@@ -37,3 +37,9 @@
     - 스프링 라이브러리
 - 브랜치 생성
     - master/develop/backend/feature..
+
+#### 1/19
+- 회원관리 개발 시작
+	- Spring Security 공부
+	- OAuth 2.0 공부
+	- JWT 공부
