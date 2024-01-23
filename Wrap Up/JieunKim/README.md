@@ -1,5 +1,76 @@
 # Daily Wrap Up
 
+## 20240122
+
+### 오늘 한 것
+
+- Entity 생성
+
+### 어려웠던 점
+
+- 양방향, 단방향 설정을 뭐로 해야할지 헷갈렸음
+
+### 내일 할 것
+
+- OpenViduController 완성
+
+## 20240120-21
+
+### 주말동안 한 것
+
+- redis 드디어 연결
+- OpenVidu api 명세서 작성
+
+### 어려웠던 점
+
+- entityManagerFactory를 Bean으로 못 만든 오류
+  - h2가 꺼져있어서 그랬다...^^
+- redisConfig를 Bean으로 못 만든 오류
+
+```java
+@Value("${spring.redis.host}")
+    private String redisHost;
+
+    @Value("${spring.redis.port}")
+    private int redisPort;
+```
+
+이걸 `@Value("${spring.data.redis.host}")` 이렇게 했어야 했음!!!!!!! yml을 무시하지 말자..
+여기서 끝이 아님
+
+- org.hibernate.exception.sqlgrammarexception: could not prepare statement [sequence "hello_seq" not found; sql statement:
+
+```yml
+jpa:
+  hibernate:
+    ddl-auto: create
+```
+
+여기서 jpa: 를 안해서 ddl-auto가 적용이 안돼서 sequence를 생성하기 못했던 것임;;;;
+
+### 내일 할 것
+
+- Entity 생성
+- OpenVidu 시작
+
+## 20240119
+
+### 오늘 한 것
+
+- 패키지 생성
+- docker 설치
+- redis 공부
+- redis config 실패
+
+### 어려웠던 점
+
+- redis 연결을 할 때 redisConfig가 계속 연동이 되지 않음... 계속 entityManagerFactory가 없다고 뜸...
+
+### 주말동안 할 일
+
+- 초기 세팅 완료
+- OpenVidu 작업 시작
+
 ## 20240118
 
 ### 오늘 한 것
