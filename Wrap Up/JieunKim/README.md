@@ -1,5 +1,23 @@
 # Daily Wrap Up
 
+## 20240123
+
+### 오늘 한 것
+
+- openvidu session post 연결 성공
+- event controller, repo, service 생성
+- gerrit, 컨플릭과 기나긴 싸움…………………………………………………
+
+### 어려웠던 점
+
+- 엔티티 수정 때 오류가 남
+- h2 db는 user라는 테이블명을 가질 수 없다. 이것때문에 2시간 날림
+- dto 생성이 어렵다
+
+### 내일 할 것
+
+- OpenVidu 컨트롤러, 서비스, 레포 끝내기
+
 ## 20240122
 
 ### 오늘 한 것
