@@ -1,5 +1,29 @@
 # Daily Wrap Up
 
+## 20240124
+
+### 오늘 한 것
+
+- openvidu session 생성 repo, sevice 성공
+- Event, Result 테이블 정규화 후 entity 생성
+- maven 3.9.0 설치
+- openvidu 커스텀 시작
+
+### 어려웠던 점
+
+- 오픈비두 튜토리얼을 커스텀하려고 하니까 되지 않아서 docker에서 pull해와서 커스텀 시작
+- maven 설치해야하는 줄 모르고 mvn 왜 안되나 했음
+
+### 새로 알게 된 점
+
+- JPA entity에서 enum column은 기본값을 주려면 하드코딩하는 법 밖에 없다
+- - Intellij 글자 오류
+    - `Alt+=` 하면 알파벳이 하나하나 떨어져서 나옴
+
+### 내일 할 것
+
+- OpenVidu 컨트롤러 만들기
+
 ## 20240123
 
 ### 오늘 한 것
