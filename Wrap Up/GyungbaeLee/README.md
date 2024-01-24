@@ -56,3 +56,7 @@
     - 클래스, 메서드명 직관적으로 변경
     - 패키지 정리
 - 네이버 로그인 검수 재요청
+
+#### 1/24
+- RestControllerAdvice 추가
+- Result CRUD 시작
