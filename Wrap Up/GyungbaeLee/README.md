@@ -60,3 +60,7 @@
 #### 1/24
 - RestControllerAdvice 추가
 - Result CRUD 시작
+
+#### 1/25
+- JWT, OAuth2 설정 완료
+- 회원 Entity, Repository 생성
