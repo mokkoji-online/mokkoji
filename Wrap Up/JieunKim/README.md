@@ -1,5 +1,31 @@
 # Daily Wrap Up
 
+## 20240125
+
+### 전날 저녁에 한 것
+
+- OpenVidu on-premise 방식으로 배포 시도. 서버가 열려있지 않아 실패
+
+### 오늘 한 것
+
+- 3주차 발표 경청
+- OpenviduController 에러 처리 후 서비스로 에러처리하라는 코드리뷰 받아서 수정
+
+### 어려웠던 점
+
+- 배포할 때 port번호 설정에 어려움
+
+### 새로 알게 된 점
+
+- 예외처리는 controller가 아닌 service단에서 한다
+- server port, http_port, https_port는 전부 다르다
+
+### 주말에 할 것
+
+- OpenVidu 배포
+- redis와 연결
+- 채팅 알아보기
+
 ## 20240124
 
 ### 오늘 한 것
