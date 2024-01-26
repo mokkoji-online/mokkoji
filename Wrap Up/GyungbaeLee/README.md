@@ -64,3 +64,8 @@
 #### 1/25
 - JWT, OAuth2 설정 완료
 - 회원 Entity, Repository 생성
+
+#### 1/26
+- 발표 경청
+- backend 에러 코드 합의
+- 회원 CRUD
