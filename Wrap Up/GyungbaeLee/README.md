@@ -56,3 +56,16 @@
     - 클래스, 메서드명 직관적으로 변경
     - 패키지 정리
 - 네이버 로그인 검수 재요청
+
+#### 1/24
+- RestControllerAdvice 추가
+- Result CRUD 시작
+
+#### 1/25
+- JWT, OAuth2 설정 완료
+- 회원 Entity, Repository 생성
+
+#### 1/26
+- 발표 경청
+- backend 에러 코드 합의
+- 회원 CRUD
