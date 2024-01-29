@@ -1,6 +1,59 @@
 # Daily Wrap Up
 
-## 20240125
+## 20240129
+
+### 오늘 한 것
+
+- 경배님과 백엔드 merge
+- merge 후 에러 수정
+- 패키지 구조 수정
+- 코드 스타일 정함
+  - 엔티티는 builder 사용
+  - 서비스는 인터페이스, impl사용
+  - 컨트롤러에 있는 유효성 검사 전부 서비스에서 하기
+  - 유저 정보는 전부 jwt로 받아오기
+- 롤링페이퍼 s3올리는 것 성공
+- redis에 연결하려 했으나 실패
+
+### 어려웠던 점
+
+- merge 후 컨벤션 정하는 데 시간이 오래걸림
+- redis에 객체를 리스트로 넣고 싶은데 되지를 않는다...
+
+### 새로 알게 된 점
+
+- builder에 대해 새로 알게 됨
+- jpa entity @AllArgsConstructor 사용 가넝(나는 루프에 빠지는 줄 알았음)
+
+### 내일 할 것
+
+- redis 연결
+- 소그룹 session 열기
+- 배포
+
+## 20240127-28
+
+### 주말동안 한 것
+
+- S3 IAM 계정 생성
+- S3로 업로드하는 Event API 생성
+
+### 어려웠던 점
+
+- Multipart/file과 json을 같이 받는 것
+  - `@RequestPart`를 사용하면 된다.
+  - 특이점은 userId하나만 json에서 받고 싶더라도 dto로 감싸줘야 인식을 했음
+- application-s3.yml에 S3 설정 내용을 담았는데 안됨...
+  - `Could not resolve placeholder 'cloud.aws.credentials.access-key' in value "${cloud.aws.credentials.access-key}"`
+  - 그래서 그냥 application.properties에 담으니까 됐음
+
+### 내일 할 것
+
+- Event API 끝내기
+- redis에 연결
+- 소그룹 session 생각하기
+
+## 20240126
 
 ### 전날 저녁에 한 것
 
@@ -25,6 +78,21 @@
 - OpenVidu 배포
 - redis와 연결
 - 채팅 알아보기
+
+## 20240125
+
+### 오늘 한 것
+
+- openvidu controller 뼈대 완성(exception 처리 추가 필요)
+
+### 내일 할 것
+
+- 서버에 업로드
+- exception 컨트롤러에 추가
+- 카카오페이 api 추가
+- 소그룹 어떻게 하냐,,생각하기
+- 채팅 한번 구경하기
+- 설문조사 메서드 생성
 
 ## 20240124
 
