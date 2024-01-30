@@ -1,5 +1,33 @@
 # Daily Wrap Up
 
+## 20240130
+
+### 오늘 한 것
+
+- redis에 사진, 롤링페이퍼 정보 list로 저장하는 것 성공
+- S3 폴더 구조 변경
+- `PhotoRedis cannot be cast to class java.lang.String (online.mokkoji.event.domain.PhotoRedis is in unnamed module of loader 'app'; java.lang.String is in module java.base of loader 'bootstrap')` 해결
+- 분산락을 위한 redisson 설치 후 셋팅
+
+### 어려웠던 점
+
+- 분산락의 개념이 뭔지 이해가 잘 가지 않았음
+- 저 에러가 뭐때문인지 처음에 잘 이해가 가지 않음
+- redisson 셋팅이 아직 잘 되지 않음
+
+### 새로 알게 된 점
+
+- 분산락이 무엇인지
+  - 경쟁 상황(Race Condition) 이 발생할때, 하나의 공유자원에 접근할때 데이터에 결함이 발생하지 않도록 원자성(atomic) 을 보장하는 기법
+- `PhotoRedis cannot be cast to class java.lang.String (online.mokkoji.event.domain.PhotoRedis is in unnamed module of loader 'app'; java.lang.String is in module java.base of loader 'bootstrap')`
+  - 이건 내가 object를 objectMapper로 String화 시키지 않아서 그랬던 것이다. 근데 serialization을 아예 dto에서 해도 괜찮을 듯
+
+### 내일 할 것
+
+- redisson으로 write-back 성공
+- 프론트와 연결
+- 배포
+
 ## 20240129
 
 ### 오늘 한 것
