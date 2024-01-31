@@ -1,5 +1,74 @@
 # Daily Wrap Up
 
+## 20240131
+
+### 오늘 한 것
+
+- redisson write-behind 성공
+- redis 남은 정보 가져와서 저장 성공
+- 지금 write-behind하고 데이터 삭제 성공
+
+### 어려웠던 점
+
+- redisson으로 write-behind하는 게 정말 생소해서 어려웠다...
+- 남은 정보를 가져오는 점이 정말 어려웠음
+- 지금은 write-behind할 때 지우는 것도 어려웠다
+
+### 새로 알게 된 점
+
+- redisson 이용 방법. 특히 RMapCache를 이용해 Write-Behind하기
+
+  - config가 정말 중요했다.
+
+    ```java
+    @Configuration
+    @AllArgsConstructor
+    public class CacheConfig {
+
+        private final RedissonClient redissonClient;
+        private final PhotoRepository photoRepository;
+
+        @Bean
+        public RMapCache<String, Photo> photoRMapCache() {
+            final RMapCache<String, Photo> photoRMapCache
+                    = redissonClient.getMapCache("photos", MapCacheOptions.<String, Photo>defaults()
+                    .writer(getPhotoMapWriter())
+                    .writeMode(MapOptions.WriteMode.WRITE_BEHIND)
+                    .writeBehindBatchSize(100)
+                    .writeBehindDelay(1000));
+
+            return photoRMapCache;
+        }
+
+        private MapWriter<String, Photo> getPhotoMapWriter() {
+            return new MapWriter<String, Photo>() {
+                @Override
+                public void write(Map<String, Photo> map) {
+                    map.forEach((k, v) -> {
+                        photoRepository.save(v);
+                    });
+                }
+
+                @Override
+                public void delete(Collection<String> keys) {
+                    // TODO : 2024.01.31 url로 삭제 시 삭제되게 하고싶은데 이상함
+                    keys.stream().forEach(key -> {
+                        photoRepository.deleteByUrl(key);
+                    });
+
+                }
+            };
+        }
+
+    }
+    ```
+
+### 내일 할 것
+
+- 프론트와 연결
+- 오류 수정
+- 배포
+
 ## 20240130
 
 ### 오늘 한 것
