@@ -1,5 +1,29 @@
 # Daily Wrap Up
 
+## 20240201
+
+### 오늘 한 것
+
+- backend 브랜치에 머지 후 컨플릭, 컨벤션에서 벗어나는 부분 수정
+- 결과물 편집 메서드 생성
+- redis 객체 안의 객체 넣어서 올릴려고 했는데 stackoverflow났음...
+
+### 어려웠던 점
+
+- redis photo 안의 연관관계로 result를 넣었는데 result와 event의 연관관계로 stackoverflow가 남
+- 그래서 다시 원래대로 돌아갔다. 그냥 레포지토리 쓰기로 함
+
+### 새로 알게 된 점
+
+- Builder 사용법 제대로 알게 됨
+  - https://stackoverflow.com/questions/67945674/how-can-we-add-additional-constructor-when-builder-pattern-is-being-used
+
+### 내일 할 것
+
+- result 편집 가져오기 끝내기
+- master 브랜치에 머지
+- 평가 듣기
+
 ## 20240131
 
 ### 오늘 한 것
