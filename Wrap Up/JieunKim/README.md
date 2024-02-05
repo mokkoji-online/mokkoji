@@ -1,5 +1,91 @@
 # Daily Wrap Up
 
+## 20240205
+
+### 오늘 한 것
+
+- 백 코드 배포 때 오픈비두 오류 해결
+- 사진첩 사진 추가 api 생성
+- 대표이미지 설정 api 생성
+
+### 어려웠던 점
+
+#### 사진첩 추가를 할 때 List<MultipartFile>을 어떤 어노테이션으로 받아야 할 지 몰라 공부함
+
+- 컨테이너를 올릴 때 `Circular placeholder reference in property definitions` 오류가 났다.
+  - 이건 `key=${key}` 와 같은 경우일 때 일어나는 오류다
+  - 스프링 자체에서 키-밸류의 이름을 같은 것으로 하면 안된다고 함
+
+### 새로 알게 된 점
+
+- `@RequestPart`
+  - 만약 파라미터가 String이나 MultipartFile/Part가 아니면 HttpMessageConverters에 의존해 request의 헤더의 Content/Type으로 변환
+  - 여러 종류의 파라미터가 있는 경우 사용됨
+- `@RequestParam`
+  - 만약 파라미터가 String이나 MultipartFile/Part가 아니면 등록된 Converter나 PropertyEditor로 변환함
+  - name-value form 환경에서 사용됨
+  - **List<MultipartFile>을 request로 받는 것을 이걸로 채택함**
+- `@RequestBody`
+  - HttpMessageConverter를 이용해 Java 객체로 변환
+  - 주로 Json 형태를 변환함
+  - `@Valid` 를 이용해서 자동 유효성 검사 적용
+- `@ModelAttribute`
+  - default 설정
+  - 생성자나 Setter로 request를 객체로 변환(HttpMessageConverter 사용X)
+
+### 내일 할 것
+
+- 프론트와 연결
+
+## 20240203-04
+
+### 주말동안 한 것
+
+- Openvidu 프론트-백 연결 80퍼센트 성공
+  - 백은 더 할 것은 없어보인다
+- redis write 전략을 write-behind에서 write-around로 변경.
+  - 때문에 동시성이슈가 사라져 redisson을 버리고 lettuce를 사용하기로 함
+
+### 어려웠던 점
+
+- 프론트와 연결할 때 끝없는 오류가 정말 갑갑했다. 그치만 다 해결함 얏호
+- redis의 write-back 방식을 사용해야 한다는 생각에 사로잡혔을 때 이 방식을 cache와 연결해서 사용하는 과정을 완벽히 이해하지 못해 코드가 중구난방으로 적혔었다. 이제는 데이터 보존을 위해 write-around를 사용해 걱정할 일이 없음
+
+### 내일 할 것
+
+- 롤링페이퍼 프론트와 연결
+- 시간이 되면 jwt에 대한 설명 듣기
+
+## 20240202
+
+### 오늘 한 것
+
+- 백-프 오픈비두 합침
+- 수정 중
+- 롤링페이퍼 get 생성
+
+### 어려웠던 점
+
+- 자꾸 CORS 에러가 나고 포트가 너무 많아서 뭐가 뭔지 헷갈림
+
+### 새로 알게 된 점
+
+- 8080→ 이건 백의 서버포트임
+  - 포스트맨에서는 이 포트로 연결이 되어야함
+- 4443→ 이건 프론트의 연결하는 포트
+  - localhost:4443을 통해 들어와야 한다.
+
+```java
+Access to XMLHttpRequest at 'http://localhost:8080/meetings/api/sessions' from origin 'http://localhost:5173' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
+```
+
+- 이건 CORS에러여서 프론트에서 프록시 설정을 하니까 해결됨
+
+### 주말동안 할 것
+
+- 롤링페이퍼 CRUD 완성
+- 백-프 합쳐보기
+
 ## 20240201
 
 ### 오늘 한 것
