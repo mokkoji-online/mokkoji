@@ -1,5 +1,114 @@
 # Daily Wrap Up
 
+## 20240209
+
+### 오늘 한 것
+
+- s3 삭제 메서드 오류 해결
+- queryDsl 사용하는 repository 생성
+
+### 어려웠던 점
+
+- QueryDsl의 q class가 자꾸 `cannot resolve symbol QPhoto` 오류를 뜨며 클래스 import를 할 수가 없었다
+  - build-generated가 source 폴더로 해야함
+  - test에서는 위의 방식으로도 됨. 근데 main에서 안돼서 밑의 링크들을 다해보고도 안됐다...근데 갑자기 또 돼서 잘 사용함
+  - https://ottl-seo.tistory.com/entry/IntelliJ-Cannot-resolve-symbol-%EC%97%90%EB%9F%AC-%ED%95%B4%EA%B2%B0
+  - https://jong-bae.tistory.com/43
+  - https://pamyferret.tistory.com/11
+
+### 새로 알게 된 점
+
+- QueryDsl
+  - JPAQueryFactory Config 생성
+    - https://batory.tistory.com/496
+  - queryDsl select한 것 dto에 저장
+    - https://icarus8050.tistory.com/5
+
+### 내일 할 것
+
+- 캐시에 저장하는 값이 삭제 후 새로고침이 되지 않는 오류 수정
+
+## 20240208
+
+### 오늘 한 것
+
+- 웹소켓 오류 해결
+- backend-deploy 브랜치 내의 파일 정리해서 오류나는 것 해결
+- s3 삭제 메서드 생성
+
+### 새로 알게 된 점
+
+- 웹소켓 오류
+  - `websocket connection to 'wss failed` 이런게 계속 났음
+  - 근데 http_port를 80, https_port를 443으로 바꾸니 됨
+  - 관련 링크
+    - https://stackoverflow.com/questions/32693376/websocket-connection-on-wss-failed
+
+    - https://stackoverflow.com/questions/34132419/websocket-connection-to-wss-failed-error-in-connection-establishment-n
+- Docker 로그 보는 법
+  1. pem키가 있는 곳에서 git bash를 켠다
+  2. ssh -i [키 파일 이름] ubuntu@[도메인 이름] 를 입력
+  3. docker ps 입력
+  4. 원하는 컨테이너 아이디 복사
+  5. docker logs <ID값> 입력
+
+### 내일 할 것
+
+- s3 삭제 오류 해결
+
+## 20240207
+
+### 오늘 한 것
+
+- openvidu url 제대로 찾아서 설정
+- 롤링페이퍼 테이블 auto-increment 문제 해결
+
+### 어려웠던 점
+
+#### auto_increment가 사라짐
+
+- 롤링페이퍼 저장할 때마다 `field 'id' doesn't have a default value` 이 오류 났음
+  - 이유는 auto-increment가 설정되지 않아서→`@GeneratedValue(strategy = GenerationType.IDENTITY)` 가 mysql에 적용이 되지 않을 때가 있음
+    - 그러면 `@GeneratedValue(strategy = GenerationType.AUTO)` 로 변경해야 한다고 함
+    - 오히려 auto_increment가 들어가지 않음
+    - 별 짓 다 해보다가 table drop하고 다시 생성하니까 됨ㅎ
+
+### 새로 알게 된 점
+
+- 오픈비두 url은 http://우리도메인:https포트로 해야함
+- 우리는 http://mokkoji.online:5443으로 하니까 됐다
+- 포트가 너무 많아서 어려움...
+
+### 내일 할 것
+
+- 오픈비두 배포
+
+## 20240206
+
+### 오늘 한 것
+
+- 결과물 프론트와 연결
+- 오픈비두 배포 오류 해결 고민
+
+### 어려웠던 점
+
+#### Result 테이블의 image의 기본값을 `@ColumnDefault`로 하면 에러가 남
+
+```java
+You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near 'url,
+```
+
+가 떴음
+
+- 어떻게 해도 떠서
+  `@Column(length = 255, columnDefinition = "varchar(255) default 'url'")` 로 변경
+- event와 result가 연관관계로 얽혀있어서 [`object references an unsaved transient instance - save the transient instance before flushing`](https://bcp0109.tistory.com/344) 에러가 나며 테이블 생성이 되지 않음
+  - 그래서 `cascade = CascadeType.PERSIST` 으로 해결
+
+### 내일 할 것
+
+- 오픈비두 배포
+
 ## 20240205
 
 ### 오늘 한 것
