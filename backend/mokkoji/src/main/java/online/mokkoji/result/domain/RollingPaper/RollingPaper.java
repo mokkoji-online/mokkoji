@@ -14,7 +14,7 @@ import java.util.List;
 public class RollingPaper {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "rollingpaper_id")
     private Long id;
 

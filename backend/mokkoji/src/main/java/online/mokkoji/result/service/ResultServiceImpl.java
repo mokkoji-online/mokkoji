@@ -17,7 +17,10 @@ import online.mokkoji.result.repository.*;
 import online.mokkoji.user.domain.Provider;
 import online.mokkoji.user.domain.User;
 import online.mokkoji.user.repository.UserRepository;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -39,7 +42,7 @@ public class ResultServiceImpl implements ResultService {
     private final PostitTemplateRepository postitTemplateRepository;
     private final UserRepository userRepository;
 
-    // 사진과 메시지 리스트로 담는 메서드
+    // 행사 리스트
     @Override
     public Map<String, Object> getResultList(String provider, String email) {
 
@@ -87,7 +90,7 @@ public class ResultServiceImpl implements ResultService {
         return resultMap;
     }
 
-//    @Cacheable(cacheNames = "messageList", key = "#", cacheManager = "cacheManager")
+    // 롤링페이퍼와 메시지 페이징
     @Override
     public ResultResDto getResult(Long resultId, Pageable pageable) {
         Optional<Result> findResult = resultRepository.findById(resultId);
@@ -102,6 +105,7 @@ public class ResultServiceImpl implements ResultService {
         if(rollingPaper == null)
             throw new RestApiException(ResultErrorCode.ROLLINGPAPER_NOT_FOUND);
 
+        // TODO : @Cacheable(value = "messages", key = "#rollingpaperId + #pageNo") 를 하고 싶은데 pageNo를 어케 하는지
         Page<Message> messageList = messageRepository.findAllByRollingPaper_Id(rollingPaper.getId(), pageable);
 
         Photomosaic photomosaic = result.getPhotomosaic();
@@ -133,9 +137,11 @@ public class ResultServiceImpl implements ResultService {
     // 사진 db 저장
     @Override
     public void createPhoto(PhotoResDto photoResDto) {
-        Photo photo = Photo.builder().resultId(photoResDto.getResultId()).photoPath(photoResDto.getPhotoPath()).build();
+
+        Photo photo = Photo.builder().result(photoResDto.getResult()).photoPath(photoResDto.getPhotoPath()).build();
         photoRepository.save(photo);
     }
+
 
     // 메시지 db 저장
     @Override
@@ -155,11 +161,15 @@ public class ResultServiceImpl implements ResultService {
     }
 
 
-    // 기억 편집 화면에서 필요한 사진과 메시지 불러오는 메서드
+    // 기억 편집 화면에서 필요한 사진 url 가져옴
     @Override
-    @Cacheable(cacheNames = "photoList", key = "#resultId", cacheManager = "cacheManager")
-    public Map<String, Object> getPhotoAndMessageMap(Long resultId) {
-        Map<String, Object> resultMap = new HashMap<>();
+    @Cacheable(value = "photoPath", key = "#resultId", cacheManager = "cacheManager")
+    public List<String> getPhotoPath(Long resultId) {
+        return photoRepository.findPhotoPathListByResultId(resultId);
+    }
+
+    // 기억 편집 화면에서 롤링페이퍼 템플릿 가져옴
+    public RollingpaperEditResDto getRollingpaperTemplate(Long resultId) {
 
         // result를 통해 롤링페이퍼 가져옴
         Result result = getResultById(resultId);
@@ -168,18 +178,7 @@ public class ResultServiceImpl implements ResultService {
         // 롤링페이퍼 설정된 템플릿 가져옴
         RollingpaperEditResDto rollingpaperDto = new RollingpaperEditResDto(rollingPaper.getBackgroundTemplate(), rollingPaper.getPostitTemplate());
 
-        // 사진 루트 가져옴
-        List<Photo> photoList = photoRepository.findAllByResultId(resultId);
-        List<String> photoPathList = new ArrayList<>();
-        for (Photo photo : photoList) {
-            photoPathList.add(photo.getPhotoPath());
-        }
-
-        resultMap.put("rollingpaperTemplate", rollingpaperDto);
-        resultMap.put("photoPathList", photoPathList);
-
-        return resultMap;
-
+        return rollingpaperDto;
     }
 
     // 롤링페이퍼 템플릿 변경
@@ -214,9 +213,26 @@ public class ResultServiceImpl implements ResultService {
     // 사진 여러개 저장(1개도 가능)
     @Override
     public void createPhotoList(List<PhotoResDto> photoResDtoList) {
+
         for (PhotoResDto photoResDto : photoResDtoList) {
+            // 하나씩 db에 저장
             createPhoto(photoResDto);
         }
+    }
+
+    @Override
+    @Caching(
+            evict = {@CacheEvict(value = "photoPath", key = "#resultId", cacheManager = "cacheManager")},
+            put = {@CachePut(value = "photoPath", key = "#resultId", cacheManager = "cacheManager")}
+    )
+    public List<String> updatePhotoPathCache(Long resultId, List<PhotoResDto> photoResDtoList) {
+
+        List<String> photoPath = getPhotoPath(resultId);
+        for (PhotoResDto photoResDto : photoResDtoList) {
+            photoPath.add(photoResDto.getPhotoPath());
+        }
+
+        return photoPath;
     }
 
     // 결과객체 가져오는 메서드

@@ -11,6 +11,4 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     Optional<Event> findBySessionId(String sessionId);
 
-    // TODO : 이게 필요하면 유저에 연관관계 추가하는게 더 낫지 않을까
-    List<Event> findAllByUser(User user);
 }

@@ -9,9 +9,16 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.mokkoji.common.exception.RestApiException;
+import online.mokkoji.common.exception.errorCode.CommonErrorCode;
 import online.mokkoji.common.exception.errorCode.EventErrorCode;
+import online.mokkoji.common.exception.errorCode.ResultErrorCode;
 import online.mokkoji.event.dto.response.PhotoResDto;
+import online.mokkoji.result.domain.Photo;
+import online.mokkoji.result.domain.Result;
+import online.mokkoji.result.repository.PhotoRepository;
+import online.mokkoji.result.repository.ResultRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,13 +36,14 @@ public class S3ServiceImpl implements S3Service {
     private String bucket;
 
     private final AmazonS3Client amazonS3Client;
+    private final ResultRepository resultRepository;
+    private final PhotoRepository photoRepository;
 
 
     // 사진 한 장 업로드 후 url 리턴
     @Override
-    public PhotoResDto uploadOnePhoto(MultipartFile multipartFile, Long userId, Long resultId) throws IOException {
-
-        return getPhotoResDto(multipartFile, userId, resultId);
+    public PhotoResDto uploadOnePhoto(MultipartFile multipartFile, Long userId, Result result) throws IOException {
+        return getPhotoResDto(multipartFile, userId, result);
     }
 
 
@@ -43,11 +51,15 @@ public class S3ServiceImpl implements S3Service {
     @Override
     public List<PhotoResDto> uploadPhotoList(List<MultipartFile> photoList, Long userId, Long resultId) {
 
+        Result result = resultRepository.findById(resultId)
+                .orElseThrow(() -> new RestApiException(ResultErrorCode.RESULT_NOT_FOUND));
+
         List<PhotoResDto> dtoList = new ArrayList<>();
 
+        // 사진 업로드 후 dto에 담아서 리턴
         for (MultipartFile photo : photoList) {
             try {
-                PhotoResDto photoResDto = getPhotoResDto(photo, userId, resultId);
+                PhotoResDto photoResDto = getPhotoResDto(photo, userId, result);
                 dtoList.add(photoResDto);
             } catch (IOException e) {
                 // TODO : 이부분도 RestApiException으로 해야하는지?
@@ -94,9 +106,36 @@ public class S3ServiceImpl implements S3Service {
         return urlMap;
     }
 
+    // 대표이미지 제외 사진 삭제
+    @Override
+    @CacheEvict(value = "photoPath", key = "#resultId", cacheManager = "cacheManager")
+    public void deletePhotos(Long resultId) {
+        Result result = resultRepository.findById(resultId)
+                .orElseThrow(() -> new RestApiException(ResultErrorCode.RESULT_NOT_FOUND));
+
+        List<Photo> photos = result.getPhotos();
+
+        for (Photo photo : photos) {
+            if (!result.getImage().equals(photo.getPhotoPath())) {
+                // S3에서 지우기
+                delete(getPhotoKey(photo.getPhotoPath()));
+                // db에서 지우기
+                photoRepository.deleteById(photo.getId());
+            }
+        }
+    }
+
+    // 사진 key 얻어냄
+    private String getPhotoKey(String photoPath) {
+        String prefixToRemove="https://mokkoji-bucket.s3.ap-northeast-2.amazonaws.com/";
+
+        return photoPath.substring(prefixToRemove.length());
+    }
+
 
     // 사진 하나 업로드 후 dto로 담음
-    private PhotoResDto getPhotoResDto(MultipartFile multipartFile, Long userId, Long resultId) throws IOException {
+    private PhotoResDto getPhotoResDto(MultipartFile multipartFile, Long userId, Result result) throws IOException {
+        Long resultId= result.getId();
         String dir = "photos";
         String subDir = "photoList";
         String prefix = "pic_";
@@ -104,7 +143,21 @@ public class S3ServiceImpl implements S3Service {
 
         upload(multipartFile, fileName);
 
-        return new PhotoResDto(resultId, amazonS3Client.getUrl(bucket, fileName).toString());
+        return new PhotoResDto(result, amazonS3Client.getUrl(bucket, fileName).toString());
+    }
+
+    // S3에 delete
+    private void delete(String photoKey) {
+        if (amazonS3Client.doesObjectExist(bucket, photoKey)) {
+            try {
+                amazonS3Client.deleteObject(bucket, photoKey);
+            } catch (Exception e) {
+                log.debug("S3 사진 삭제 실패", e);
+                e.printStackTrace();
+            }
+        } else {
+            throw new RestApiException(ResultErrorCode.PHOTO_NOT_FOUND);
+        }
     }
 
     // S3에 upload

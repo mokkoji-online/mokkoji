@@ -55,13 +55,7 @@ public class OpenviduController {
                                               HttpServletRequest req
     ) throws OpenViduJavaClientException, OpenViduHttpException {
 
-        log.info("jwt 토큰 : {}", jwtUtil.getProvider(req));
-        log.info("jwt 토큰 : {}", jwtUtil.getEmail(req));
-
-        
-
         User user=userService.getByProviderAndEmail(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
-        log.info("user : {}", user.toString());
 
         // request body 객체로 직렬화
         SessionProperties properties = SessionProperties.fromJson(params).build();
@@ -69,8 +63,8 @@ public class OpenviduController {
         //세션 생성
         Session session = openvidu.createSession(properties);
 
-        // DB에 저장할 Dto 생성
-         SessionReqDto sessionReqDto = new SessionReqDto(user.getId(), session.getSessionId(), session.createdAt());
+//         DB에 저장할 Dto 생성
+        SessionReqDto sessionReqDto = new SessionReqDto(user.getId(), session.getSessionId(), session.createdAt());
 
         // DB에 저장
          eventService.createSession(sessionReqDto);
@@ -107,7 +101,6 @@ public class OpenviduController {
         User user=userService.getByProviderAndEmail(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
 
         sessionReqDto.setUserId(user.getId());
-//        sessionReqDto.setUserId(1L);
 
         Session activeSession = openvidu.getActiveSession(sessionId);
         eventService.deleteSession(sessionId, sessionReqDto);
