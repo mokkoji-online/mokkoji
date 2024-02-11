@@ -13,13 +13,6 @@
       </button>
     </div>
     <div class="flex flex-col justify-center">
-      <!-- <input
-        type="text"
-        name="writer"
-        id="writer"
-        placeholder="이름"
-        class="p-0 m-0 mb-[2vh] w-[13vw] h-[7vh] bg-yellow-100 border-sm border-black rounded-r-lg text-center text-r-md placeholder:text-[1.3vw] placeholder:text-center"
-      /> -->
       <div class="p-[2vw] flex flex-col border-sm rounded-r-lg">
         <textarea
           name=""

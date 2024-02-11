@@ -11,10 +11,16 @@ const { VITE_SERVER } = import.meta.env
 export const useSessionStore = defineStore('session', () => {
   const router = useRouter()
 
-  const createSession = () => {
-    router.push('/meetings')
-    sessionStorage.setItem('sessionId', '')
+  // 세션 생성
+  const createSession = async () => {
+    const response = await axiosJwt.post(VITE_SERVER + '/meetings/sessions', {
+      headers: { 'Content-Type': 'application/json' }
+    })
+
+    sessionStorage.setItem('sessionId', response.data)
     sessionStorage.setItem('isHost', true)
+
+    router.push('/meetings')
   }
 
   const findSession = async (sessionId) => {

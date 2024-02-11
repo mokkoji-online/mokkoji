@@ -32,8 +32,19 @@ const props = defineProps({
 
 console.log(props.streamManager)
 
-const userName = ref($cookies.get('user').name)
+const userName = ref()
 const videoElement = ref(null)
+
+const clientData = () => {
+  const { clientData } = getConnectionData()
+  userName.value = clientData
+}
+
+// 사용자 데이터 가져오기
+const getConnectionData = () => {
+  const { connection } = props.streamManager.stream
+  return JSON.parse(connection.data)
+}
 
 const captureImg = () => {
   const target = videoElement.value
@@ -59,6 +70,8 @@ onMounted(() => {
   if (videoElement.value && props.streamManager) {
     props.streamManager.addVideoElement(videoElement.value)
   }
+
+  clientData()
 })
 </script>
 

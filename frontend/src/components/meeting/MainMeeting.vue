@@ -520,7 +520,7 @@ const state = reactive({
   mainStreamManager: undefined,
   publisher: undefined,
   subscribers: [],
-  mySessionId: sessionStorage.getItem('sessionId'),
+  // mySessionId: sessionStorage.getItem('sessionId'),
   myUserName:
     $cookies.get('user') !== null ? $cookies.get('user').name : sessionStorage.getItem('userName'),
   openviduToken: undefined
@@ -637,20 +637,6 @@ const joinSession = () => {
   window.addEventListener('beforeunload', leaveMainMeeting)
 }
 
-// 세션 생성
-const createSession = async (sessionId) => {
-  const response = await axiosJwt.post(
-    VITE_SERVER + '/meetings/sessions',
-    { customSessionId: sessionId },
-    {
-      headers: { 'Content-Type': 'application/json' }
-    }
-  )
-  if (sessionStorage.getItem('isHost') && sessionStorage.getItem('sessionId') === '')
-    sessionStorage.sessionId = response.data
-  return response.data // sessionId
-}
-
 // 세션 삭제
 const deleteSession = () => {
   if (state.session) {
@@ -678,9 +664,8 @@ const createToken = async (sessionId) => {
   return response.data.connectionToken // 토큰
 }
 
-const getToken = async (mySessionId) => {
-  const sessionId = await createSession(mySessionId)
-  return await createToken(sessionId)
+const getToken = async () => {
+  return await createToken(sessionStorage.getItem('sessionId'))
 }
 
 const leaveMainMeeting = async () => {
