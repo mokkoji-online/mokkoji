@@ -5,8 +5,11 @@
   >
     <div class="flex pb-[4vh] h-[10vh] w-[31vw] items-center">
       <div class="text-[1.5vw] basis-1/2 font-bold">롤링페이퍼 작성</div>
-      <button class="ml-auto h-full" @click="$emit('remove-letter-modal')">
-        <IconCancelBlack class="size-[70%]" />
+      <button
+        class="ml-auto w-[3vw] hover:bg-red-100 aspect-square rounded-full"
+        @click="$emit('remove-letter-modal')"
+      >
+        <IconCancelBlack class="size-[50%]" />
       </button>
     </div>
     <div class="flex flex-col justify-center">
@@ -25,24 +28,35 @@
           cols="30"
           rows="10"
           placeholder="메시지를 입력하세요"
-          class="h-[40vh] bg-yellow-100 rounded-r-lg resize-none placeholder:text-[1.5vw] text-center text-r-md focus:outline-none"
+          class="h-[40vh] bg-yellow-100 rounded-r-lg resize-none placeholder:text-[1.5vw] text-center text-r-md font-bold focus:outline-none"
           v-model="textFile"
         >
         </textarea>
-        <div class="flex h-[5vh]">
+        <div class="flex h-[6vh]">
           <div class="basis-1/2 flex justify-start">
-            <label className="input-audio-button" for="input-audio" class="mr-[1vw]">
-              <IconAudio class="size-[100%] hover:cursor-pointer" />
+            <label
+              className="input-audio-button"
+              for="input-audio"
+              class="mr-[1vw] hover:bg-red-100 aspect-square rounded-full flex justify-center items-center"
+            >
+              <IconAudio class="size-[90%] hover:cursor-pointer" />
             </label>
             <input type="file" id="input-audio" class="hidden" @change="uploadAudioFile" />
-            <label for="input-video">
-              <IconVideo class="size-[100%] hover:cursor-pointer" />
+            <label
+              for="input-video"
+              class="hover:bg-red-100 aspect-square rounded-full flex justify-center items-center"
+            >
+              <IconVideo class="size-[85%] hover:cursor-pointer" />
             </label>
             <input type="file" id="input-video" class="hidden" @change="uploadVideoFile" />
           </div>
           <div class="basis-1/2 flex justify-end">
-            <button type="button" class="" @click="removeContents">
-              <IconRemove class="size-[100%]" />
+            <button
+              type="button"
+              class="hover:bg-red-100 aspect-square rounded-full flex justify-center items-center"
+              @click="removeContents"
+            >
+              <IconRemove class="size-[90%]" />
             </button>
           </div>
         </div>
@@ -61,7 +75,7 @@
               alt="파일 클립 이미지"
               class="mr-[0.5vw] w-[1.5vw] size-[70%]"
             /><strong class="text-r-sm w-[10.5vw] whitespace-nowrap overflow-hidden"
-              >음성: {{ audioFileName }}</strong
+              >음성파일: {{ audioFileName }}</strong
             >
             <img
               src="@/assets/meeting/delete.png"
@@ -81,7 +95,7 @@
               alt="파일 클립 이미지"
               class="mr-[0.5vw] w-[1.5vw] size-[70%]"
             /><strong class="text-r-sm w-[10.5vw] whitespace-nowrap overflow-hidden"
-              >영상: {{ videoFileName }}</strong
+              >영상파일: {{ videoFileName }}</strong
             >
             <img
               src="@/assets/meeting/delete.png"

@@ -12,6 +12,7 @@ import EditPage from '@/views/EditView.vue'
 import HandleCallback from '@/components/common/HandleCallback.vue'
 import RollingPaper from '@/views/RollingPaper.vue'
 import PhotoMosaic from '@/views/PhotoMosaic.vue'
+import AudioRecorderModal from '@/components/modal/meeting/AudioRecorderModal.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -91,6 +92,11 @@ const router = createRouter({
       path: '/photomosaic',
       name: 'photomosaic',
       component: PhotoMosaic
+    },
+    {
+      path: '/audiorecordingmodal',
+      name: 'audiorecordingmodal',
+      component: AudioRecorderModal
     }
   ]
 })

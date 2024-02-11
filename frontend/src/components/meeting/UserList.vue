@@ -4,29 +4,35 @@
     action="/ses_AucL2KJFyW"
     name="group-user-list"
     accept-charset="utf-8"
-    class="mb-[1vh] w-[95%] h-[20%] border-sm border-purple-300 rounded-r-md flex items-center"
+    class="mb-[1vh] w-[95%] h-[15%] bg-white border-sm border-purple-300 rounded-r-md flex items-center"
   >
-    <div class="w-full flex items-center">
-      <img src="@/assets/landing/profile_icon.jpg" alt="" class="ml-[0.5vw] w-[3vw] rounded-full" />
-      <div class="ml-[1vw] text-r-sm">
+    <div class="w-full h-full flex items-center">
+      <img
+        src="@/assets/landing/profile_icon.jpg"
+        alt=""
+        class="ml-[0.5vw] h-[80%] aspect-square rounded-full"
+      />
+      <div class="ml-[1vw] text-[1vw] w-[40%] flex">
         {{ userName }}
+        <div v-if="buttonType === 'user-list' && userName === myName" class="ml-[0.3vw]">(나)</div>
       </div>
-      <div v-if="buttonType === 'user-list' && userName === myName" class="ml-[0.3vw]">(나)</div>
-      <div v-if="buttonType === 'user-list'">마이크</div>
-      <div v-if="buttonType === 'user-list'">카메라</div>
-      <div class="mr-[1vw] w-full h-full flex justify-end">
+
+      <div v-if="buttonType === 'group'" class="mr-[1vw] w-full h-full flex justify-end">
         <input
           type="checkbox"
           name="user"
           :id="`user-${userIndex}`"
           class="user-check"
           :value="userName"
-          v-if="buttonType === 'group'"
           @click="handleUserCheck"
         />
-        <label :for="`user-${userIndex}`" class="flex justify-center items-center">
-          <div class="flex justify-center items-center">
-            <IconCheck class="h-[4vh]" />
+        <label
+          :for="`user-${userIndex}`"
+          class="flex justify-center items-center"
+          @click="checkUser"
+        >
+          <div class="flex justify-center items-center hover:bg-[#e7c6ff]">
+            <IconCheck v-if="isChecked" class="h-[4vh]" />
           </div>
         </label>
       </div>
@@ -56,10 +62,9 @@ const props = defineProps({
   }
 })
 
-console.log(props.myName)
-
 const emit = defineEmits(['user-checked']['user-unchecked'])
 
+const isChecked = ref(false)
 const userName = ref('')
 const checkBox = ref()
 
@@ -72,6 +77,10 @@ const clientData = () => {
 const getConnectionData = () => {
   const { connection } = props.streamManager.stream
   return JSON.parse(connection.data)
+}
+
+const checkUser = () => {
+  isChecked.value = !isChecked.value
 }
 
 const handleUserCheck = () => {
@@ -103,7 +112,7 @@ input.user-check {
 
 input.user-check + label div {
   display: inline-block;
-  width: 2vw;
+  width: 2.5vw;
   aspect-ratio: 1/1;
   vertical-align: middle;
   border-radius: 1vb;

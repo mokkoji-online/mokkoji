@@ -3,7 +3,7 @@
     <div
       class="absolute top-[90%] left-[3%] w-[20%] h-[8%] flex justify-center items-center text-white bg-black opacity-100 rounded-r-xl text-r-md"
     >
-      {{ clientData() }}
+      {{ userName }}
     </div>
     <video ref="videoElement" autoplay class="w-full h-full rounded-[5.5vb]" />
   </div>
@@ -11,7 +11,7 @@
     <div
       class="absolute top-[80%] left-[3%] w-[35%] h-[15%] flex justify-center items-center bg-black rounded-r-xl"
     >
-      <span class="text-white text-opacity-none text-[2vh]">{{ clientData() }}</span>
+      <span class="text-white text-opacity-none text-[2vh]">{{ userName }}</span>
     </div>
     <video ref="videoElement" autoplay class="w-full h-full rounded-[3vb]" />
   </div>
@@ -32,18 +32,8 @@ const props = defineProps({
 
 console.log(props.streamManager)
 
+const userName = ref($cookies.get('user').name)
 const videoElement = ref(null)
-
-const clientData = () => {
-  const { clientData } = getConnectionData()
-  return clientData
-}
-
-// 사용자 데이터 가져오기
-const getConnectionData = () => {
-  const { connection } = props.streamManager.stream
-  return JSON.parse(connection.data)
-}
 
 const captureImg = () => {
   const target = videoElement.value

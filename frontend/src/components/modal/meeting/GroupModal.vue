@@ -5,8 +5,11 @@
     >
       <div class="pb-[4vh] h-[5%] flex items-center">
         <div class="basis-3/12 font-bold text-r-md">소그룹</div>
-        <button class="ml-auto basis-2/12 flex justify-end" @click="$emit('remove-group-modal')">
-          <IconCancelBlack class="size-[15%]" />
+        <button
+          class="ml-auto w-[4vh] aspect-square flex justify-center rounded-r-xl hover:bg-gray"
+          @click="$emit('remove-group-modal')"
+        >
+          <IconCancelBlack class="size-[50%]" />
         </button>
       </div>
       <div class="mb-[1vh] p-[2vh] h-[90%] bg-purple-100 rounded-r-lg">
@@ -21,7 +24,7 @@
             <input
               type="text"
               placeholder="참여자명 검색"
-              class="mb-[1vh] w-[95%] h-[10%] border-sm bg-gray rounded-full"
+              class="m-0 p-0 mb-[1vh] w-[95%] h-[10%] border-sm bg-gray rounded-full text-r-sm pl-[2vh] hover:bg-neutral-200 focus:bg-neutral-200"
               v-model="searchUserName"
             />
             <div class="w-full h-[80%] flex flex-col justify-start items-center">
@@ -50,7 +53,7 @@
       <div class="h-[5%] flex justify-end">
         <button
           id="create-button"
-          class="w-[6vw] h-[6vh] bg-purple-200 font-bold text-r-sm text-center rounded-r-lg"
+          class="w-[6vw] h-[6vh] bg-purple-200 font-bold text-r-sm text-center rounded-r-lg hover:bg-purple-300"
           @click="createGroupMeeting"
         >
           생성하기

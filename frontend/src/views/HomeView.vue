@@ -26,21 +26,21 @@
           </div>
           <div class="flex flex-col mt-[2vw] justify-center items-center">
             <button
-              class="my-[1vh] rounded-r-lg hover:bg-purple-500 text-[1vw] text-white w-[13vw] aspect-[5] bg-purple-400"
+              class="my-[1vh] rounded-r-lg hover:bg-purple-500 text-[1.2vw] text-white w-[15vw] aspect-[5] bg-purple-400"
               @click="createMeeting"
             >
               화상 모임 생성
             </button>
             <div>
               <div
-                class="flex items-center border-[0.3vb] bg-white border-slate-500 rounded-r-lg text-[1vw] w-[13vw] aspect-[5]"
+                class="flex items-center border-[0.3vb] bg-white border-slate-500 rounded-r-lg w-[15vw] aspect-[5]"
               >
                 <input
                   type="text"
                   placeholder="행사 링크(ID)로 참여"
                   v-model="conferenceIdInput"
                   @keyup.enter="submitConferenceId"
-                  class="m-0 p-0 pl-[1.5vw] border-none w-[90%] h-full rounded-r-lg text-[1vw]"
+                  class="m-0 p-0 pl-[2.5vw] border-none w-[90%] h-full rounded-r-lg text-[1.2vw]"
                 />
                 <button
                   @click="submitConferenceId"

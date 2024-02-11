@@ -40,16 +40,19 @@
       v-model="userName"
       class="w-80 border-2 border-gray"
     /><br />
-    <button @click="submitTempName" class="float-right">참가하기</button>
+    <button @click="submitTempName(userName)" class="float-right">참가하기</button>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 
 const props = defineProps({
   conferenceIdInput: String
 })
+
+const router = useRouter()
 
 const isConfirm = ref(false)
 const userName = ref('')
@@ -70,11 +73,10 @@ const createName = () => {
 }
 
 const submitTempName = (tempName) => {
-  if (tempName.value === null || tempName.trim(' ').length === 0) {
-    // tempName 조합 로직
+  if (tempName.value === null || tempName.trim('').length === 0) {
     tempName = createName()
   }
-  // 서버에 회의 id, userName 전달 후 참가
+
   sessionStorage.setItem('userName', tempName)
 
   router.push('/meetings')

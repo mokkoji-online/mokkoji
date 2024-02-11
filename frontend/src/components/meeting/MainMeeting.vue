@@ -49,36 +49,43 @@
       >
         <div
           v-if="isUserList"
-          class="w-full h-full border-sm border-neutral-300 rounded-r-lg flex flex-col"
+          :class="{
+            'w-full h-full border-sm border-neutral-300 rounded-r-lg flex flex-col':
+              isUserList && !isChat,
+            'w-full h-1/2 border-sm border-neutral-300 rounded-r-lg flex flex-col':
+              isUserList && isChat
+          }"
         >
           <div class="px-md w-full h-[13%] flex items-center">
             <div class="ml-[1vw] w-[30%] font-bold text-r-md">참여자</div>
-            <div class="w-[70%] flex just">
-              <button @click="showInviteModal">
-                <div class="ml-[4vw] text-r-sm text-purple-400">초대하기</div>
-                <IconInvite class="w-[4vw] size-[40%]" />
+            <div class="w-[70%] flex">
+              <button
+                class="ml-auto w-[45%] flex justify-center hover:bg-neutral-200 rounded-r-lg"
+                @click="showInviteModal"
+              >
+                <div class="w-[100%] text-r-sm text-purple-400">초대하기</div>
+                <IconInvite class="w-[4vw] size-[70%]" />
               </button>
               <button
-                class="ml-auto basis-2/12 flex justify-end"
-                @click="showUserList, showInviteModal"
+                class="ml-[3vh] flex w-[2.3vw] aspect-square rounded-full hover:bg-neutral-200"
+                @click="showUserList(), showInviteModal('close')"
               >
-                <IconCancelPurple class="size-[70%]" />
+                <IconCancelPurple class="size-[80%]" />
               </button>
             </div>
           </div>
           <div class="bg-gray h-[80%] flex flex-col justify-center items-center overflow-hidden">
-            <user-list
+            <UserList
               v-for="user in userList"
               :key="user.stream.connection.connectionId"
               :stream-manager="user"
               :search-user-name="searchUserName"
               :my-name="state.myUserName"
               :button-type="'user-list'"
-              class="bg-white w-[90%] h-[10vh] rounded-r-lg text-r-sm flex justify-center items-center font-semibold"
             />
           </div>
           <div class="h-[13%] flex flex-col justify-center items-center">
-            <div class="bg-gray w-[90%] h-[70%] rounded-r-xl flex items-center">
+            <div class="bg-gray w-[95%] h-[70%] rounded-r-xl flex items-center">
               <input
                 type="text"
                 name=""
@@ -88,7 +95,7 @@
                 v-model="searchUserName"
               />
               <button
-                class="ml-[1vw] w-[17%] h-[90%] rounded-full bg-purple-200 flex justify-center items-center"
+                class="ml-[1vw] w-[17%] h-[90%] rounded-full bg-purple-200 flex justify-center items-center hover:bg-purple-300"
               >
                 <IconSearch class="size-[60%]" />
               </button>
@@ -98,20 +105,30 @@
         <div v-if="isUserList && isChat" class="mb-[1vh]"></div>
         <div
           v-if="isChat"
-          id="chat-container"
-          class="w-full h-full border-sm border-neutral-300 rounded-r-lg flex flex-col"
+          :class="{
+            'w-full h-full border-sm border-neutral-300 rounded-r-lg flex flex-col':
+              isChat && !isUserList,
+            'w-full h-1/2 border-sm border-neutral-300 rounded-r-lg flex flex-col':
+              isChat && isUserList
+          }"
         >
           <div class="px-md w-full h-[13%] flex items-center">
             <div class="ml-[1vw] basis-3/12 font-bold text-r-md">채팅</div>
-            <button class="ml-auto basis-2/12 flex justify-end" @click="showChat">
-              <IconCancelPurple @click="showChat" class="size-[50%]" />
+            <button
+              class="ml-auto w-[2.3vw] aspect-square rounded-full flex hover:bg-neutral-200"
+              @click="showChat"
+            >
+              <IconCancelPurple class="size-[80%]" />
             </button>
           </div>
-          <div class="bg-gray h-[80%] flex flex-col justify-center items-center overflow-y-scroll">
+          <div
+            id="chat-container"
+            class="pt-[1vh] bg-gray h-[80%] flex flex-col justify-start items-center overflow-y-scroll"
+          >
             <ChatLog :chat-log="chatMessages" />
           </div>
           <div class="h-[13%] flex flex-col justify-center items-center">
-            <div action="/meeting" class="bg-gray w-[90%] h-[70%] rounded-r-xl flex items-center">
+            <div action="/meeting" class="bg-gray w-[95%] h-[70%] rounded-r-xl flex items-center">
               <input
                 v-model="chatMessage"
                 type="text"
@@ -119,11 +136,13 @@
                 id="chat-message"
                 placeholder="메시지 보내기"
                 class="my-0 ml-[2vb] pl-[0.5vw] bg-gray w-[80%] h-[100%] border-0 placeholder:items-center text-r-md rounded-r-xl"
+                maxlength="100"
+                @keypress.enter="sendMessage"
               />
               <button
-                @click="sendMessage()"
+                @click="sendMessage"
                 type="submit"
-                class="ml-[1vw] w-[17%] h-[90%] rounded-full bg-purple-200 flex justify-center items-center"
+                class="ml-[1vw] w-[17%] h-[90%] rounded-full bg-purple-200 flex justify-center items-center hover:bg-purple-300"
               >
                 <IconSendMessage class="size-[60%]" />
               </button>
@@ -241,6 +260,15 @@
           <div class="w-2/4">
             <div class="w-[80%] h-full flex items-center">
               <button
+                v-if="isHost"
+                id="button-quit"
+                class="w-full aspect-[2] bg-red-500 hover:bg-red-400 text-white rounded-r-xl text-r-md"
+                @click="leaveMainMeeting"
+              >
+                회의 종료
+              </button>
+              <button
+                v-else
                 id="button-quit"
                 class="w-full aspect-[2] bg-red-500 hover:bg-red-400 text-white rounded-r-xl text-r-md"
                 @click="leaveMainMeeting"
@@ -333,11 +361,11 @@ import GroupModal from '@/components/modal/meeting/GroupModal.vue'
 const emit = defineEmits(['leave-meeting']['create-group-meeting'])
 
 const router = useRouter()
-const store = useSessionStore()
 
-const videoWidth = window.screen.width * 0.65
-const videoHeight = window.screen.height * 0.9
+const videoWidth = window.screen.width * 0.22
+const videoHeight = window.screen.height * 0.95
 
+const isHost = ref(sessionStorage.getItem('isHost'))
 const isGrid = ref(false)
 const isMic = ref(true)
 const isMicModal = ref(false)
@@ -360,7 +388,7 @@ const chatMessage = ref('')
 const chatMessages = ref([])
 const userList = ref([])
 const connectedUser = ref([])
-const groupNumber = ref(0)
+const groupNumber = ref(1)
 const groupList = ref([])
 const myVideo = ref(null)
 
@@ -384,8 +412,12 @@ const onSaveAs = (uri, filename) => {
   document.body.removeChild(link)
 }
 
-const showInviteModal = () => {
-  isInviteModal.value = !isInviteModal.value
+const showInviteModal = (event) => {
+  if (event === 'close') {
+    isInviteModal.value = false
+  } else {
+    isInviteModal.value = !isInviteModal.value
+  }
 }
 
 const showMeetingDetailModal = () => {
@@ -468,6 +500,13 @@ const showChat = () => {
   isChat.value = !isChat.value
 }
 
+const scrollToBottom = () => {
+  // 스크롤할 대상 요소 선택
+  const scroll = document.getElementById('chat-container')
+
+  scroll.scrollTop = scroll.scrollHeight
+}
+
 // ---------------- OpenVidu 관련 ----------------
 
 axiosJwt.defaults.headers.post['Content-Type'] = 'application/json'
@@ -484,11 +523,7 @@ const state = reactive({
   mySessionId: sessionStorage.getItem('sessionId'),
   myUserName:
     $cookies.get('user') !== null ? $cookies.get('user').name : sessionStorage.getItem('userName'),
-  openviduToken: undefined,
-  isMic: true,
-  isCamera: true,
-  isSpeaker: true,
-  isChat: true
+  openviduToken: undefined
 })
 
 // 세션 참가하기
@@ -518,9 +553,14 @@ const joinSession = () => {
 
         state.mainStreamManager = publisher
         state.publisher = publisher
+        state.session.publish(publisher)
         userList.value.unshift(publisher)
 
-        state.session.host = state.session.publish(publisher)
+        if (sessionStorage.getItem('isHost')) {
+          state.session.host = $cookies.get('user').name
+        }
+
+        window.addEventListener('beforeunload', leaveMainMeeting)
       })
     })
     .catch((error) => {
@@ -538,18 +578,29 @@ const joinSession = () => {
     const subscriber = state.session.subscribe(stream, undefined)
     userList.value.push(subscriber)
     state.subscribers.push(subscriber)
-    console.log(state.subscribers)
   })
 
   // 시그널링 서버로부터 수신된 채팅 메시지 처리
   state.session.on('signal:chat', (event) => {
     const sender = JSON.parse(event.from.data)
+    const now = new Date()
+    const time = ref()
+
+    if (now.getHours > 12) {
+      time.value = (now.getHours() % 12) + ':' + now.getMinutes() + ' PM'
+    } else {
+      time.value = now.getHours() + ':' + now.getMinutes() + ' AM'
+    }
 
     const chatData = {
       sender: sender.clientData,
-      content: event.data
+      content: event.data,
+      time: time
     }
+
     chatMessages.value.push(chatData)
+
+    window.setTimeout(scrollToBottom, 50)
   })
 
   // 참가자 퇴장
@@ -569,8 +620,8 @@ const joinSession = () => {
   })
 
   // 소그룹 생성
-  state.session.on('signal:group', () => {
-    emit('create-group-meeting', {
+  state.session.on('signal:group', async () => {
+    await emit('create-group-meeting', {
       groupNumber: groupNumber.value
     })
 
@@ -632,17 +683,19 @@ const getToken = async (mySessionId) => {
   return await createToken(sessionId)
 }
 
-const leaveMainMeeting = (event) => {
-  if (sessionStorage.getItem('isHost')) {
-    store.deleteSession
+const leaveMainMeeting = async () => {
+  // if (sessionStorage.getItem('isHost')) {
+  //   store.deleteSession
 
-    for (let idx = 0; idx < state.subscribers.length; idx++) {
-      state.session.forceDisconnect(state.subscribers[idx].stream.connection)
-    }
-  }
+  //   for (let idx = 0; idx < state.subscribers.length; idx++) {
+  //     state.session.forceDisconnect(state.subscribers[idx].stream.connection)
+  //   }
+  // }
 
   // delete sessionStorage.sessionId
-  // deleteSession()
+  await deleteSession()
+
+  delete sessionStorage.session
 
   emit('leave-meeting')
 
@@ -699,7 +752,17 @@ onBeforeUnmount(() => {
 })
 </script>
 
-<style>
+<style scoped>
+::-webkit-scrollbar {
+  width: 0.8vw;
+  background-color: white;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #e7c6ff;
+  border-radius: var(--border-radius-lg);
+}
+
 #button-container-center {
   margin: auto 0;
 }
@@ -767,16 +830,6 @@ input {
 input::placeholder {
   align-content: center;
   font-size: 1vw;
-}
-
-::-webkit-scrollbar {
-  width: 0;
-  background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: transparent;
-  border: none;
 }
 
 .up-enter-active {

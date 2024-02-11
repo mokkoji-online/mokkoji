@@ -2,7 +2,7 @@
   <div class="fixed w-[24%] h-[17%] top-[11%] right-[0.9%]">
     <div
       id="gift-container"
-      class="py-[1vh] h-[100%] bg-[#E7C6FF] opacity-95 flex flex-col justify-center items-center rounded-r-lg"
+      class="pb-[1vh] h-[100%] bg-[#E7C6FF] opacity-95 flex flex-col justify-center items-center rounded-r-lg"
     >
       <div class="font-bold text-r-sm self-start ml-[0.7vw] my-[1vh]">참여자 초대하기</div>
       <div class="mb-[1vh] text-r-sm">
