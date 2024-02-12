@@ -18,11 +18,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 //전역적으로 에러를 처리해주는 클래스
-@RestControllerAdvice(basePackages = "online.mokkoji.api.controller")
+@RestControllerAdvice(basePackages = "online.mokkoji")
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RestApiException.class)
     public ResponseEntity<Object> handleCustomException(RestApiException e) {
+
         ErrorCode errorCode = e.getErrorCode();
         return handleExceptionInternal(errorCode);
     }
@@ -51,7 +52,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 .collect(Collectors.toList());
 
         ErrorResDto response = ErrorResDto.builder()
-                .code("NOT_VALID_ERROR")  // 적절한 오류 코드 지정
+                .code(400)  // 적절한 오류 코드 지정
                 .message("유효성 검사 실패")
                 .errors(errors)
                 .build();
@@ -66,7 +67,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ErrorResDto makeErrorResponse(ErrorCode errorCode) {
         return ErrorResDto.builder()
-                .code(errorCode.name())
+                .code(errorCode.getErrorCode())
                 .message(errorCode.getErrorMessage())
                 .build();
     }
@@ -78,7 +79,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     private ErrorResDto makeErrorResponse(ErrorCode errorCode, String message) {
         return ErrorResDto.builder()
-                .code(errorCode.name())
+                .code(errorCode.getErrorCode())
                 .message(message)
                 .build();
     }

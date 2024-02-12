@@ -13,4 +13,5 @@ public interface ResultRepository extends JpaRepository<Result, Long> {
     List<Result> findAllByUser_ProviderAndUser_EmailOrderByIdDesc(Provider provider, String email);
 
     Optional<Result> findById(Long resultId);
+
 }

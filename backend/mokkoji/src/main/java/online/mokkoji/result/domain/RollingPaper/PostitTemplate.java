@@ -20,6 +20,7 @@ public class PostitTemplate {
     private PostitName postitName;
     private String postitPath;
 
+
     public PostitTemplate(PostitName postitName, String postitPath) {
         this.postitName = postitName;
         this.postitPath = postitPath;

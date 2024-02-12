@@ -13,6 +13,7 @@ import online.mokkoji.event.dto.request.MessageReqDto;
 import online.mokkoji.event.dto.response.PhotoResDto;
 import online.mokkoji.event.repository.EventRepository;
 import online.mokkoji.event.service.EventService;
+import online.mokkoji.result.domain.Result;
 import online.mokkoji.result.dto.response.MessageResDto;
 import online.mokkoji.result.service.ResultService;
 import online.mokkoji.user.domain.Provider;
@@ -28,7 +29,7 @@ import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
-@CrossOrigin(origins = "*")
+//@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.version}/events")
@@ -51,8 +52,8 @@ public class EventController {
         // 사진 업로드
         Event event = eventRepository.findBySessionId(sessionId)
                 .orElseThrow(()->new RestApiException(EventErrorCode.EVENT_NOT_FOUND));
-        Long resultId = event.getResult().getId();
-        PhotoResDto photoResDto = s3Service.uploadOnePhoto(photo, user.getId(), resultId);
+        Result result = event.getResult();
+        PhotoResDto photoResDto = s3Service.uploadOnePhoto(photo, user.getId(), result);
 
         // db에 저장
         resultService.createPhoto(photoResDto);
@@ -82,6 +83,7 @@ public class EventController {
 
         // 유효성 검사 후 파일 S3에 업로드
         Map<String, String> urlMap = s3Service.uploadRollingpaper(fileMap, user.getId(), paperId);
+//        Map<String, String> urlMap = s3Service.uploadRollingpaper(fileMap, 15L, paperId);
         MessageResDto messageResDto = new MessageResDto(paperId, messageReqDto.getWriter(), messageReqDto.getText(), urlMap);
         resultService.createMessage(messageResDto);
         return new ResponseEntity<>("롤링페이퍼 업로드 완료", HttpStatus.OK);

@@ -1,5 +1,7 @@
 package online.mokkoji.event.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +13,7 @@ import online.mokkoji.event.domain.Event;
 import online.mokkoji.event.dto.request.MessageReqDto;
 import online.mokkoji.event.repository.EventRepository;
 import online.mokkoji.openvidu.dto.request.SessionReqDto;
+import online.mokkoji.openvidu.dto.response.GroupSessionResDto;
 import online.mokkoji.result.domain.Result;
 import online.mokkoji.result.domain.RollingPaper.*;
 import online.mokkoji.result.repository.BackgroundTemplateRepository;
@@ -19,6 +22,9 @@ import online.mokkoji.result.repository.ResultRepository;
 import online.mokkoji.result.repository.RollingPaperRepository;
 import online.mokkoji.user.domain.User;
 import online.mokkoji.user.repository.UserRepository;
+import org.springframework.data.redis.core.ListOperations;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,10 +32,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -44,6 +47,7 @@ public class EventServiceImpl implements EventService {
     private final RollingPaperRepository rollingPaperRepository;
     private final BackgroundTemplateRepository backgroundTemplateRepository;
     private final PostitTemplateRepository postitTemplateRepository;
+    private final RedisTemplate redisTemplate;
 
 
     // 호스트 Session 생성
@@ -123,5 +127,48 @@ public class EventServiceImpl implements EventService {
         }
 
         return fileMap;
+    }
+
+    // 행사 정보 하나 받아오기
+    @Override
+    public Event getEvent(String sessionId) {
+        return eventRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new RestApiException(EventErrorCode.EVENT_NOT_FOUND));
+    }
+
+    // redis에 소그룹 정보 저장
+    @Override
+    public void createGroupSession(GroupSessionResDto groupSessionResDto) {
+
+        ListOperations<String, GroupSessionResDto> listOperations = redisTemplate.opsForList();
+
+        String key = "session::" + groupSessionResDto.getSessionId().substring(0,14);
+
+        if (redisTemplate.hasKey(key)!=null) {
+            listOperations.rightPush(key, groupSessionResDto);
+        } else {
+            List<GroupSessionResDto> groupSessionList = new ArrayList<>();
+            groupSessionList.add(groupSessionResDto);
+            listOperations.rightPushAll(key, groupSessionList);
+        }
+    }
+
+    // redis에서 소그룹 리스트 가져오기
+    @Override
+    public List<GroupSessionResDto> getGroupSession(String sessionId) {
+        String key="session::"+sessionId;
+
+
+        ListOperations<String, GroupSessionResDto> listOperations = redisTemplate.opsForList();
+
+        Boolean b = redisTemplate.hasKey(key);
+
+
+        if (redisTemplate.hasKey(key)) {
+            List<GroupSessionResDto> range = listOperations.range(key, 0, -1);
+            return range;
+        } else {
+            return new ArrayList<>();
+        }
     }
 }

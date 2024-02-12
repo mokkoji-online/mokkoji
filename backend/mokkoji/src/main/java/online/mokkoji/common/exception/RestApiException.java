@@ -9,4 +9,6 @@ import online.mokkoji.common.exception.errorCode.ErrorCode;
 @RequiredArgsConstructor
 public class RestApiException extends RuntimeException {
     private final ErrorCode errorCode;
+
+
 }

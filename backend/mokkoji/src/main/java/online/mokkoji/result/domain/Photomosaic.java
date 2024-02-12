@@ -21,5 +21,9 @@ public class Photomosaic {
     @Column(nullable = false, length = 100)
     @Size(max = 100)
     private String path;
+
+    public void updatePath(String path) {
+        this.path = path;
+    }
 }
 

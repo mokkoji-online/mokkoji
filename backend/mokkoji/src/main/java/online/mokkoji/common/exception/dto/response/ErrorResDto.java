@@ -13,7 +13,7 @@ import java.util.List;
 @Builder
 @RequiredArgsConstructor
 public class ErrorResDto {
-    private final String code;
+    private final Integer code;
     private final String message;
 
     @JsonInclude(JsonInclude.Include.NON_EMPTY)

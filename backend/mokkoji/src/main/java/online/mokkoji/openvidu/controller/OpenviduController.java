@@ -11,6 +11,7 @@ import online.mokkoji.common.exception.errorCode.CommonErrorCode;
 import online.mokkoji.common.exception.errorCode.UserErrorCode;
 import online.mokkoji.event.service.EventService;
 import online.mokkoji.openvidu.dto.request.SessionReqDto;
+import online.mokkoji.openvidu.dto.response.GroupSessionResDto;
 import online.mokkoji.user.domain.Provider;
 import online.mokkoji.user.domain.User;
 import online.mokkoji.user.repository.UserRepository;
@@ -55,13 +56,7 @@ public class OpenviduController {
                                               HttpServletRequest req
     ) throws OpenViduJavaClientException, OpenViduHttpException {
 
-        log.info("jwt 토큰 : {}", jwtUtil.getProvider(req));
-        log.info("jwt 토큰 : {}", jwtUtil.getEmail(req));
-
-        
-
         User user=userService.getByProviderAndEmail(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
-        log.info("user : {}", user.toString());
 
         // request body 객체로 직렬화
         SessionProperties properties = SessionProperties.fromJson(params).build();
@@ -69,8 +64,8 @@ public class OpenviduController {
         //세션 생성
         Session session = openvidu.createSession(properties);
 
-        // DB에 저장할 Dto 생성
-         SessionReqDto sessionReqDto = new SessionReqDto(user.getId(), session.getSessionId(), session.createdAt());
+//         DB에 저장할 Dto 생성
+        SessionReqDto sessionReqDto = new SessionReqDto(user.getId(), session.getSessionId(), session.createdAt());
 
         // DB에 저장
          eventService.createSession(sessionReqDto);
@@ -78,17 +73,22 @@ public class OpenviduController {
         return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
     }
 
+
     // 세션 정보 받기
     @GetMapping("/sessions/{sessionId}")
-    public ResponseEntity<Session> getSession(@PathVariable("sessionId") String sessionId)
+    public ResponseEntity<Map<String, Object>> getSession(@PathVariable("sessionId") String sessionId)
             throws OpenViduJavaClientException, OpenViduHttpException {
 
-
         openvidu.fetch();
+        Map<String, Object> responseMap = new HashMap<>();
         List<Session> activeSessions = openvidu.getActiveSessions();
         for (Session session : activeSessions) {
             if (session.getSessionId().equals(sessionId)) {
-                return new ResponseEntity<>(session, HttpStatus.OK);
+
+                responseMap.put("session", session);
+                responseMap.put("hostName", eventService.getEvent(sessionId).getUser().getName());
+
+                return new ResponseEntity<>(responseMap, HttpStatus.OK);
             }
         }
 
@@ -107,7 +107,6 @@ public class OpenviduController {
         User user=userService.getByProviderAndEmail(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
 
         sessionReqDto.setUserId(user.getId());
-//        sessionReqDto.setUserId(1L);
 
         Session activeSession = openvidu.getActiveSession(sessionId);
         eventService.deleteSession(sessionId, sessionReqDto);
@@ -135,6 +134,40 @@ public class OpenviduController {
         response.put("message", "Session에 참여자 연결 성공");
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    // 소그룹 생성
+    @PostMapping("/groupsessions")
+    public ResponseEntity<String> addGroupSession(@RequestBody(required = false) Map<String, Object> params
+    ) throws OpenViduJavaClientException, OpenViduHttpException {
+
+        // request body 객체로 직렬화
+        SessionProperties properties = SessionProperties.fromJson(params).build();
+
+        //세션 생성
+        Session session = openvidu.createSession(properties);
+
+        // 소그룹 세션 dto 생성
+        GroupSessionResDto groupSessionResDto = new GroupSessionResDto(session.getSessionId(), (String) params.get("groupName"));
+
+        // redis에 저장
+        eventService.createGroupSession(groupSessionResDto);
+
+
+        return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
+    }
+
+    // 세션 정보 받기
+    @GetMapping("/groupsessions/{sessionId}")
+    public ResponseEntity<?> getGroupSession(@PathVariable("sessionId") String sessionId)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+
+        List<GroupSessionResDto> groupSessions=eventService.getGroupSession(sessionId);
+
+        if (groupSessions.size()<1) return new ResponseEntity<>("소그룹 없음", HttpStatus.OK);
+
+
+        return new ResponseEntity<>(groupSessions, HttpStatus.OK);
     }
 
 

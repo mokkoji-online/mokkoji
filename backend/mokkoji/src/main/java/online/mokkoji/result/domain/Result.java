@@ -8,6 +8,9 @@ import online.mokkoji.result.domain.RollingPaper.RollingPaper;
 import online.mokkoji.user.domain.User;
 import org.hibernate.annotations.ColumnDefault;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 @ToString(of = {"id","name", "content", "status","image"})
@@ -47,6 +50,9 @@ public class Result {
 
     @OneToOne(mappedBy = "result", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private Photomosaic photomosaic;
+
+    @OneToMany(mappedBy = "result")
+    private List<Photo> photos = new ArrayList<>();
 
     @Builder
     public Result(Event event,User user) {
