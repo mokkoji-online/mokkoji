@@ -3,9 +3,11 @@ package online.mokkoji.event.service;
 import online.mokkoji.event.domain.Event;
 import online.mokkoji.event.dto.request.MessageReqDto;
 import online.mokkoji.openvidu.dto.request.SessionReqDto;
+import online.mokkoji.openvidu.dto.response.GroupSessionResDto;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -22,4 +24,7 @@ public interface EventService {
 
     Event getEvent(String sessionId);
 
+    void createGroupSession(GroupSessionResDto groupSessionResDto);
+
+    List<GroupSessionResDto> getGroupSession(String sessionId);
 }
