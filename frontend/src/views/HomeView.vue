@@ -273,18 +273,16 @@ const submitConferenceId = async () => {
 }
 
 const createMeeting = () => {
-  store.createSession()
-
-  // if ($cookies.get('user') !== null) {
-  //   store.createSession()
-  // } else {
-  //   toast('로그인이 필요합니다', {
-  //     theme: 'auto',
-  //     type: 'warning',
-  //     transition: 'flip',
-  //     autoClose: 1000
-  //   })
-  // }
+  if ($cookies.get('user') !== null) {
+    store.createSession()
+  } else {
+    toast('로그인이 필요합니다', {
+      theme: 'auto',
+      type: 'warning',
+      transition: 'flip',
+      autoClose: 1000
+    })
+  }
 }
 
 const toTop = () => {

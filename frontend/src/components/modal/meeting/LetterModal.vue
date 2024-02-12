@@ -3,7 +3,7 @@
     id="letter-container"
     class="fixed py-[4vh] px-[3vw] w-[37vw] left-[33vw] aspect-square bg-yellow-100 flex flex-col justify-center rounded-r-lg"
   >
-    <div class="flex pb-[4vh] h-[10vh] w-[31vw] items-center">
+    <div class="flex pb-[4vb] w-[31vw] items-center">
       <div class="text-[1.5vw] basis-1/2 font-bold">롤링페이퍼 작성</div>
       <button
         class="ml-auto w-[3vw] hover:bg-red-100 aspect-square rounded-full"
@@ -21,7 +21,7 @@
           cols="30"
           rows="10"
           placeholder="메시지를 입력하세요"
-          class="h-[40vh] bg-yellow-100 rounded-r-lg resize-none placeholder:text-[1.5vw] text-center text-r-md font-bold focus:outline-none"
+          class="h-[90%] bg-yellow-100 rounded-r-lg resize-none placeholder:text-[1.5vw] text-center text-r-md font-bold focus:outline-none"
           v-model="textFile"
         >
         </textarea>
@@ -30,14 +30,15 @@
             <label
               className="input-audio-button"
               for="input-audio"
-              class="mr-[1vw] hover:bg-red-100 aspect-square rounded-full flex justify-center items-center"
+              class="mr-[1vw] hover:bg-red-100 w-[3vw] aspect-square rounded-full flex justify-center items-center"
+              @click="$emit('show-audio-recorder')"
             >
               <IconAudio class="size-[90%] hover:cursor-pointer" />
             </label>
-            <input type="file" id="input-audio" class="hidden" @change="uploadAudioFile" />
+            <!-- <input type="file" id="input-audio" class="hidden" @change="uploadAudioFile" /> -->
             <label
               for="input-video"
-              class="hover:bg-red-100 aspect-square rounded-full flex justify-center items-center"
+              class="hover:bg-red-100 w-[3vw] aspect-square rounded-full flex justify-center items-center"
             >
               <IconVideo class="size-[85%] hover:cursor-pointer" />
             </label>
@@ -46,7 +47,7 @@
           <div class="basis-1/2 flex justify-end">
             <button
               type="button"
-              class="hover:bg-red-100 aspect-square rounded-full flex justify-center items-center"
+              class="hover:bg-red-100 w-[3vw] aspect-square rounded-full flex justify-center items-center"
               @click="removeContents"
             >
               <IconRemove class="size-[90%]" />
@@ -57,7 +58,7 @@
       <div>
         <!-- <audio-recorder src=""></audio-recorder> -->
       </div>
-      <div class="pt-[1vh] pb-[2vh] flex flex-wrap">
+      <div class="pt-[1vw] pb-[1vw] flex flex-wrap">
         <div
           v-if="isAudioFile"
           class="text-black mr-[1vw] w-[15vw] h-[5vh] border-sm rounded-r-lg flex items-center"
@@ -99,14 +100,19 @@
           </div>
         </div>
       </div>
-      <button
-        type="submit"
-        form="letterForm"
-        class="w-[7vw] aspect-[2] text-r-md bg-red-200 hover:bg-red-300 border-sm rounded-r-lg self-end"
-        @click="sendLetter"
-      >
-        작성하기
-      </button>
+      <div class="flex">
+        <p v-if="isFileCheck" style="color: red" class="text-[1.4vw]">
+          작성한 내용이 존재하지 않습니다.
+        </p>
+        <button
+          type="submit"
+          form="letterForm"
+          class="ml-auto w-[7vw] aspect-[2] text-r-md bg-red-200 hover:bg-red-300 border-sm rounded-r-lg font-semibold"
+          @click="sendLetter"
+        >
+          작성하기
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -119,13 +125,15 @@ import IconVideo from '@/icons/meeting/IconVideo.vue'
 import IconRemove from '@/icons/meeting/IconRemove.vue'
 import IconCancelBlack from '@/icons/meeting/IconCancelBlack.vue'
 
-defineEmits(['remove-letter-modal'])
+defineEmits(['remove-letter-modal']['show-audio-recorder'])
 
 const store = useLetterStore()
+
+const isFileCheck = ref(false)
 const isVideoFile = ref(false)
 const isAudioFile = ref(false)
-const videoFile = ref()
-const audioFile = ref()
+const videoFile = ref(null)
+const audioFile = ref(null)
 const textFile = ref('')
 const videoFileName = ref('')
 const audioFileName = ref('')
@@ -158,8 +166,14 @@ const removeVideoFile = (event) => {
 }
 
 const sendLetter = () => {
-  store.sendLetter(videoFile.value, audioFile.value, textFile.value)
+  if (videoFile.value === null && audioFile.value === null && textFile.value === '') {
+    isFileCheck.value = true
+    return
+  } else {
+    store.sendLetter(videoFile.value, audioFile.value, textFile.value)
+  }
 
+  isFileCheck.value = false
   audioFile.value = null
   videoFile.value = null
   textFile.value = ''

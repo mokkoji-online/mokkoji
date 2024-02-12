@@ -19,9 +19,6 @@ const emit = defineEmits(['create-meeting'])
 
 const sessions = ref({ sessionId: props.mainSessionId, groupNumber: props.groupNumber })
 
-console.log(props)
-console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@')
-
 onMounted(() => {
   emit('create-meeting')
 })

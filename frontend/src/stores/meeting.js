@@ -1,17 +1,15 @@
-import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 import axiosJwt from '@/services/api'
 import axios from 'axios'
 
-const { VITE_API_URL_LOCAL } = import.meta.env
 const { VITE_API_URL } = import.meta.env
 const { VITE_SERVER } = import.meta.env
 
 export const useSessionStore = defineStore('session', () => {
   const router = useRouter()
 
-  // 세션 생성
   const createSession = async () => {
     const response = await axiosJwt.post(VITE_SERVER + '/meetings/sessions', {
       headers: { 'Content-Type': 'application/json' }
@@ -21,6 +19,18 @@ export const useSessionStore = defineStore('session', () => {
     sessionStorage.setItem('isHost', true)
 
     router.push('/meetings')
+  }
+
+  const createGroupSession = async (sessionId) => {
+    const response = await axiosJwt.post(
+      VITE_SERVER + '/meetings/sessions',
+      { customSessionId: sessionId },
+      {
+        headers: { 'Content-Type': 'application/json' }
+      }
+    )
+
+    sessionStorage.setItem('groupSessionId', response.data)
   }
 
   const findSession = async (sessionId) => {
@@ -48,6 +58,7 @@ export const useSessionStore = defineStore('session', () => {
 
   return {
     createSession,
+    createGroupSession,
     findSession,
     deleteSession
   }

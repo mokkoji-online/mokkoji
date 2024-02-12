@@ -14,7 +14,7 @@
               :key="sub.stream.connection.connectionId"
               :stream-manager="sub"
               :main-stream="false"
-              @click.native="updateMainVideoStreamManager(sub)"
+              @click="updateMainVideoStreamManager(sub)"
               class="h-1/3 flex-none"
             />
           </div>
@@ -345,8 +345,6 @@ const router = useRouter()
 const videoWidth = window.screen.width * 0.22
 const videoHeight = window.screen.height * 0.95
 
-const groupNumber = ref(props.session.groupNumber)
-
 const isGrid = ref(false)
 const isMic = ref(true)
 const isMicModal = ref(false)
@@ -507,7 +505,6 @@ const state = reactive({
   mainStreamManager: undefined,
   publisher: undefined,
   subscribers: [],
-  mySessionId: sessionStorage.getItem('sessionId') + props.session.groupNumber,
   myUserName:
     $cookies.get('user') !== null ? $cookies.get('user').name : sessionStorage.getItem('userName'),
   openviduToken: undefined
@@ -522,7 +519,7 @@ const joinSession = () => {
   state.session = state.OV.initSession()
 
   // 4) 유효한 사용자 토큰으로 세션에 연결하기
-  getToken(state.mySessionId)
+  getToken()
     .then((token) => {
       state.session.connect(token, { clientData: state.myUserName }).then(() => {
         let publisher = state.OV.initPublisher(undefined, {
@@ -593,18 +590,6 @@ const joinSession = () => {
   window.addEventListener('beforeunload', leaveMainMeeting)
 }
 
-// 세션 생성
-const createSession = async (sessionId) => {
-  const response = await axiosJwt.post(
-    VITE_SERVER + '/meetings/sessions',
-    { customSessionId: sessionId },
-    {
-      headers: { 'Content-Type': 'application/json' }
-    }
-  )
-  return response.data // sessionId
-}
-
 // 토큰 생성
 const createToken = async (sessionId) => {
   const response = await axiosJwt.post(
@@ -619,12 +604,12 @@ const createToken = async (sessionId) => {
   return response.data.connectionToken // 토큰
 }
 
-const getToken = async (mySessionId) => {
-  const sessionId = await createSession(mySessionId)
-  return await createToken(sessionId)
+const getToken = async () => {
+  return await createToken(sessionStorage.getItem('groupSessionId'))
 }
 
-const leaveMainMeeting = () => {
+// 세션 삭제
+const deleteSession = () => {
   if (state.session) {
     state.session.disconnect()
 
@@ -633,24 +618,24 @@ const leaveMainMeeting = () => {
     state.publisher = undefined
     state.subscribers = []
     state.OV = undefined
-
-    emit('leave-meeting')
-    router.push('/')
   }
 }
 
-const leaveGroupMeeting = () => {
-  if (state.session) {
-    state.session.disconnect()
+const leaveMainMeeting = async () => {
+  await deleteSession()
 
-    state.session = undefined
-    state.mainStreamManager = undefined
-    state.publisher = undefined
-    state.subscribers = []
-    state.OV = undefined
+  sessionStorage.clear()
 
-    router.push(`/meetings`)
-  }
+  emit('leave-meeting')
+  router.push('/')
+}
+
+const leaveGroupMeeting = async () => {
+  await deleteSession()
+
+  sessionStorage.removeItem('groupSessionId')
+
+  router.push(`/meetings`)
 }
 
 const updateMainVideoStreamManager = (stream) => {
@@ -676,9 +661,7 @@ onMounted(() => {
   window.addEventListener('beforeunload', leaveMainMeeting)
 })
 
-onBeforeUnmount(() => {
-  window.addEventListener('beforeunload', leaveMainMeeting)
-})
+onBeforeUnmount(() => {})
 </script>
 
 <style scoped>

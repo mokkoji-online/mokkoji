@@ -1,18 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '@/views/HomeView.vue'
 import MyPageView from '@/views/MyPageView.vue'
-import MyPage from '@/components/mypage/MyPage.vue'
 import EventListPage from '@/views/EventListView.vue'
-import MyDetail from '@/components/mypage/MyDetail.vue'
 import MainMeetingView from '@/views/MainMeetingView.vue'
 import GroupMeetingView from '@/views/GroupMeetingView.vue'
-import Error404 from '@/components/common/Error404.vue'
-import ErrorSession from '@/components/common/ErrorSession.vue'
 import EditPage from '@/views/EditView.vue'
-import HandleCallback from '@/components/common/HandleCallback.vue'
 import RollingPaper from '@/views/RollingPaper.vue'
 import PhotoMosaic from '@/views/PhotoMosaic.vue'
-import AudioRecorderModal from '@/components/modal/meeting/AudioRecorderModal.vue'
+import MyPage from '@/components/mypage/MyPage.vue'
+import MyDetail from '@/components/mypage/MyDetail.vue'
+import Error404 from '@/components/common/Error404.vue'
+import ErrorSession from '@/components/common/ErrorSession.vue'
+import HandleCallback from '@/components/common/HandleCallback.vue'
+import WaitingRoom from '@/components/meeting/WaitingRoom.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -94,9 +94,9 @@ const router = createRouter({
       component: PhotoMosaic
     },
     {
-      path: '/audiorecordingmodal',
-      name: 'audiorecordingmodal',
-      component: AudioRecorderModal
+      path: '/waitingroom',
+      name: 'waitingroom',
+      component: WaitingRoom
     }
   ]
 })
