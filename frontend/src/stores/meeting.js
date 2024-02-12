@@ -16,6 +16,7 @@ export const useSessionStore = defineStore('session', () => {
     })
 
     sessionStorage.setItem('sessionId', response.data)
+    sessionStorage.setItem('host', $cookies.get('user').name)
     sessionStorage.setItem('isHost', true)
 
     router.push('/meetings')
@@ -36,8 +37,9 @@ export const useSessionStore = defineStore('session', () => {
   const findSession = async (sessionId) => {
     try {
       const res = await axios.get(VITE_API_URL + VITE_SERVER + `/meetings/sessions/${sessionId}`)
-      if (res.data.sessionId !== undefined) {
-        sessionStorage.setItem('sessionId', res.data.sessionId)
+      if (res.data !== undefined) {
+        sessionStorage.setItem('sessionId', res.data.session.sessionId)
+        sessionStorage.setItem('host', res.data.hostName)
         sessionStorage.setItem('isHost', false)
         return 'success'
       } else {

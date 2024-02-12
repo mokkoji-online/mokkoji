@@ -10,7 +10,6 @@ import PhotoMosaic from '@/views/PhotoMosaic.vue'
 import MyPage from '@/components/mypage/MyPage.vue'
 import MyDetail from '@/components/mypage/MyDetail.vue'
 import Error404 from '@/components/common/Error404.vue'
-import ErrorSession from '@/components/common/ErrorSession.vue'
 import HandleCallback from '@/components/common/HandleCallback.vue'
 import WaitingRoom from '@/components/meeting/WaitingRoom.vue'
 

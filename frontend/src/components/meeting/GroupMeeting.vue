@@ -35,9 +35,9 @@
       >
         <user-Video
           id="sub-video"
-          v-for="sub in state.subscribers"
-          :key="sub.stream.connection.connectionId"
-          :stream-manager="sub"
+          v-for="user in userList"
+          :key="user.stream.connection.connectionId"
+          :stream-manager="user"
           :main-stream="false"
           class="w-full"
         />
@@ -75,7 +75,7 @@
             </div>
           </div>
           <div class="bg-gray h-[80%] flex flex-col justify-center items-center overflow-hidden">
-            <user-list
+            <UserList
               v-for="user in userList"
               :key="user.stream.connection.connectionId"
               :stream-manager="user"
@@ -266,12 +266,13 @@
         </div>
       </div>
     </section>
+    <transition-group name="down">
+      <InviteModal v-if="isInviteModal" />
+    </transition-group>
     <transition-group name="up">
       <MeetingDetailModal
         v-if="isMeetingDetailModal"
         :session="state.session"
-        @copy-address-info="showAddressCopyModal"
-        @copy-session-id-info="showSessionIdCopyModal"
         @remove-detail-modal="showMeetingDetailModal"
       />
     </transition-group>
@@ -288,9 +289,6 @@
       <GiftModal v-if="isGiftModal" />
     </transition-group>
     <transition-group name="up">
-      <CaptureModal v-if="isCaptureModal" />
-    </transition-group>
-    <transition-group name="up">
       <LeaveGroupModal
         v-if="isLeaveGroupModal"
         @leave-main-meeting="leaveMainMeeting"
@@ -301,14 +299,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { OpenVidu } from 'openvidu-browser'
 import html2canvas from 'html2canvas'
 import axiosJwt from '@/services/api'
-import UserList from './UserList.vue'
-import UserVideo from './UserVideo.vue'
-import ChatLog from './ChatLog.vue'
+import UserList from '@/components/meeting/UserList.vue'
+import UserVideo from '@/components/meeting/UserVideo.vue'
+import ChatLog from '@/components/meeting/ChatLog.vue'
 import IconInfo from '@/icons/meeting/IconInfo.vue'
 import IconSearch from '@/icons/meeting/IconSearch.vue'
 import IconInvite from '@/icons/meeting/IconInvite.vue'
@@ -324,6 +322,7 @@ import IconCamera from '@/icons/meeting/IconCamera.vue'
 import IconUserList from '@/icons/meeting/IconUserList.vue'
 import IconChat from '@/icons/meeting/IconChat.vue'
 import IconSendMessage from '@/icons/meeting/IconSendMessage.vue'
+import InviteModal from '@/components/modal/meeting/InviteModal.vue'
 import MeetingDetailModal from '@/components/modal/meeting/MeetingDetailModal.vue'
 import MicModal from '@/components/modal/meeting/MicModal.vue'
 import CameraModal from '@/components/modal/meeting/CameraModal.vue'
@@ -331,12 +330,6 @@ import GiftModal from '@/components/modal/meeting/GiftModal.vue'
 import LetterModal from '@/components/modal/meeting/LetterModal.vue'
 import CaptureModal from '@/components/modal/meeting/CaptureModal.vue'
 import LeaveGroupModal from '@/components/modal/meeting/LeaveGroupModal.vue'
-
-const props = defineProps({
-  session: {
-    type: Object
-  }
-})
 
 const emit = defineEmits(['leave-meeting'])
 
@@ -352,8 +345,6 @@ const isCamera = ref(true)
 const isCameraModal = ref(false)
 const isInviteModal = ref(false)
 const isMeetingDetailModal = ref(false)
-const isAddressCopyModal = ref(false)
-const isSessionIdCopyModal = ref(false)
 const isLetterModal = ref(false)
 const isGiftModal = ref(false)
 const isCaptureModal = ref(false)
@@ -408,22 +399,6 @@ const showInviteModal = (event) => {
 
 const showMeetingDetailModal = () => {
   isMeetingDetailModal.value = !isMeetingDetailModal.value
-}
-
-const showAddressCopyModal = () => {
-  isAddressCopyModal.value = true
-
-  setTimeout(() => {
-    isAddressCopyModal.value = false
-  }, 600)
-}
-
-const showSessionIdCopyModal = () => {
-  isSessionIdCopyModal.value = true
-
-  setTimeout(() => {
-    isSessionIdCopyModal.value = false
-  }, 600)
 }
 
 const setLayoutState = () => {
@@ -554,6 +529,7 @@ const joinSession = () => {
     console.log('새로운 참가자 입장')
     const subscriber = state.session.subscribe(stream, undefined)
     state.subscribers.push(subscriber)
+    userList.value.push(subscriber)
   })
 
   // 시그널링 서버로부터 수신된 채팅 메시지 처리
@@ -562,7 +538,7 @@ const joinSession = () => {
     const now = new Date()
     const time = ref()
 
-    if (now.getHours > 12) {
+    if (now.getHours() > 12) {
       time.value = (now.getHours() % 12) + ':' + now.getMinutes() + ' PM'
     } else {
       time.value = now.getHours() + ':' + now.getMinutes() + ' AM'
@@ -586,8 +562,6 @@ const joinSession = () => {
       state.subscribers.splice(index, 1)
     }
   })
-
-  window.addEventListener('beforeunload', leaveMainMeeting)
 }
 
 // 토큰 생성
@@ -624,7 +598,7 @@ const deleteSession = () => {
 const leaveMainMeeting = async () => {
   await deleteSession()
 
-  sessionStorage.clear()
+  // sessionStorage.clear()
 
   emit('leave-meeting')
   router.push('/')
@@ -660,8 +634,6 @@ onMounted(() => {
 
   window.addEventListener('beforeunload', leaveMainMeeting)
 })
-
-onBeforeUnmount(() => {})
 </script>
 
 <style scoped>

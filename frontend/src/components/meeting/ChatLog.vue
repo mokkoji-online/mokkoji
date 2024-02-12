@@ -1,15 +1,10 @@
 <template>
-  <div>
+  <div class="w-full flex flex-wrap justify-center">
     <div
+      id="chat-container"
       v-for="chatMessage in props.chatLog"
       :key="chatMessage"
-      :class="
-        ({
-          'bg-purple-100 ':
-            chatMessage.sender === myName ? 'bg-white' : chatMessage.sender !== myName
-        },
-        'bg-black p-[2vh] bg-white w-[90%] flex rounded-r-lg inline-block items-center font-semibold mb-[1vh] border-sm border-purple-300')
-      "
+      class="p-[2vh] bg-white w-[90%] flex rounded-r-lg inline-block items-center font-semibold mb-[1vh] border-sm border-purple-300"
     >
       <div class="text-r-sm h-full max-w-[80%] inline-block">
         {{ chatMessage.sender + ' : ' + chatMessage.content }}

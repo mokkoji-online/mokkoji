@@ -1,15 +1,15 @@
 <template>
-  <div class="fixed w-[26%] h-[33%] bottom-[11%] left-[13%]">
+  <div class="fixed w-[26%] aspect-auto bottom-[11%] left-[13%]">
     <div
       id="gift-container"
-      class="px-[2vw] h-[100%] bg-black flex flex-col justify-center items-start space-y-[1vh] rounded-r-lg"
+      class="p-[1vw] pl-[1.5vw] h-[100%] bg-black flex flex-col justify-center items-start space-y-[1vh] rounded-r-lg"
     >
       <div class="flex w-[23vw] items-center h-[5vh]">
-        <div class="text-white text-r-md">{{ hostName }}님의 회의 정보</div>
+        <div class="text-white text-r-md">{{ host }}님의 회의 정보</div>
         <button
           class="ml-auto w-[2.5vw] aspect-square size-[100%] flex justify-center items-center hover:bg-neutral-500 rounded-full"
         >
-          <IconCancelWhite class="w-[2vw] size-[40%]" @click="$emit('remove-detail-modal')" />
+          <IconCancelWhite class="size-[40%]" @click="$emit('remove-detail-modal')" />
         </button>
       </div>
       <div class="text-white text-r-sm">
@@ -17,7 +17,7 @@
       </div>
       <button
         class="ml-[4vw] w-[5vw] text-white text-[0.8vw] hover:bg-neutral-500 rounded-r-lg"
-        @click="copySessionInfo(address), $emit('copy-address-info')"
+        @click="copySessionInfo(address), showAddressCopyModal()"
       >
         <IconCopyWhite class="mr-[0.3vw]" />주소 복사
       </button>
@@ -28,19 +28,33 @@
       </div>
       <button
         class="ml-[4vw] w-[4.3vw] text-white text-[0.8vw] hover:bg-neutral-500 rounded-r-lg"
-        @click="copySessionInfo(sessionId), $emit('copy-session-id-info')"
+        @click="copySessionInfo(sessionId), showSessionIdCopyModal()"
       >
         <IconCopyWhite class="mr-[0.3vw]" />ID 복사
       </button>
       <div class="text-white text-r-sm flex">
         주최자
-        <div class="text-white ml-[1.3vw]">| {{ hostName }}</div>
+        <div class="text-white ml-[1.3vw]">| {{ host }}</div>
       </div>
       <div class="text-white text-r-sm flex">
         <div>날짜</div>
         <div class="text-white ml-[2.2vw] text-r-sm">| {{ today }}</div>
       </div>
     </div>
+    <transition-group name="up">
+      <div v-if="isAddressCopy" class="absolute w-[24%] h-[13%] bottom-[59%] left-[21%]">
+        <div class="h-[100%] bg-neutral-500 flex flex-col justify-center items-center rounded-r-lg">
+          <div class="font-bold text-white text-r-sm">복사 완료</div>
+        </div>
+      </div>
+    </transition-group>
+    <transition-group name="up">
+      <div v-if="isSessionIdCopy" class="absolute w-[24%] h-[13%] bottom-[38%] left-[21%]">
+        <div class="h-[100%] bg-neutral-500 flex flex-col justify-center items-center rounded-r-lg">
+          <div class="font-bold text-white text-r-sm">복사 완료</div>
+        </div>
+      </div>
+    </transition-group>
   </div>
 </template>
 
@@ -49,15 +63,47 @@ import { ref } from 'vue'
 import IconCopyWhite from '@/icons/meeting/IconCopyWhite.vue'
 import IconCancelWhite from '@/icons/meeting/IconCancelWhite.vue'
 
-const hostName = ref($cookies.get('user').name)
+const host = sessionStorage.getItem('host')
 const address = ref(`https://mokkoji.online/meetings/${sessionStorage.getItem('sessionId')}`)
 const sessionId = ref(sessionStorage.getItem('sessionId'))
 const date = new Date()
 const today = date.toLocaleDateString()
+const isAddressCopy = ref(false)
+const isSessionIdCopy = ref(false)
 
 const copySessionInfo = (sessionInfo) => {
   navigator.clipboard.writeText(sessionInfo)
 }
+
+const showAddressCopyModal = () => {
+  isAddressCopy.value = true
+
+  setTimeout(() => {
+    isAddressCopy.value = false
+  }, 600)
+}
+
+const showSessionIdCopyModal = () => {
+  isSessionIdCopy.value = true
+
+  setTimeout(() => {
+    isSessionIdCopy.value = false
+  }, 600)
+}
 </script>
 
-<style></style>
+<style setup>
+.up-enter-active {
+  transition: all 0.3s;
+}
+
+.up-leave-active {
+  transition: all 0.3s;
+}
+
+.up-enter-from,
+.up-leave-to {
+  transform: translateY(10px);
+  opacity: 0;
+}
+</style>
