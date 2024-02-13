@@ -1,5 +1,110 @@
 # Daily Wrap Up
 
+## 20240213
+
+### 오늘 한 것
+
+- OpenVidu 소그룹 세션Id 백에서 생성하는 것으로 수정
+  - redis에서 counter 사용
+- 디버깅 후 자잘한 오류 수정
+
+### 어려웠던 점
+
+- redis에서 increment할 때 값이 없으면 set을 해야하는 줄 알았는데, set은 String밖에 되지 않아 자료형이 달라 increment가 되지 않는 오류에 빠졌음
+
+### 새로 알게 된 점
+
+- `redisConfig.java` 에서 `redisTemplate.setValueSerializer(**new** GenericJackson2JsonRedisSerializer());` 때문에
+
+```java
+// 카운터가 있으면 그대로 ++1, 아니면 0으로 시작
+        if (redisTemplate.hasKey(counterKey)) {
+            valueOperations.increment(counterKey, 1);
+        } else {
+            valueOperations.set(counterKey,"0");
+        }
+```
+
+- 이렇게 하면 String으로 저장된 0에서 increment를 하지 못함
+- 그래서 따로 분기처리를 하지 않고 있으면 increment를 함
+  ```java
+  // 키가 있든 없든 increment 메서드 호출
+      valueOperations.increment(counterKey, 1);
+  ```
+
+### 내일 할 것
+
+- 디버깅 후 오류 수정
+- 발표 PPT 제작
+- UCC 촬영
+
+## 20240212
+
+### 오늘 한 것
+
+- OpenVidu 소그룹 세션 생성, 정보 get api 생성
+  - 소그룹 생성 후 RDB가 아닌 Redis에 저장
+
+### 어려웠던 점
+
+- 소그룹 리스트를 get할 때 redis에서 가져와야 하는데 key값이 있는지 boolean을 return해야하는 `redisTemplate.hasKey(key)` 메서드가 null을 출력함
+  - 이유는 3가지이다.
+    1. key 가 없음
+    2. pipeline 사용 중인 상태
+    3. 트랜잭션이 걸려있는 상태
+
+### 새로 알게 된 점
+
+- 파이프라인이나 트랜잭션에서 redis 명령을 실행하면 명령의 결과가 즉시 반환되지 않고 커맨드 버퍼에 저장이 돼서 해당 값이 트랜잭션이 커밋되거나 롤백이 되야 해당 값이 반환되는데 트랜잭션이 진행중인 상태에서는 버퍼에 남아있어 아무 결과값이 없는 null이 나오는 것이라고 한다.
+- 나는 트랜잭션이 걸려있는 상태였다
+
+```java
+@Bean
+    public RedisTemplate<?, ?> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
+
+        RedisTemplate<?, ?> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory);
+//        redisTemplate.setEnableTransactionSupport(true);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+
+        return redisTemplate;
+    }
+```
+
+- 관련 링크
+  [https://velog.io/@greentea/spring-RedisTemplate.hasKey값이-null이-나올-경우](https://velog.io/@greentea/spring-RedisTemplate.hasKey%EA%B0%92%EC%9D%B4-null%EC%9D%B4-%EB%82%98%EC%98%AC-%EA%B2%BD%EC%9A%B0)
+  https://stackoverflow.com/questions/70032606/redis-haskey-method-return-null
+
+### 내일 할 것
+
+- 프론트와 연결 후 오류 수정
+
+## 20240210-11
+
+### 주말동안 한 것
+
+- S3에서 파일 삭제 오류 수정
+  - key값을 파라미터로 넣어야 했는데 냅다 url을 넣으니 안됐던 것이었다
+- redis cache로 photoPath 추가, 조회, 삭제 성공
+
+### 어려웠던 점
+
+- redis cache에서 조회, 삭제는 잘 되는데 추가가 계속 안됐다.
+
+### 새로 알게된 점
+
+- `@Cache` 어노테이션들은 외부에서 불려지는 메서드에서만 작동한다. - 이유는 프록시 모드가 기본이기 때문에 내부 호출 메서드에서는 작동하지 않는다. - 그래서 추가가 안됐던 것이었음... - 내부에서 불려지는 메서드에 캐싱을 하면 적용되지 않는다 - https://docs.spring.io/spring-framework/docs/3.2.x/spring-framework-reference/html/cache.html#cache-annotation-enable - 여길 보면
+
+  > In proxy mode (which is the default), only external method calls coming in through the proxy are intercepted. This means that self-invocation, in effect, a method within the target object calling another method of the target object, will not lead to an actual caching at runtime even if the invoked method is marked with @Cacheable - considering using the aspectj mode in this case.
+
+  프록시모드에서는 외부에서 호출되는 메서드에서만 사용가능하다고 한다
+
+### 내일 할 것
+
+- 롤링페이퍼 프론트와 연결
+- 시간이 되면 jwt에 대한 설명 듣기
+
 ## 20240209
 
 ### 오늘 한 것
@@ -39,12 +144,15 @@
 ### 새로 알게 된 점
 
 - 웹소켓 오류
+
   - `websocket connection to 'wss failed` 이런게 계속 났음
   - 근데 http_port를 80, https_port를 443으로 바꾸니 됨
   - 관련 링크
+
     - https://stackoverflow.com/questions/32693376/websocket-connection-on-wss-failed
 
     - https://stackoverflow.com/questions/34132419/websocket-connection-to-wss-failed-error-in-connection-establishment-n
+
 - Docker 로그 보는 법
   1. pem키가 있는 곳에서 git bash를 켠다
   2. ssh -i [키 파일 이름] ubuntu@[도메인 이름] 를 입력
