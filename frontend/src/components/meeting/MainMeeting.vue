@@ -625,7 +625,12 @@ const getToken = async () => {
   return await createToken(sessionStorage.getItem('sessionId'))
 }
 
-const leaveMainMeeting = () => {
+const leaveMainMeeting = async () => {
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
+  const tracks = stream.getTracks()
+
+  tracks.forEach((track) => track.stop())
+
   deleteSession()
 
   emit('leave-meeting')
