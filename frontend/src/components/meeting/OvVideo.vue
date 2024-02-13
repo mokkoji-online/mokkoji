@@ -30,8 +30,6 @@ const props = defineProps({
   }
 })
 
-console.log(props.streamManager)
-
 const userName = ref()
 const videoElement = ref(null)
 

@@ -90,31 +90,31 @@
           </div>
         </div>
         <!-- 영상 파일 -->
-        <div v-if="!isAudioRecorder && isVideoRecorder">
-          <div
-            class="absolute self-center ml-1/2 mt-1/2 p-[4lvh] bg-purple-200 rounded-r-xl flex flex-col gap-1 items-center w-fit h-fit z-20"
+        <div
+          v-if="!isAudioRecorder && isVideoRecorder"
+          class="w-fit h-full self-center p-[4lvh] bg-purple-200 rounded-r-lg flex flex-col gap-[1lvh] items-center"
+        >
+          <button
+            class="ml-auto mb-[1vh] h-[30%] aspect-square hover:bg-white rounded-full"
+            @click="showVideoRecorder"
           >
-            <video
-              ref="videoRef"
-              width="200"
-              autoplay
-              class="border-2 border-white rounded-lg"
-            ></video>
-            <div class="flex flex-row justify-center h-10">
-              <button @click="startVideoRecording" :disabled="isRecording">
-                <IconRecord class="size-[100%] fill-red-500"></IconRecord>
-              </button>
-              <button @click="stopVideoRecording" :disabled="!isRecording">
-                <IconStop class="size-[100%] fill-red-500" />
-              </button>
-            </div>
-            <video
-              v-if="isEndRecording"
-              ref="recordedVideo"
-              width="150lwh"
-              controls
-              :src="recordedVideoSrc"
-            ></video>
+            <IconCancelBlack class="size-[100%]" />
+          </button>
+          <video
+            v-if="!isEndRecording"
+            ref="videoRef"
+            width="300"
+            autoplay
+            class="border-sm border-white rounded-r-lg"
+          ></video>
+          <video v-else ref="recordedVideo" width="150lwh" controls :src="recordedVideoSrc"></video>
+          <div class="flex flex-row justify-center h-[15lvh]">
+            <button @click="startVideoRecording" :disabled="isRecording" class="h-[100%]">
+              <IconRecord class="size-[70%] fill-red-500"></IconRecord>
+            </button>
+            <button @click="stopVideoRecording" :disabled="!isRecording" class="h-[100%]">
+              <IconStop class="size-[70%] fill-red-500" />
+            </button>
           </div>
         </div>
         <div class="flex h-[6vh]">
@@ -294,9 +294,9 @@ const leftTime = ref(60)
 
 const videoRef = ref(null)
 const stream = ref(null)
-const isEndRecording = ref(false)
 const chunks = ref([])
 const recordedVideoSrc = ref('')
+const isEndRecording = ref(false)
 
 const removeContents = () => {
   document.getElementById('input-text').value = ''
@@ -338,7 +338,7 @@ const uploadAudioFile = (event) => {
   isAudioFile.value = true
 
   if (event === 'record') {
-    audioFileName.value = 'audio recording'
+    audioFileName.value = '내 녹음 파일'
   } else {
     audioFile.value = event.target.files[0]
     audioFileName.value = event.target.files[0].name
@@ -349,7 +349,7 @@ const uploadVideoFile = (event) => {
   isVideoFile.value = true
 
   if (event === 'record') {
-    videoFileName.value = 'video recording'
+    videoFileName.value = '내 영상 파일'
   } else {
     videoFile.value = event.target.files[0]
     videoFileName.value = event.target.files[0].name

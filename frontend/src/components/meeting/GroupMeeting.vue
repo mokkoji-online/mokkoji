@@ -299,7 +299,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { OpenVidu } from 'openvidu-browser'
 import html2canvas from 'html2canvas'
@@ -561,6 +561,12 @@ const joinSession = () => {
     if (index >= 0) {
       state.subscribers.splice(index, 1)
     }
+
+    for (let idx = 0; idx < userList.value.length; idx++) {
+      if (stream.streamId === userList.value[idx].stream.streamId) {
+        userList.value.splice(idx, 1)
+      }
+    }
   })
 }
 
@@ -596,16 +602,16 @@ const deleteSession = () => {
 }
 
 const leaveMainMeeting = async () => {
-  await deleteSession()
+  deleteSession()
 
-  // sessionStorage.clear()
+  sessionStorage.clear()
 
   emit('leave-meeting')
   router.push('/')
 }
 
 const leaveGroupMeeting = async () => {
-  await deleteSession()
+  deleteSession()
 
   sessionStorage.removeItem('groupSessionId')
 
@@ -617,22 +623,25 @@ const updateMainVideoStreamManager = (stream) => {
   state.mainStreamManager = stream
 }
 
-const sendMessage = (event) => {
+const sendMessage = () => {
   if (chatMessage.value.trim() !== '') {
-    // OpenVidu 시그널링 서버를 통해 채팅 메시지를 보낸다.
     state.session.signal({
       data: chatMessage.value,
       to: [],
-      type: 'chat' // 채팅 메시지 타입
+      type: 'chat'
     })
-    chatMessage.value = '' // 메시지 전송 후 입력 필드 비우기
+    chatMessage.value = ''
   }
 }
 
 onMounted(() => {
   joinSession()
 
-  window.addEventListener('beforeunload', leaveMainMeeting)
+  window.addEventListener('beforeunload', deleteSession)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', deleteSession)
 })
 </script>
 

@@ -11,9 +11,9 @@ const emit = defineEmits(['create-meeting'])
 
 const router = useRouter()
 
-const createGroupMeeting = (session) => {
+const createGroupMeeting = () => {
   router.push({
-    path: `/meetings/${session.groupNumber}`
+    path: `/groupmeetings`
   })
 }
 

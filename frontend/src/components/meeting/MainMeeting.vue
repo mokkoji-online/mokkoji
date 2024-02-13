@@ -25,6 +25,7 @@
               :main-stream="true"
               class="px-sm w-full h-full"
             />
+            <button @click="toggleCamera">화면전환</button>
           </div>
         </div>
       </div>
@@ -308,7 +309,6 @@
     <transition-group name="up">
       <LetterModal v-if="isLetterModal" @remove-letter-modal="showLetterModal()" />
     </transition-group>
-    <VideoRecorderModal v-if="isVideoRecorderModal" />
     <transition-group name="up">
       <GiftModal v-if="isGiftModal" />
     </transition-group>
@@ -316,7 +316,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, onBeforeMount } from 'vue'
+import { ref, reactive, onBeforeMount, onBeforeUnmount } from 'vue'
 import { useRouter } from 'vue-router'
 import { OpenVidu } from 'openvidu-browser'
 import { useSessionStore } from '@/stores/meeting'
@@ -378,7 +378,6 @@ const chatMessage = ref('')
 const chatMessages = ref([])
 const userList = ref([])
 const connectedUser = ref([])
-const groupNumber = ref(1)
 const myVideo = ref(null)
 
 const captureMyVideo = () => {
@@ -525,6 +524,7 @@ const joinSession = () => {
     })
     .catch((error) => {
       console.log('세션에 연결하는 과정에서 에러가 발생했습니다.', error.code, error.message)
+      router.push('/reloadingroom')
     })
 
   // 비동기 예외
@@ -569,6 +569,12 @@ const joinSession = () => {
     if (index >= 0) {
       state.subscribers.splice(index, 1)
     }
+
+    for (let idx = 0; idx < userList.value.length; idx++) {
+      if (stream.streamId === userList.value[idx].stream.streamId) {
+        userList.value.splice(idx, 1)
+      }
+    }
   })
 
   state.session.on('connectionCreated', (event) => {
@@ -581,30 +587,17 @@ const joinSession = () => {
 
   // 소그룹 생성
   state.session.on('signal:group', async () => {
-    await emit('create-group-meeting', {
-      groupNumber: groupNumber.value
-    })
+    await emit('create-group-meeting')
 
-    sessionStorage.setItem(
-      'groupSessionId',
-      sessionStorage.getItem('sessionId') + groupNumber.value
-    )
-
-    groupNumber.value++
+    sessionStorage.setItem('groupSessionId', sessionStorage.getItem('sessionId'))
 
     deleteSession()
   })
-
-  state.session.on('signal:else-group', () => {
-    groupNumber.value++
-  })
 }
 
-// 세션 삭제
 const deleteSession = () => {
   if (state.session) {
     state.session.disconnect()
-
     state.session = undefined
     state.mainStreamManager = undefined
     state.publisher = undefined
@@ -631,8 +624,8 @@ const getToken = async () => {
   return await createToken(sessionStorage.getItem('sessionId'))
 }
 
-const leaveMainMeeting = async () => {
-  await deleteSession()
+const leaveMainMeeting = () => {
+  deleteSession()
 
   emit('leave-meeting')
 
@@ -653,7 +646,7 @@ const sendMessage = () => {
 }
 
 const createGroupMeeting = (userList) => {
-  store.createGroupSession(sessionStorage.getItem('sessionId') + groupNumber.value)
+  store.createGroupSession(sessionStorage.getItem('sessionId'))
 
   connectedUser.value.forEach((user) => {
     const foundUser = userList.value.find((checkedUser) => checkedUser.userName === user.name)
@@ -675,6 +668,35 @@ const createGroupMeeting = (userList) => {
   isGroupModal.value = false
 }
 
+const isFrontCamera = ref(false)
+
+const toggleCamera = () => {
+  state.OV.getDevices().then((devices) => {
+    const videoDevices = devices.filter((device) => device.kind === 'videoinput')
+
+    console.log(videoDevices)
+
+    if (videoDevices && videoDevices.length > 1) {
+      const newPublisher = state.OV.initPublisher('html-element-id', {
+        videoSource: isFrontCamera.value ? videoDevices[1].deviceId : videoDevices[0].deviceId,
+        publishAudio: true,
+        publishVideo: true,
+        mirror: isFrontCamera.value
+      })
+
+      isFrontCamera.value = !isFrontCamera.value
+
+      state.session.unpublish(state.publisher).then(() => {
+        state.publisher = newPublisher
+
+        state.session.publish(state.publisher).then(() => {
+          console.log('New publisher published!')
+        })
+      })
+    }
+  })
+}
+
 const updateMainVideoStreamManager = (stream) => {
   if (state.mainStreamManager === stream) return
   state.mainStreamManager = stream
@@ -683,7 +705,11 @@ const updateMainVideoStreamManager = (stream) => {
 onBeforeMount(() => {
   joinSession()
 
-  window.addEventListener('beforeunload', leaveMainMeeting)
+  window.addEventListener('beforeunload', deleteSession)
+})
+
+onBeforeUnmount(() => {
+  window.removeEventListener('beforeunload', deleteSession)
 })
 </script>
 

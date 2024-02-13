@@ -24,7 +24,7 @@ export const useSessionStore = defineStore('session', () => {
 
   const createGroupSession = async (sessionId) => {
     const response = await axiosJwt.post(
-      VITE_SERVER + '/meetings/sessions',
+      VITE_SERVER + '/meetings/groupsessions',
       { customSessionId: sessionId },
       {
         headers: { 'Content-Type': 'application/json' }

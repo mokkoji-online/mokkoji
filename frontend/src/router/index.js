@@ -12,6 +12,7 @@ import MyDetail from '@/components/mypage/MyDetail.vue'
 import Error404 from '@/components/common/Error404.vue'
 import HandleCallback from '@/components/common/HandleCallback.vue'
 import WaitingRoom from '@/components/meeting/WaitingRoom.vue'
+import ReloadingRoom from '@/components/meeting/ReloadingRoom.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,7 +58,7 @@ const router = createRouter({
       props: true
     },
     {
-      path: '/meetings/:groupNumber',
+      path: '/groupmeetings',
       name: 'groupmeeting',
       component: GroupMeetingView,
       props: true
@@ -111,6 +112,11 @@ const router = createRouter({
       path: '/waitingroom',
       name: 'waitingroom',
       component: WaitingRoom
+    },
+    {
+      path: '/reloadingroom',
+      name: 'reloadingroom',
+      component: ReloadingRoom
     }
   ]
 })
