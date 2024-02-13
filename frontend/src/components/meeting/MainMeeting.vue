@@ -354,8 +354,8 @@ const emit = defineEmits(['leave-meeting']['create-group-meeting'])
 const router = useRouter()
 const store = useSessionStore()
 
-const videoWidth = window.screen.width * 0.22
-const videoHeight = window.screen.height * 0.95
+const videoWidth = window.screen.width * 0.65
+const videoHeight = window.screen.height * 0.85
 
 const isHost = ref(sessionStorage.getItem('isHost'))
 const isGrid = ref(false)

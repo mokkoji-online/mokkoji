@@ -107,7 +107,6 @@
               <button @click="stopVideoRecording" :disabled="!isRecording">
                 <IconStop class="size-[100%] fill-red-500" />
               </button>
-              <!-- <button @click="downloadRecording" :disabled="!videoFile">Download Recording</button> -->
             </div>
             <video
               v-if="isEndRecording"
@@ -259,7 +258,7 @@ import IconStop from '@/icons/meeting/IconStop.vue'
 import IconPlay from '@/icons/meeting/IconPlay.vue'
 import IconPause from '@/icons/meeting/IconPause.vue'
 
-defineEmits(['remove-letter-modal', 'show-audio-recorder', 'show-video-recorder'])
+defineEmits(['remove-letter-modal'])
 
 const store = useLetterStore()
 
@@ -463,7 +462,7 @@ const onAudioEnded = () => {
 
 // 영상 촬영 관련
 
-async function startCamera() {
+const startCamera = async () => {
   try {
     stream.value = await navigator.mediaDevices.getUserMedia({ video: true })
     videoRef.value.srcObject = stream.value
@@ -472,7 +471,7 @@ async function startCamera() {
   }
 }
 
-function startVideoRecording() {
+const startVideoRecording = () => {
   if (isEndRecording.value) startCamera()
 
   if (!stream.value || !(stream.value instanceof MediaStream)) {
@@ -502,14 +501,14 @@ function startVideoRecording() {
   }
 }
 
-function stopVideoRecording() {
+const stopVideoRecording = () => {
   if (mediaRecorder.value && isRecording.value) {
     mediaRecorder.value.stop()
     isEndRecording.value = true
   }
 }
 
-function downloadRecording() {
+const downloadRecording = () => {
   if (videoFile.value) {
     const url = URL.createObjectURL(videoFile.value)
     const a = document.createElement('a')

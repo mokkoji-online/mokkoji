@@ -47,13 +47,13 @@
 </template>
 
 <script setup>
-const { VITE_NAVER_CLIENT_ID, VITE_NAVER_REDIRECT_URL } = import.meta.env
+const { VITE_NAVER_CLIENT_ID, VITE_NAVER_REDIRECT_URL_LOCAL } = import.meta.env
 
 const naverApiRequestURI =
   `https://nid.naver.com/oauth2.0/authorize?client_id=` +
   VITE_NAVER_CLIENT_ID +
   '&redirect_uri=' +
-  VITE_NAVER_REDIRECT_URL +
+  VITE_NAVER_REDIRECT_URL_LOCAL +
   '&state=mokkoji&response_type=code'
 </script>
 

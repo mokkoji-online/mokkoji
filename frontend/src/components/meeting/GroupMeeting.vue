@@ -335,8 +335,8 @@ const emit = defineEmits(['leave-meeting'])
 
 const router = useRouter()
 
-const videoWidth = window.screen.width * 0.22
-const videoHeight = window.screen.height * 0.95
+const videoWidth = window.screen.width * 0.65
+const videoHeight = window.screen.height * 0.85
 
 const isGrid = ref(false)
 const isMic = ref(true)

@@ -14,7 +14,7 @@
 
       <div class="ml-auto self-center">
         <ul class="font-medium flex md:flex-row">
-          <button id="button-header"><a href="/" class="text-[2vh]">홈으로</a></button>
+          <button id="button-header"><a href="/" class="text-[3vh]">홈으로</a></button>
           <li v-if="!(store.isLogin || isLogin)">
             <button id="button-header" @click="showLoginModal" class="text-[2vh]">로그인</button>
             <ModalView v-if="isLoginModal" :show-modal="isLoginModal" @close-modal="showLoginModal">
@@ -22,7 +22,7 @@
             </ModalView>
           </li>
           <li v-else>
-            <div class="flex flex-row relative justify-center items-center gap-[3vh] text-[2vh]">
+            <div class="flex flex-row relative justify-center items-center gap-[3vh] text-[3vh]">
               <button
                 id="button-header"
                 data-dropdown-toggle="dropdown"
@@ -32,20 +32,20 @@
               </button>
               <div class="flex justify-center items-center rounded-full">
                 <img class="overflow-hidden rounded-full w-[5vh] m-0 mr-[1vh]" :src="image" />
-                <p class="text-black text-[2vh]">{{ name }}님</p>
+                <p class="text-black text-[3vh]">{{ name }}님</p>
               </div>
               <div
                 id="dropdown"
                 class="z-10 hidden bg-white divide-y divide-slate-200 rounded-lg w-32"
               >
                 <ul aria-labelledby="dropdownHoverButton" class="w-50">
-                  <li id="li-dropdown" class="text-[2vh]">
+                  <li id="li-dropdown" class="text-[3vh]">
                     <router-link to="mypage">마이페이지</router-link>
                   </li>
-                  <li id="li-dropdown" class="text-[2vh]">
+                  <li id="li-dropdown" class="text-[3vh]">
                     <router-link to="eventlist">내 결과물</router-link>
                   </li>
-                  <li id="li-dropdown" class="text-[2vh]">
+                  <li id="li-dropdown" class="text-[3vh]">
                     <a @click="logout">로그아웃</a>
                   </li>
                 </ul>
