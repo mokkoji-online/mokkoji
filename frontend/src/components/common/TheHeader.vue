@@ -27,7 +27,7 @@
               class="flex flex-row relative justify-center items-center gap-[2.5vh] text-[2.5vh]"
             >
               <div class="flex justify-center items-center rounded-full">
-                <img class="overflow-hidden rounded-full w-[4vw] m-0 mr-[1vw]" :src="image" />
+                <img class="overflow-hidden rounded-full w-[7vh] m-0 mr-[1vw]" :src="image" />
                 <p class="text-black text-[2.5vh]">{{ name }}님</p>
               </div>
               <button

@@ -372,6 +372,7 @@ const isGiftModal = ref(false)
 const isCapture = ref(false)
 const isUserList = ref(false)
 const isChat = ref(false)
+const isFrontCamera = ref(true)
 
 const searchUserName = ref('')
 const chatMessage = ref('')
@@ -586,10 +587,10 @@ const joinSession = () => {
   })
 
   // 소그룹 생성
-  state.session.on('signal:group', async () => {
-    await emit('create-group-meeting')
+  state.session.on('signal:group', async (event) => {
+    sessionStorage.setItem('groupSessionId', event.data)
 
-    sessionStorage.setItem('groupSessionId', sessionStorage.getItem('sessionId'))
+    emit('create-group-meeting')
 
     deleteSession()
   })
@@ -645,8 +646,8 @@ const sendMessage = () => {
   }
 }
 
-const createGroupMeeting = (userList) => {
-  store.createGroupSession(sessionStorage.getItem('sessionId'))
+const createGroupMeeting = async (userList) => {
+  const response = await store.createGroupSession(sessionStorage.getItem('sessionId'))
 
   connectedUser.value.forEach((user) => {
     const foundUser = userList.value.find((checkedUser) => checkedUser.userName === user.name)
@@ -654,6 +655,7 @@ const createGroupMeeting = (userList) => {
 
     if (userIndex !== -1) {
       state.session.signal({
+        data: response,
         to: [user.connection, state.session.connection],
         type: 'group'
       })
@@ -668,32 +670,26 @@ const createGroupMeeting = (userList) => {
   isGroupModal.value = false
 }
 
-const isFrontCamera = ref(false)
+const toggleCamera = async () => {
+  const devices = await state.OV.getDevices()
 
-const toggleCamera = () => {
-  state.OV.getDevices().then((devices) => {
-    const videoDevices = devices.filter((device) => device.kind === 'videoinput')
+  const videoDevices = await devices.filter((device) => device.kind === 'videoinput')
 
-    console.log(videoDevices)
+  isFrontCamera.value = !isFrontCamera.value
 
-    if (videoDevices && videoDevices.length > 1) {
-      const newPublisher = state.OV.initPublisher('html-element-id', {
-        videoSource: isFrontCamera.value ? videoDevices[1].deviceId : videoDevices[0].deviceId,
-        publishAudio: true,
-        publishVideo: true,
-        mirror: isFrontCamera.value
-      })
+  const mediaStream = await state.OV.getUserMedia({
+    audioSource: false,
+    videoSource: isFrontCamera.value ? videoDevices[1].deviceId : videoDevices[0].deviceId,
+    resolution: `${videoWidth}x${videoHeight}`,
+    frameRate: 30
+  })
 
-      isFrontCamera.value = !isFrontCamera.value
+  const myTrack = mediaStream.getVideoTracks()[0]
 
-      state.session.unpublish(state.publisher).then(() => {
-        state.publisher = newPublisher
-
-        state.session.publish(state.publisher).then(() => {
-          console.log('New publisher published!')
-        })
-      })
-    }
+  state.publisher.replaceTrack(myTrack).then(() => {
+    console.log('New track has been published').catch((error) => {
+      console.error('Error replacing track', error)
+    })
   })
 }
 

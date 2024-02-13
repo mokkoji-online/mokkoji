@@ -12,6 +12,9 @@ const props = defineProps({
   },
   mainStream: {
     type: Boolean
+  },
+  isFront: {
+    type: Boolean
   }
 })
 

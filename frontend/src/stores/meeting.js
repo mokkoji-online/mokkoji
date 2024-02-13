@@ -31,7 +31,7 @@ export const useSessionStore = defineStore('session', () => {
       }
     )
 
-    sessionStorage.setItem('groupSessionId', response.data)
+    return response.data
   }
 
   const findSession = async (sessionId) => {
