@@ -42,20 +42,17 @@ onMounted(() => {
       store.email = res.data.email
       store.image = res.data.image
       if (res.data.first == true) {
-        alert('회원 가입 페이지로 이동합니다.')
         router.push('/signup')
-      } 
-      else {
-        store.isLogin = true;
+      } else {
+        store.isLogin = true
         const refreshToken = res.headers['authorization-refresh']
         tokenService.setLocalRefreshToken(refreshToken)
-        store.forceReload = true;
-        alert('로그인 완료')
-        router.replace('/');
+        store.forceReload = true
+        router.push('/')
       }
     })
     .catch((err) => {
-      console.log(err);
+      console.log(err)
     })
 })
 </script>

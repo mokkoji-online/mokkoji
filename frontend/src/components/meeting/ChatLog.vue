@@ -25,7 +25,9 @@ const props = defineProps({
   }
 })
 
-const myName = ref($cookies.get('user').name)
+const myName = ref(
+  $cookies.get('user') !== null ? $cookies.get('user').name : sessionStorage.getItem('userName')
+)
 </script>
 
 <style></style>

@@ -109,9 +109,10 @@ const router = createRouter({
       }
     },
     {
-      path: '/waitingroom',
+      path: '/meetings/:sessionId',
       name: 'waitingroom',
-      component: WaitingRoom
+      component: WaitingRoom,
+      props: true
     },
     {
       path: '/reloadingroom',

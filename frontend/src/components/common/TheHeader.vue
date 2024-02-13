@@ -50,9 +50,6 @@
                   <li id="li-dropdown" class="text-[2.5vh]">
                     <router-link to="eventlist">내 결과물</router-link>
                   </li>
-                  <!-- <li id="li-dropdown" class="text-[2.5vh]">
-                    <a @click="logout">로그아웃</a>
-                  </li> -->
                 </ul>
               </div>
             </div>

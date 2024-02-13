@@ -15,17 +15,18 @@
               :stream-manager="sub"
               :main-stream="false"
               @click="updateMainVideoStreamManager(sub)"
-              class="h-1/3 flex-none"
+              @toggle-camera="toggleCamera"
             />
           </div>
-          <div ref="myVideo" class="max-h-[100%] basis-3/4 flex justify-center items-start">
+          <div
+            ref="myVideo"
+            class="mr-[1vh] w-full h-full basis-3/4 flex justify-center items-start"
+          >
             <user-Video
-              id="main-video"
               :stream-manager="state.mainStreamManager"
               :main-stream="true"
-              class="px-sm w-full h-full"
+              @toggle-camera="toggleCamera"
             />
-            <button @click="toggleCamera">화면전환</button>
           </div>
         </div>
       </div>
@@ -40,7 +41,7 @@
           :key="user.stream.connection.connectionId"
           :stream-manager="user"
           :main-stream="false"
-          class="w-full rounded-[3vb]"
+          @toggle-camera="toggleCamera"
         />
       </div>
       <!-- 참여자 목록, 채팅방-->
@@ -261,7 +262,7 @@
           <div class="w-2/4">
             <div class="w-[80%] h-full flex items-center">
               <button
-                v-if="isHost"
+                v-if="isHost === 'true'"
                 id="button-quit"
                 class="w-full aspect-[2] bg-red-500 hover:bg-red-400 text-white rounded-r-xl text-r-md"
                 @click="leaveMainMeeting"
@@ -306,6 +307,9 @@
         @create-group-meeting="createGroupMeeting"
       />
     </transition-group>
+    <transition-group name="down">
+      <GroupAlertModal v-if="isGroupAlertModal" />
+    </transition-group>
     <transition-group name="up">
       <LetterModal v-if="isLetterModal" @remove-letter-modal="showLetterModal()" />
     </transition-group>
@@ -348,14 +352,15 @@ import CameraModal from '@/components/modal/meeting/CameraModal.vue'
 import GiftModal from '@/components/modal/meeting/GiftModal.vue'
 import LetterModal from '@/components/modal/meeting/LetterModal.vue'
 import GroupModal from '@/components/modal/meeting/GroupModal.vue'
+import GroupAlertModal from '@/components/modal/meeting/GroupAlertModal.vue'
 
 const emit = defineEmits(['leave-meeting']['create-group-meeting'])
 
 const router = useRouter()
 const store = useSessionStore()
 
-const videoWidth = window.screen.width * 0.65
-const videoHeight = window.screen.height * 0.85
+const videoWidth = window.screen.width
+const videoHeight = window.screen.height
 
 const isHost = ref(sessionStorage.getItem('isHost'))
 const isGrid = ref(false)
@@ -368,6 +373,7 @@ const isMeetingDetailModal = ref(false)
 const isGroupModal = ref(false)
 const isLetterModal = ref(false)
 const isGroup = ref(false)
+const isGroupAlertModal = ref(false)
 const isGiftModal = ref(false)
 const isCapture = ref(false)
 const isUserList = ref(false)
@@ -450,7 +456,19 @@ const setCameraState = () => {
 }
 
 const showGroupModal = () => {
-  isGroupModal.value = !isGroupModal.value
+  if ($cookies.get('user') !== null) {
+    if (sessionStorage.getItem('isHost') === 'true') {
+      isGroupAlertModal.value = true
+
+      setTimeout(() => {
+        isGroupAlertModal.value = false
+      }, 1000)
+    } else {
+      isGroupModal.value = !isGroupModal.value
+    }
+  } else {
+    alert('로그인이 필요한 기능입니다.')
+  }
 }
 
 const showLetterModal = () => {
@@ -517,7 +535,12 @@ const joinSession = () => {
           mirror: false
         })
 
-        state.mainStreamManager = publisher
+        if (sessionStorage.getItem('isHost') === 'true') {
+          state.mainStreamManager = publisher
+        } else {
+          state.subscribers.unshift(publisher)
+        }
+
         state.publisher = publisher
         state.session.publish(publisher)
         userList.value.unshift(publisher)
@@ -535,10 +558,23 @@ const joinSession = () => {
 
   // 새로운 참가자 입장
   state.session.on('streamCreated', ({ stream }) => {
-    console.log('새로운 참가자 입장')
     const subscriber = state.session.subscribe(stream, undefined)
     userList.value.push(subscriber)
-    state.subscribers.push(subscriber)
+
+    if (sessionStorage.getItem('isHost') === 'false') {
+      for (let idx = 0; idx < userList.value.length; idx++) {
+        const name = JSON.parse(userList.value[idx].stream.connection.data)
+        const subscriberName = JSON.parse(subscriber.stream.connection.data)
+
+        if (name.clientData === sessionStorage.getItem('host')) {
+          state.mainStreamManager = subscriber
+        } else if (name.clientData === subscriberName.clientData) {
+          state.subscribers.push(subscriber)
+        }
+      }
+    } else {
+      state.subscribers.push(subscriber)
+    }
   })
 
   // 시그널링 서버로부터 수신된 채팅 메시지 처리
@@ -628,23 +664,24 @@ const getToken = async () => {
 const leaveMainMeeting = async () => {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true })
   const tracks = stream.getTracks()
-
   tracks.forEach((track) => track.stop())
 
+  if (sessionStorage.getItem('isHost') === 'true') {
+    await store.deleteSession(sessionStorage.getItem('sessionId'))
+    sessionStorage.clear()
+  }
+
   deleteSession()
-
   emit('leave-meeting')
-
   router.push('/')
 }
 
 const sendMessage = () => {
   if (chatMessage.value.trim() !== '') {
-    // OpenVidu 시그널링 서버를 통해 채팅 메시지 보내기
     state.session.signal({
       data: chatMessage.value,
       to: [],
-      type: 'chat' // 채팅 메시지 타입
+      type: 'chat'
     })
 
     chatMessage.value = ''
@@ -677,25 +714,27 @@ const createGroupMeeting = async (userList) => {
 
 const toggleCamera = async () => {
   const devices = await state.OV.getDevices()
-
   const videoDevices = await devices.filter((device) => device.kind === 'videoinput')
 
   isFrontCamera.value = !isFrontCamera.value
 
-  const mediaStream = await state.OV.getUserMedia({
-    audioSource: false,
-    videoSource: isFrontCamera.value ? videoDevices[1].deviceId : videoDevices[0].deviceId,
-    resolution: `${videoWidth}x${videoHeight}`,
-    frameRate: 30
-  })
-
-  const myTrack = mediaStream.getVideoTracks()[0]
-
-  state.publisher.replaceTrack(myTrack).then(() => {
-    console.log('New track has been published').catch((error) => {
-      console.error('Error replacing track', error)
+  if (videoDevices && videoDevices.length > 1) {
+    const mediaStream = await state.OV.getUserMedia({
+      audioSource: false,
+      videoSource: isFrontCamera.value ? videoDevices[0].deviceId : videoDevices[1].deviceId,
+      resolution: `${videoWidth}x${videoHeight}`,
+      frameRate: 30
     })
-  })
+
+    const myTrack = mediaStream.getVideoTracks()[0]
+
+    state.publisher.replaceTrack(myTrack).then(() => {
+      console.log('New track has been published')
+    })
+  } else {
+    // 모달창 띄우기
+    console.log('전환할 화면이 존재하지 않습니다.')
+  }
 }
 
 const updateMainVideoStreamManager = (stream) => {
@@ -703,9 +742,16 @@ const updateMainVideoStreamManager = (stream) => {
   state.mainStreamManager = stream
 }
 
-onBeforeMount(() => {
-  joinSession()
+const noBack = () => {
+  history.pushState(null, null, location.href)
+  window.onpopstate = () => {
+    history.go(1)
+  }
+}
 
+onBeforeMount(() => {
+  noBack()
+  joinSession()
   window.addEventListener('beforeunload', deleteSession)
 })
 

@@ -55,14 +55,14 @@
             <button
               id="button"
               v-if="recordedChunks.length !== 0 && !isRecording && !isPlaying"
-              @click="playRecording()"
+              @click="playAudioRecording()"
             >
               <IconPlay class="size-[100%]" />
             </button>
             <button
               id="button"
               v-if="recordedChunks.length !== 0 && !isRecording && isPlaying"
-              @click="pausePlaying()"
+              @click="pauseAudioPlaying()"
             >
               <IconPause class="size-[90%]" />
             </button>
@@ -83,7 +83,7 @@
           >
             <button
               class="w-[8vw] aspect-[2.5] bg-purple-200 rounded-r-lg text-r-md flex justify-center items-center font-semibold hover:bg-purple-300 hover:cursor-pointer"
-              @click="uploadAudioFile('record')"
+              @click="uploadAudioFile"
             >
               파일 업로드
             </button>
@@ -91,14 +91,14 @@
         </div>
         <!-- 영상 파일 -->
         <div
-          v-show="!isAudioRecorder && isVideoRecorder"
-          class="w-fit h-full self-center p-[4lvh] bg-purple-200 rounded-r-lg flex flex-col gap-[1lvh] items-center"
+          v-if="!isAudioRecorder && isVideoRecorder"
+          class="w-fit h-full self-center px-[4lvh] pt-[2lvh] bg-purple-200 rounded-r-lg flex flex-col gap-[1lvh] items-center"
         >
           <button
-            class="ml-auto mb-[1vh] h-[30%] aspect-square hover:bg-white rounded-full"
+            class="ml-auto mb-[1vh] w-[12%] aspect-square hover:bg-white rounded-full"
             @click="showVideoRecorder"
           >
-            <IconCancelBlack class="size-[100%]" />
+            <IconCancelBlack class="size-[60%]" />
           </button>
           <video
             v-if="!isEndRecording"
@@ -107,13 +107,27 @@
             autoplay
             class="border-sm border-white rounded-r-lg"
           ></video>
-          <video v-else ref="recordedVideo" width="150lwh" controls :src="recordedVideoSrc"></video>
-          <div class="flex flex-row justify-center h-[15lvh]">
-            <button @click="startVideoRecording" :disabled="isRecording" class="h-[100%]">
-              <IconRecord class="size-[70%] fill-red-500"></IconRecord>
+          <video v-else ref="recordedVideo" width="300lwh" controls :src="recordedVideoSrc"></video>
+          <div class="flex flex-row justify-center h-[15.5lvh]">
+            <button
+              @click="startVideoRecording"
+              :disabled="isRecording"
+              :class="{
+                'h-[70%] aspect-square': isRecording,
+                'h-[70%] aspect-square hover:bg-purple-300 rounded-full': !isRecording
+              }"
+            >
+              <IconRecord class="size-[90%] fill-red-500"></IconRecord>
             </button>
-            <button @click="stopVideoRecording" :disabled="!isRecording" class="h-[100%]">
-              <IconStop class="size-[70%] fill-red-500" />
+            <button
+              @click="stopVideoRecording"
+              :disabled="!isRecording"
+              :class="{
+                'h-[70%] aspect-square': !isRecording,
+                'h-[70%] aspect-square hover:bg-purple-300 rounded-full': isRecording
+              }"
+            >
+              <IconStop class="size-[90%] fill-red-500" />
             </button>
           </div>
         </div>
@@ -121,18 +135,16 @@
           <div class="basis-1/2 flex justify-start">
             <label
               class="mr-[1vw] hover:bg-red-100 w-[3vw] aspect-square rounded-full flex justify-center items-center"
-              @click="showAudioModal"
+              @click="showAudioRecorder"
             >
               <IconAudio class="size-[90%] hover:cursor-pointer" />
             </label>
-            <input type="file" id="input-audio" class="hidden" @change="uploadAudioFile" />
             <label
               class="hover:bg-red-100 w-[3vw] aspect-square rounded-full flex justify-center items-center"
-              @click="showVideoModal"
+              @click="showVideoRecorder"
             >
               <IconVideo class="size-[85%] hover:cursor-pointer" />
             </label>
-            <input type="file" id="input-video" class="hidden" @change="uploadVideoFile" />
           </div>
           <div class="basis-1/2 flex justify-end">
             <button
@@ -201,48 +213,6 @@
         </button>
       </div>
     </div>
-    <!-- 음성, 영상 파일 업로드 모달 -->
-    <div
-      v-if="isAudioModal"
-      class="absolute w-[8vw] top-[54%] left-[7%] text-r-md flex flex-col items-center bg-red-100 rounded-r-lg border-sm"
-    >
-      <div class="w-full border-b-[0.3vb]">
-        <button class="w-full p-[0.5vw] hover:bg-red-200 rounded-r-lg" @click="showAudioRecorder">
-          음성 녹음
-        </button>
-      </div>
-      <div class="w-full">
-        <button
-          for="input-audio"
-          class="w-full p-[0.5vw] hover:bg-red-200 rounded-r-lg"
-          @click="clickUpload('input-audio')"
-        >
-          파일 업로드
-        </button>
-      </div>
-    </div>
-    <div
-      v-if="isVideoModal"
-      class="absolute w-[8vw] top-[54%] left-[17%] text-r-md flex flex-col items-center bg-red-100 rounded-r-lg border-sm"
-    >
-      <div class="w-full border-b-[0.3vb]">
-        <button
-          class="w-full p-[0.5vw] hover:bg-red-200 rounded-r-lg border-sm border-black"
-          @click="showVideoRecorder"
-        >
-          영상 촬영
-        </button>
-      </div>
-      <div class="w-full">
-        <button
-          for="input-video"
-          class="w-full p-[0.5vw] hover:bg-red-200 rounded-r-lg"
-          @click="clickUpload('input-video')"
-        >
-          파일 업로드
-        </button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -262,8 +232,6 @@ defineEmits(['remove-letter-modal'])
 
 const store = useLetterStore()
 
-const isAudioModal = ref(false)
-const isVideoModal = ref(false)
 const isAudioRecorder = ref(false)
 const isVideoRecorder = ref(false)
 const isFileCheck = ref(false)
@@ -293,7 +261,7 @@ const leftTime = ref(60)
 // 영상 촬영 관련
 
 const videoRef = ref(null)
-const stream = ref(null)
+const videoStream = ref(null)
 const chunks = ref([])
 const recordedVideoSrc = ref('')
 const isEndRecording = ref(false)
@@ -303,57 +271,25 @@ const removeContents = () => {
   textFile.value = ''
 }
 
-const showAudioModal = () => {
-  isAudioModal.value = !isAudioModal.value
-  isVideoModal.value = false
-}
-
-const showVideoModal = () => {
-  isVideoModal.value = !isVideoModal.value
-  isAudioModal.value = false
-}
-
 const showAudioRecorder = () => {
-  isAudioModal.value = false
   isAudioRecorder.value = !isAudioRecorder.value
+  isVideoRecorder.value = false
 }
 
 const showVideoRecorder = () => {
-  isVideoModal.value = false
   isVideoRecorder.value = !isVideoRecorder.value
+  isAudioRecorder.value = false
 }
 
-const clickUpload = (event) => {
-  const myInput = document.getElementById(event)
-  myInput.click()
-
-  if (event === 'input-audio') {
-    showAudioModal()
-  } else if (event === 'input-video') {
-    showVideoModal()
-  }
-}
-
-const uploadAudioFile = (event) => {
+const uploadAudioFile = () => {
   isAudioFile.value = true
-
-  if (event === 'record') {
-    audioFileName.value = '내 녹음 파일'
-  } else {
-    audioFile.value = event.target.files[0]
-    audioFileName.value = event.target.files[0].name
-  }
+  isAudioRecorder.value = false
+  audioFileName.value = '내 녹음 파일'
 }
 
-const uploadVideoFile = (event) => {
+const uploadVideoFile = () => {
   isVideoFile.value = true
-
-  if (event === 'record') {
-    videoFileName.value = '내 영상 파일'
-  } else {
-    videoFile.value = event.target.files[0]
-    videoFileName.value = event.target.files[0].name
-  }
+  videoFileName.value = '내 영상 파일'
 }
 
 const removeAudioFile = () => {
@@ -375,8 +311,12 @@ const sendLetter = () => {
   }
 
   isFileCheck.value = false
+  isVideoFile.value = false
+  isAudioFile.value = false
   audioFile.value = null
   videoFile.value = null
+  videoFileName.value = ''
+  audioFileName.value = ''
   textFile.value = ''
 }
 
@@ -384,8 +324,8 @@ const sendLetter = () => {
 
 const startAudioRecording = async () => {
   recordedChunks.value = []
-
   isRecording.value = true
+
   const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
   mediaRecorder.value = new MediaRecorder(stream, {
     mimeType: 'audio/webm;codecs=opus'
@@ -441,17 +381,17 @@ const stopAudioRecording = async () => {
   const blob = new Blob(recordedChunks.value, { type: 'audio/webm' })
   const audioUrl = URL.createObjectURL(blob)
   audio.value.src = audioUrl
-  audioFile.value = new File([blob], 'audio recording', { type: 'audio/webm' })
+  audioFile.value = new File([blob], 'audio.webm', { type: 'audio/webm' })
 
   cancelAnimationFrame(animationId.value)
 }
 
-const playRecording = async () => {
+const playAudioRecording = async () => {
   isPlaying.value = true
   await audio.value.play()
 }
 
-const pausePlaying = () => {
+const pauseAudioPlaying = () => {
   isPlaying.value = false
   audio.value.pause()
 }
@@ -465,23 +405,24 @@ const onAudioEnded = () => {
 const startCamera = async () => {
   console.log(navigator.mediaDevices.getUserMedia);
   try {
-    stream.value = await navigator.mediaDevices.getUserMedia({ video: true })
-    videoRef.value.srcObject = stream.value
+    videoStream.value = await navigator.mediaDevices.getUserMedia({ video: true })
+    videoRef.value.srcObject = videoStream.value
   } catch (error) {
     console.error('Error accessing camera:', error)
   }
 }
 
 const startVideoRecording = () => {
+  isEndRecording.value = false
   if (isEndRecording.value) startCamera()
 
-  if (!stream.value || !(stream.value instanceof MediaStream)) {
+  if (!videoStream.value || !(videoStream.value instanceof MediaStream)) {
     console.error('Invalid stream for recording')
     return
   }
 
   try {
-    mediaRecorder.value = new MediaRecorder(stream.value)
+    mediaRecorder.value = new MediaRecorder(videoStream.value)
     chunks.value = []
     mediaRecorder.value.ondataavailable = (event) => {
       if (event.data.size > 0) {

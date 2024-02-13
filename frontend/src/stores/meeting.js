@@ -11,27 +11,35 @@ export const useSessionStore = defineStore('session', () => {
   const router = useRouter()
 
   const createSession = async () => {
-    const response = await axiosJwt.post(VITE_SERVER + '/meetings/sessions', {
-      headers: { 'Content-Type': 'application/json' }
-    })
+    try {
+      const response = await axiosJwt.post(VITE_SERVER + '/meetings/sessions', {
+        headers: { 'Content-Type': 'application/json' }
+      })
 
-    sessionStorage.setItem('sessionId', response.data)
-    sessionStorage.setItem('host', $cookies.get('user').name)
-    sessionStorage.setItem('isHost', true)
+      sessionStorage.setItem('sessionId', response.data)
+      sessionStorage.setItem('host', $cookies.get('user').name)
+      sessionStorage.setItem('isHost', true)
 
-    router.push('/meetings')
+      router.push('/meetings')
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const createGroupSession = async (sessionId) => {
-    const response = await axiosJwt.post(
-      VITE_SERVER + '/meetings/groupsessions',
-      { customSessionId: sessionId },
-      {
-        headers: { 'Content-Type': 'application/json' }
-      }
-    )
+    try {
+      const response = await axiosJwt.post(
+        VITE_SERVER + '/meetings/groupsessions',
+        { customSessionId: sessionId },
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
 
-    return response.data
+      return response.data
+    } catch (error) {
+      console.error(error)
+    }
   }
 
   const findSession = async (sessionId) => {
@@ -52,7 +60,15 @@ export const useSessionStore = defineStore('session', () => {
 
   const deleteSession = async (sessionId) => {
     try {
-      const res = await axiosJwt.delete(VITE_SERVER + `/meetings/sessions/${sessionId}`)
+      const res = await axiosJwt.delete(
+        VITE_SERVER + `/meetings/sessions/${sessionId}`,
+        { participantCount: 1234, endTime: 12 },
+        {
+          headers: { 'Content-Type': 'application/json' }
+        }
+      )
+
+      console.log(res)
     } catch (error) {
       console.error(error)
     }
@@ -71,12 +87,9 @@ export const useLetterStore = defineStore('letter', () => {
     // FormData 객체 생성
     const formData = new FormData()
 
-    // FormData에 음성 파일 추가
-    if (videoFile) formData.append('video', videoFile)
-    // FormData에 영상 파일 추가
-    if (audioFile) formData.append('audio', audioFile)
+    console.log(videoFile)
+    console.log(textFile)
 
-    // JSON 데이터 추가
     const text = {
       writer: $cookies.get('user').name,
       text: textFile
@@ -85,7 +98,9 @@ export const useLetterStore = defineStore('letter', () => {
     const json = JSON.stringify(text)
     const blob = new Blob([json], { type: 'application/json' })
 
-    formData.append('writerAndText', blob)
+    if (videoFile) formData.append('video', videoFile)
+    if (audioFile) formData.append('audio', audioFile)
+    if (textFile !== '') formData.append('writerAndText', blob)
 
     try {
       // axios를 사용하여 POST 요청 보내기

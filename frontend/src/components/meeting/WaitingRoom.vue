@@ -25,8 +25,11 @@
             v-model="userName"
             class="m-0 p-0 my-[2vh] w-[40%] h-[10%] border-sm border-purple-200 text-r-md text-center focus:bg-purple-100"
           />
-          <p v-if="isInputError" style="color: red" class="text-r-md mb-[2vh]">
+          <p v-if="isInputEmpty" style="color: red" class="text-r-md mb-[2vh]">
             이름을 입력해 주세요.
+          </p>
+          <p v-if="isInputError" style="color: red" class="text-r-md mb-[2vh]">
+            존재하지 않는 행사 주소입니다.
           </p>
           <button
             class="w-[30%] aspect-[3] bg-purple-200 rounded-r-lg hover:bg-purple-300"
@@ -43,23 +46,36 @@
 <script setup>
 import { ref, onMounted, onBeforeMount } from 'vue'
 import { useRouter } from 'vue-router'
+import { useSessionStore } from '@/stores/meeting'
+
+const props = defineProps({
+  sessionId: {
+    type: String
+  }
+})
 
 const emit = defineEmits(['waiting-room']['leave-meeting'])
 
 const router = useRouter()
+const store = useSessionStore()
 
+const isInputEmpty = ref(false)
 const isInputError = ref(false)
-const isModal = ref(false)
 const userName = ref('')
 
 const joinMeeting = async () => {
   if (userName.value === '') {
-    isInputError.value = true
+    isInputEmpty.value = true
   } else {
-    if ($cookies.get('user') !== null) {
+    isInputEmpty.value = false
+
+    const result = await store.findSession(props.sessionId)
+
+    if (result === 'success') {
+      isInputError.value = false
       router.push('/meetings')
     } else {
-      isModal.value = true
+      isInputError.value = true
     }
   }
 }

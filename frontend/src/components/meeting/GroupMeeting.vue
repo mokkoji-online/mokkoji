@@ -15,15 +15,17 @@
               :stream-manager="sub"
               :main-stream="false"
               @click="updateMainVideoStreamManager(sub)"
-              class="h-1/3 flex-none"
+              @toggle-camera="toggleCamera"
             />
           </div>
-          <div ref="myVideo" class="max-h-[100%] basis-3/4 flex justify-center items-start">
+          <div
+            ref="myVideo"
+            class="mr-[1vh] w-full h-full basis-3/4 flex justify-center items-start"
+          >
             <user-Video
-              id="main-video"
               :stream-manager="state.mainStreamManager"
               :main-stream="true"
-              class="px-sm w-full h-full"
+              @toggle-camera="toggleCamera"
             />
           </div>
         </div>
@@ -39,7 +41,7 @@
           :key="user.stream.connection.connectionId"
           :stream-manager="user"
           :main-stream="false"
-          class="w-full"
+          @toggle-camera="toggleCamera"
         />
       </div>
       <!-- 참여자 목록, 채팅방-->
@@ -351,6 +353,7 @@ const isCaptureModal = ref(false)
 const isUserList = ref(false)
 const isChat = ref(false)
 const isLeaveGroupModal = ref(false)
+const isFrontCamera = ref(true)
 
 const searchUserName = ref('')
 const chatMessage = ref('')
@@ -634,9 +637,41 @@ const sendMessage = () => {
   }
 }
 
-onMounted(() => {
-  joinSession()
+const toggleCamera = async () => {
+  const devices = await state.OV.getDevices()
+  const videoDevices = await devices.filter((device) => device.kind === 'videoinput')
 
+  isFrontCamera.value = !isFrontCamera.value
+
+  if (videoDevices && videoDevices.length > 1) {
+    const mediaStream = await state.OV.getUserMedia({
+      audioSource: false,
+      videoSource: isFrontCamera.value ? videoDevices[0].deviceId : videoDevices[1].deviceId,
+      resolution: `${videoWidth}x${videoHeight}`,
+      frameRate: 30
+    })
+
+    const myTrack = mediaStream.getVideoTracks()[0]
+
+    state.publisher.replaceTrack(myTrack).then(() => {
+      console.log('New track has been published')
+    })
+  } else {
+    // 모달창 띄우기
+    console.log('전환할 화면이 존재하지 않습니다.')
+  }
+}
+
+const noBack = () => {
+  history.pushState(null, null, location.href)
+  window.onpopstate = (event) => {
+    history.go(1)
+  }
+}
+
+onMounted(() => {
+  noBack()
+  joinSession()
   window.addEventListener('beforeunload', deleteSession)
 })
 

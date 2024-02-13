@@ -1,9 +1,13 @@
 <template>
-  <ov-video v-if="streamManager" :stream-manager="streamManager" :main-stream="mainStream" />
+  <ov-video
+    v-if="streamManager"
+    :stream-manager="streamManager"
+    :main-stream="mainStream"
+    @toggle-camera="toggleCamera"
+  />
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import OvVideo from './OvVideo.vue'
 
 const props = defineProps({
@@ -18,7 +22,11 @@ const props = defineProps({
   }
 })
 
-const userName = ref('')
+const emit = defineEmits(['toggle-camera'])
+
+const toggleCamera = () => {
+  emit('toggle-camera')
+}
 </script>
 
 <style></style>

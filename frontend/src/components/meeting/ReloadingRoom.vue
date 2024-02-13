@@ -8,7 +8,7 @@
     >
       <div class="relative w-full h-[100%] flex items-center">
         <div class="absolute w-full h-full flex justify-center items-center">
-          <img src="@/assets/logo/mokkoji_logo.png" alt="" class="h-[90%] opacity-10 z-0" />
+          <img src="@/assets/logo/mokkoji_logo.png" alt="" class="w-[60%] opacity-10 z-0" />
         </div>
         <div
           class="w-full h-full pr-[7vh] flex flex-col justify-center items-center right-[8%] text-r-md font-bold"
@@ -17,10 +17,18 @@
           <h1 class="text-[2.6lvw]">행사가 종료됐어요.</h1>
           <br />
           <button
+            v-if="isLogin"
             class="w-[20%] aspect-[3] bg-purple-300 rounded-r-lg hover:bg-purple-400 z-10"
-            @click="joinMeeting"
+            @click="createMeeting"
           >
             다시 생성하기
+          </button>
+          <button
+            v-else
+            class="w-[20%] aspect-[3] bg-purple-300 rounded-r-lg hover:bg-purple-400 z-10"
+            @click="goToHome"
+          >
+            메인화면 이동
           </button>
         </div>
       </div>
@@ -29,15 +37,34 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeMount } from 'vue'
+import { ref, onMounted, onBeforeMount } from 'vue'
 import { useSessionStore } from '@/stores/meeting'
+import { useRouter } from 'vue-router'
+import { toast } from 'vue3-toastify'
 
 const emit = defineEmits(['waiting-room']['leave-meeting'])
 
+const router = useRouter()
 const store = useSessionStore()
 
-const joinMeeting = async () => {
-  store.createSession()
+const isLogin = ref(true)
+
+const createMeeting = async () => {
+  if ($cookies.get('user') !== null) {
+    store.createSession()
+  } else {
+    toast('로그인이 필요합니다', {
+      theme: 'auto',
+      type: 'warning',
+      transition: 'flip',
+      autoClose: 1000
+    })
+    isLogin.value = false
+  }
+}
+
+const goToHome = () => {
+  router.push('/')
 }
 
 onMounted(() => {
