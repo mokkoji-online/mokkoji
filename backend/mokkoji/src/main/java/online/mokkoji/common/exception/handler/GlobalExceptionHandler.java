@@ -2,8 +2,8 @@ package online.mokkoji.common.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import online.mokkoji.common.exception.RestApiException;
-import online.mokkoji.common.exception.errorCode.CommonErrorCode;
-import online.mokkoji.common.exception.errorCode.ErrorCode;
+import online.mokkoji.common.exception.errorcode.CommonErrorCode;
+import online.mokkoji.common.exception.errorcode.ErrorCode;
 import online.mokkoji.common.exception.dto.response.ErrorResDto;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(RestApiException.class)
     public ResponseEntity<Object> handleCustomException(RestApiException e) {
-
         ErrorCode errorCode = e.getErrorCode();
         return handleExceptionInternal(errorCode);
     }

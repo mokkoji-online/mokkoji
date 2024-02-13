@@ -4,16 +4,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import online.mokkoji.event.domain.Event;
-import online.mokkoji.result.domain.RollingPaper.RollingPaper;
+import online.mokkoji.result.domain.rollingpaper.RollingPaper;
 import online.mokkoji.user.domain.User;
-import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Getter
-@ToString(of = {"id","name", "content", "status","image"})
+@ToString(of = {"id","name", "memo", "status","image"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Result {
 
@@ -40,7 +39,7 @@ public class Result {
 
     @Column(length = 40)
     @Size(max = 40)
-    private String content;
+    private String memo;
 
     @Column(length = 255, columnDefinition = "varchar(255) default 'https://mokkoji-bucket.s3.ap-northeast-2.amazonaws.com/%EA%B8%B0%EB%B3%B8+%EC%82%AC%EC%A7%84/%EB%8C%80%ED%91%9C%EC%9D%B4%EB%AF%B8%EC%A7%80_%EA%B8%B0%EB%B3%B8.png'")
     private String image;
@@ -67,7 +66,9 @@ public class Result {
         this.user = user;
     }
 
-    public void updateStatus() {
+    public void updateStatus(String name, String memo) {
+        this.name = name;
+        this.memo = memo;
         this.status = Status.RECOLLECTION;
     }
 

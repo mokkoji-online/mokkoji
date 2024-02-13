@@ -1,4 +1,4 @@
-package online.mokkoji.S3;
+package online.mokkoji.s3;
 
 import online.mokkoji.event.dto.response.PhotoResDto;
 import online.mokkoji.result.domain.Result;
@@ -22,12 +22,15 @@ public interface S3Service {
     // 대표이미지 제외 사진 삭제
     void deletePhotos(Long resultId);
 
-    String downloadWithUrl(String s3Url, String provider, String email);
+    //url로 다운로드
+    String downloadWithUrl(String s3Url);
 
-    String downloadAllPhotos(Long resultId, String provider, String email);
+    //포토모자이크 cellImages 다운로드
+    String downloadCellImages(Long resultId);
 
+    //다운로드 presigned 링크 생성(공유)
     String createDownloadUrl(String fileName);
 
-    String uploadPhotomosaic(MultipartFile multipartFile, Long resultId, String provider, String email);
-
+    //포토모자이크 S3로 업로드
+    String uploadPhotomosaic(String localPath, Long resultId);
 }

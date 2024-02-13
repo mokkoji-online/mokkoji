@@ -42,31 +42,15 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Event> events = new ArrayList<>();
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     private UserAccount userAccount;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY,cascade = CascadeType.REMOVE, optional = false)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY,cascade = CascadeType.PERSIST, optional = false)
     private Record record;
 
     // TODO : reddis로 관리
     @Column(length = 65535)
     private String refreshToken;
-
-    @Builder(builderMethodName = "initialBuilder")
-    public User(String email, String name, String image) {
-        this.email = email;
-        this.name = name;
-        this.image = image;
-    }
-
-    @Builder(builderMethodName = "nonTokenBuilder")
-    public User(Provider provider, String email, String name, String image, Authority authority) {
-        this.provider = provider;
-        this.email = email;
-        this.name = name;
-        this.image = image;
-        this.authority = authority;
-    }
 
     @Builder
     public User(Provider provider, String email, String name, String image, Authority authority, String refreshToken) {

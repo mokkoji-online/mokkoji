@@ -3,7 +3,9 @@ package online.mokkoji.result.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import online.mokkoji.S3.S3Service;
+import online.mokkoji.result.dto.request.RecollectionReqDto;
+import online.mokkoji.result.service.PhotomosaicService;
+import online.mokkoji.s3.S3Service;
 import online.mokkoji.common.auth.jwt.util.JwtUtil;
 import online.mokkoji.event.dto.response.PhotoResDto;
 import online.mokkoji.result.dto.request.RollingPaperReqDto;
@@ -11,7 +13,6 @@ import online.mokkoji.result.dto.response.ResultResDto;
 import online.mokkoji.result.dto.response.RollingpaperEditResDto;
 import online.mokkoji.result.service.ResultService;
 import online.mokkoji.user.domain.User;
-import online.mokkoji.user.repository.UserRepository;
 import online.mokkoji.user.service.UserService;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -35,6 +37,7 @@ public class ResultController {
     private final JwtUtil jwtUtil;
     private final UserService userService;
     private final S3Service s3Service;
+    private final PhotomosaicService photomosaicService;
 
     // 행사 리스트
     @GetMapping("/lists")
@@ -108,42 +111,46 @@ public class ResultController {
     }
 
     // 추억 생성(S3 포토모자이크 링크 DB에 저장, 로컬 cellImages 삭제)
-    @GetMapping("/{resultId}")
-    public ResponseEntity<Map<String, Object>> addRecollection(@PathVariable Long resultId, HttpServletRequest req) {
-        resultService.createRecollection(resultId);
+    @PostMapping("/{resultId}")
+    public ResponseEntity<Map<String, Object>> addRecollection(@PathVariable Long resultId,
+                                                               @RequestBody RecollectionReqDto recollectionReqDto, HttpServletRequest req) {
+        resultService.createRecollection(resultId, recollectionReqDto);
 
         // S3에서 대표이미지 제외 사진 삭제
         s3Service.deletePhotos(resultId);
 
         Map<String, Object> result = resultService.getResultList(jwtUtil.getProvider(req), jwtUtil.getEmail(req));
 
+        //로컬 셀 이미지 삭제
+        String cellImagesDirectory = System.getProperty("user.home") + File.separator + "Downloads" +
+                File.separator + "mokkoji" + File.separator + resultId;
+
+        photomosaicService.deleteCellImages(cellImagesDirectory);
+
         return new ResponseEntity<>(result, HttpStatus.CREATED);
     }
 
-    @GetMapping("/thumbnail/{resultId}")
-    public ResponseEntity<Void> downloadThumbnail(@PathVariable Long resultId, HttpServletRequest req) {
+    //대표사진 다운로드
+    @GetMapping("/{resultId}/thumbnail")
+    public ResponseEntity<Void> downloadThumbnail(@PathVariable Long resultId) {
         String thumbnailPath = resultService.getThumbnailPath(resultId);
 
-        String provider = jwtUtil.getProvider(req);
-        String email = jwtUtil.getEmail(req);
-        s3Service.downloadWithUrl(thumbnailPath, provider, email);
+        s3Service.downloadWithUrl(thumbnailPath);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/photomosaic/{resultId}")
-    public ResponseEntity<Void> downloadPhotomosaic(@PathVariable Long resultId, HttpServletRequest req) {
+    @GetMapping("{resultId}/photomosaic")
+    public ResponseEntity<Void> downloadPhotomosaic(@PathVariable Long resultId) {
         String photomosaicPath = resultService.getPhotomosaicPath(resultId);
 
-        String provider = jwtUtil.getProvider(req);
-        String email = jwtUtil.getEmail(req);
-        s3Service.downloadWithUrl(photomosaicPath, provider, email);
+        s3Service.downloadWithUrl(photomosaicPath);
 
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @GetMapping("/image/sharing/{resultId}")
-    public ResponseEntity<String> shareImage(@PathVariable Long resultId) {
+    @GetMapping("{resultId}/sharing/thumbnail")
+    public ResponseEntity<String> shareThumbnail(@PathVariable Long resultId) {
         String imageFilename = resultService.getImageFileName(resultId);
 
         String downloadUrl = s3Service.createDownloadUrl(imageFilename);
@@ -151,12 +158,31 @@ public class ResultController {
         return new ResponseEntity<>(downloadUrl, HttpStatus.CREATED);
     }
 
-    @GetMapping("/photomosaic/sharing/{resultId}")
+    @GetMapping("{resultId}/sharing/photomosaic/")
     public ResponseEntity<String> sharePhotoMosaic(@PathVariable Long resultId) {
         String photomosaicFilename = resultService.getPhotoMosaicFileName(resultId);
 
         String downloadUrl = s3Service.createDownloadUrl(photomosaicFilename);
 
         return new ResponseEntity<>(downloadUrl, HttpStatus.CREATED);
+    }
+
+    //포토 모자이크 생성
+    @PutMapping("{resultId}/photomosaic")
+    public ResponseEntity<String> addPhotomosaic(@PathVariable("resultId") Long resultId) {
+        //S3에 저장된 thumbnail, images 임시 다운로드(경로 확인 필요)
+        String thumbnailPath = resultService.getThumbnailPath(resultId);
+
+        String localThumbnail = s3Service.downloadWithUrl(thumbnailPath);
+        String cellImagesPath = s3Service.downloadCellImages(resultId);
+
+        //photomosaic 생성, 임시 경로에 저장
+        String photomosaic = photomosaicService.createPhotomosaic(localThumbnail, cellImagesPath);
+
+        //임시 경로에 저장된 포토 모자이크 S3로 업로드
+        String photomosaicPath = s3Service.uploadPhotomosaic(photomosaic, resultId);
+        resultService.updatePhotomosaic(resultId, photomosaicPath);
+
+        return new ResponseEntity<>(photomosaicPath, HttpStatus.CREATED);
     }
 }

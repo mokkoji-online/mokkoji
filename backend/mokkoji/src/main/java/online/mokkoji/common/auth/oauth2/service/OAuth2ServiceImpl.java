@@ -8,8 +8,8 @@ import online.mokkoji.common.auth.jwt.util.JwtUtil;
 import online.mokkoji.common.auth.oauth2.config.OAuth2Config;
 import online.mokkoji.common.auth.oauth2.dto.response.UserInfoResDto;
 import online.mokkoji.common.exception.RestApiException;
-import online.mokkoji.common.exception.errorCode.CommonErrorCode;
-import online.mokkoji.common.exception.errorCode.OAuthErrorCode;
+import online.mokkoji.common.exception.errorcode.CommonErrorCode;
+import online.mokkoji.common.exception.errorcode.OAuthErrorCode;
 import online.mokkoji.user.domain.Authority;
 import online.mokkoji.user.domain.Provider;
 import online.mokkoji.user.domain.User;
@@ -76,15 +76,14 @@ public class OAuth2ServiceImpl implements OAuth2Service {
 
         if(findUser.isEmpty()) {
             User guestUser = User.builder()
-                    .provider(Provider.NAVER)
-                    .email(email)
-                    .name(name)
-                    .image(image)
                     .authority(Authority.GUEST)
+                    .email(email)
+                    .image(image)
+                    .name(name)
+                    .provider(Provider.NAVER)
                     .build();
 
             userRepository.save(guestUser);
-
 
             UserInfoResDto userInfoResDto = new UserInfoResDto("naver", email, name, image, true);
 

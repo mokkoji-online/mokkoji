@@ -1,8 +1,8 @@
 package online.mokkoji.result.dto.response;
 
 import lombok.*;
-import online.mokkoji.result.domain.RollingPaper.BackgroundTemplate;
-import online.mokkoji.result.domain.RollingPaper.PostitTemplate;
+import online.mokkoji.result.domain.rollingpaper.BackgroundTemplate;
+import online.mokkoji.result.domain.rollingpaper.PostitTemplate;
 
 @Getter
 @Setter

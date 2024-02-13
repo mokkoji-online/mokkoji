@@ -1,7 +1,7 @@
 package online.mokkoji.result.repository;
 
-import online.mokkoji.result.domain.RollingPaper.PostitName;
-import online.mokkoji.result.domain.RollingPaper.PostitTemplate;
+import online.mokkoji.result.domain.rollingpaper.PostitName;
+import online.mokkoji.result.domain.rollingpaper.PostitTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -3,11 +3,10 @@ package online.mokkoji.event.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import online.mokkoji.S3.S3ServiceImpl;
+import online.mokkoji.s3.S3ServiceImpl;
 import online.mokkoji.common.auth.jwt.util.JwtUtil;
 import online.mokkoji.common.exception.RestApiException;
-import online.mokkoji.common.exception.errorCode.EventErrorCode;
-import online.mokkoji.common.exception.errorCode.UserErrorCode;
+import online.mokkoji.common.exception.errorcode.EventErrorCode;
 import online.mokkoji.event.domain.Event;
 import online.mokkoji.event.dto.request.MessageReqDto;
 import online.mokkoji.event.dto.response.PhotoResDto;
@@ -16,9 +15,7 @@ import online.mokkoji.event.service.EventService;
 import online.mokkoji.result.domain.Result;
 import online.mokkoji.result.dto.response.MessageResDto;
 import online.mokkoji.result.service.ResultService;
-import online.mokkoji.user.domain.Provider;
 import online.mokkoji.user.domain.User;
-import online.mokkoji.user.repository.UserRepository;
 import online.mokkoji.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -89,6 +86,4 @@ public class EventController {
         return new ResponseEntity<>("롤링페이퍼 업로드 완료", HttpStatus.OK);
 
     }
-
-
 }

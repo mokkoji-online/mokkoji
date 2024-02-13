@@ -1,21 +1,19 @@
 package online.mokkoji.event.service;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.mokkoji.common.exception.RestApiException;
-import online.mokkoji.common.exception.errorCode.EventErrorCode;
-import online.mokkoji.common.exception.errorCode.ResultErrorCode;
-import online.mokkoji.common.exception.errorCode.UserErrorCode;
+import online.mokkoji.common.exception.errorcode.EventErrorCode;
+import online.mokkoji.common.exception.errorcode.ResultErrorCode;
+import online.mokkoji.common.exception.errorcode.UserErrorCode;
 import online.mokkoji.event.domain.Event;
 import online.mokkoji.event.dto.request.MessageReqDto;
 import online.mokkoji.event.repository.EventRepository;
 import online.mokkoji.openvidu.dto.request.SessionReqDto;
 import online.mokkoji.openvidu.dto.response.GroupSessionResDto;
 import online.mokkoji.result.domain.Result;
-import online.mokkoji.result.domain.RollingPaper.*;
+import online.mokkoji.result.domain.rollingpaper.*;
 import online.mokkoji.result.repository.BackgroundTemplateRepository;
 import online.mokkoji.result.repository.PostitTemplateRepository;
 import online.mokkoji.result.repository.ResultRepository;
@@ -28,10 +26,6 @@ import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Slf4j
@@ -136,15 +130,42 @@ public class EventServiceImpl implements EventService {
                 .orElseThrow(() -> new RestApiException(EventErrorCode.EVENT_NOT_FOUND));
     }
 
+    // redis에서 counter로 sessionId 생성 후 소그룹 정보 리턴
+    @Override
+    public Map<String, Object> getGroupSessionCounter(Map<String, Object> params) {
+
+        ValueOperations<String,String> valueOperations=redisTemplate.opsForValue();
+
+
+        // 미리 가공할 sessionId 뽑아놓기
+        String sessionId = (String) params.get("customSessionId");
+
+        String counterKey="counter::"+sessionId;
+
+        // 키가 있든 없든 increment 메서드 호출
+        valueOperations.increment(counterKey, 1);
+
+        String count = String.valueOf(valueOperations.get(counterKey));
+
+
+        params.remove("customSessionId");
+        params.put("customSessionId", sessionId +"_"+count);
+
+
+        return params;
+    }
+
     // redis에 소그룹 정보 저장
     @Override
     public void createGroupSession(GroupSessionResDto groupSessionResDto) {
+
+
 
         ListOperations<String, GroupSessionResDto> listOperations = redisTemplate.opsForList();
 
         String key = "session::" + groupSessionResDto.getSessionId().substring(0,14);
 
-        if (redisTemplate.hasKey(key)!=null) {
+        if (redisTemplate.hasKey(key)) {
             listOperations.rightPush(key, groupSessionResDto);
         } else {
             List<GroupSessionResDto> groupSessionList = new ArrayList<>();

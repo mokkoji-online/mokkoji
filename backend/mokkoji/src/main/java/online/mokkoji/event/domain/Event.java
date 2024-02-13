@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import online.mokkoji.common.exception.RestApiException;
-import online.mokkoji.common.exception.errorCode.EventErrorCode;
+import online.mokkoji.common.exception.errorcode.EventErrorCode;
 import online.mokkoji.openvidu.dto.request.SessionReqDto;
 import online.mokkoji.result.domain.Result;
 import online.mokkoji.user.domain.User;

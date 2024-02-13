@@ -24,6 +24,8 @@ public interface EventService {
 
     Event getEvent(String sessionId);
 
+    Map<String, Object> getGroupSessionCounter(Map<String, Object> groupSessionResDto);
+
     void createGroupSession(GroupSessionResDto groupSessionResDto);
 
     List<GroupSessionResDto> getGroupSession(String sessionId);

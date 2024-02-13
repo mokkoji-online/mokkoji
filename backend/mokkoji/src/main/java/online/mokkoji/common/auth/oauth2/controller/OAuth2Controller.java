@@ -31,18 +31,19 @@ public class OAuth2Controller {
     @GetMapping("/{provider}/{code}")
     public ResponseEntity<UserInfoResDto> getUserInfo(@PathVariable String provider, @PathVariable String code,
                                                       HttpServletResponse res) throws Exception {
-            Map<String, Object> result = oAuth2Service.getNaverUserInfo(code);
 
-            UserInfoResDto userInfoResDto = (UserInfoResDto) result.get("userInfo");
+        Map<String, Object> result = oAuth2Service.getNaverUserInfo(code);
 
-            String accessToken = (String) result.get("accessToken");
-            res.addHeader("Authorization", accessToken);
+        UserInfoResDto userInfoResDto = (UserInfoResDto) result.get("userInfo");
 
-            if(result.containsKey("refreshToken")) {
-                String refreshToken = (String) result.get("refreshToken");
-                res.addHeader("Authorization-Refresh", refreshToken);
-            }
+        String accessToken = (String) result.get("accessToken");
+        res.addHeader("Authorization", accessToken);
 
-            return new ResponseEntity<>(userInfoResDto, HttpStatus.OK);
+        if(result.containsKey("refreshToken")) {
+            String refreshToken = (String) result.get("refreshToken");
+            res.addHeader("Authorization-Refresh", refreshToken);
+        }
+
+        return new ResponseEntity<>(userInfoResDto, HttpStatus.OK);
     }
 }

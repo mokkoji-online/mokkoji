@@ -1,4 +1,4 @@
-package online.mokkoji.common.exception.errorCode;
+package online.mokkoji.common.exception.errorcode;
 
 import org.springframework.http.HttpStatus;
 

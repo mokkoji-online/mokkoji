@@ -1,4 +1,4 @@
-package online.mokkoji.common.exception.errorCode;
+package online.mokkoji.common.exception.errorcode;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ResultErrorCode implements ErrorCode {
 
+    NONE_FOLDER_DIRECTORY(400, "잘못된 폴더 경로입니다"),
     RESULT_NOT_FOUND(404, "존재하지 않는 결과물입니다"),
     BACKGROUND_NOT_FOUND(404, "존재하지 않는 배경 템플릿입니다"),
     POSTIT_NOT_FOUND(404, "존재하지 않는 포스트잇 템플릿입니다"),

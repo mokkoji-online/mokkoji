@@ -1,4 +1,4 @@
-package online.mokkoji.result.domain.RollingPaper;
+package online.mokkoji.result.domain.rollingpaper;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;

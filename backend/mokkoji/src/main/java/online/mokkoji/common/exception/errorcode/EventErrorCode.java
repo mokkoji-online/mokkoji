@@ -1,4 +1,4 @@
-package online.mokkoji.common.exception.errorCode;
+package online.mokkoji.common.exception.errorcode;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

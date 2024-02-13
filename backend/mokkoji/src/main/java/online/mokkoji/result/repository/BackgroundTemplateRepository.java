@@ -1,7 +1,7 @@
 package online.mokkoji.result.repository;
 
-import online.mokkoji.result.domain.RollingPaper.BackgroundName;
-import online.mokkoji.result.domain.RollingPaper.BackgroundTemplate;
+import online.mokkoji.result.domain.rollingpaper.BackgroundName;
+import online.mokkoji.result.domain.rollingpaper.BackgroundTemplate;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

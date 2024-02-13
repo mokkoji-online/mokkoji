@@ -1,6 +1,6 @@
 package online.mokkoji.result.repository;
 
-import online.mokkoji.result.domain.RollingPaper.RollingPaper;
+import online.mokkoji.result.domain.rollingpaper.RollingPaper;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

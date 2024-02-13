@@ -1,6 +1,7 @@
 package online.mokkoji.result.service;
 
 import online.mokkoji.event.dto.response.PhotoResDto;
+import online.mokkoji.result.dto.request.RecollectionReqDto;
 import online.mokkoji.result.dto.request.RollingPaperReqDto;
 import online.mokkoji.result.dto.response.MessageResDto;
 import online.mokkoji.result.dto.response.ResultResDto;
@@ -16,7 +17,7 @@ public interface ResultService {
 
     ResultResDto getResult(Long resultId, Pageable pageable);
 
-    void createRecollection(Long resultId);
+    void createRecollection(Long resultId, RecollectionReqDto recollectionReqDto);
 
     // 사진 db 저장
     void createPhoto(PhotoResDto photoResDto);
@@ -42,13 +43,18 @@ public interface ResultService {
     // 사진 url redis에 업데이트
     List<String> updatePhotoPathCache(Long resultId, List<PhotoResDto> photoResDtoList);
 
+    //대표사진 S3 링크 반환
     String getThumbnailPath(Long resultId);
 
+    //포토모자이크 S3 링크 반환
     String getPhotomosaicPath(Long resultId);
 
+    //대표사진 파일 이름 반환
     String getImageFileName(Long resultId);
 
+    //포토모자이크 파일 이름 반환
     String getPhotoMosaicFileName(Long resultId);
 
+    //포토모자이크 S3 링크 DB에 저장
     void updatePhotomosaic(Long resultId, String photomosaicPath);
 }

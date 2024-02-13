@@ -6,7 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.mokkoji.common.auth.jwt.util.JwtUtil;
 import online.mokkoji.common.exception.RestApiException;
-import online.mokkoji.common.exception.errorCode.*;
+import online.mokkoji.common.exception.errorcode.*;
 import online.mokkoji.user.domain.User;
 import online.mokkoji.user.dto.request.UserInputReqDto;
 import online.mokkoji.user.dto.response.MyPageResDto;
@@ -52,6 +52,7 @@ public class UserController {
         String provider = jwtService.getProvider(req);
         String email = jwtService.getEmail(req);
 
+        log.info("회원가입 요청");
         userServiceImpl.createUser(provider, email, userInputReqDto);
 
         return new ResponseEntity<>(userInputReqDto, HttpStatus.CREATED);

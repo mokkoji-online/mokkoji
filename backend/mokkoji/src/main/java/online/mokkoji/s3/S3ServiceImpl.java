@@ -1,4 +1,4 @@
-package online.mokkoji.S3;
+package online.mokkoji.s3;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.HttpMethod;
@@ -9,7 +9,10 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import online.mokkoji.common.exception.RestApiException;
-import online.mokkoji.common.exception.errorCode.*;
+import online.mokkoji.common.exception.errorcode.EventErrorCode;
+import online.mokkoji.common.exception.errorcode.ResultErrorCode;
+import online.mokkoji.common.exception.errorcode.S3ErrorCode;
+import online.mokkoji.common.exception.errorcode.UserErrorCode;
 import online.mokkoji.event.dto.response.PhotoResDto;
 import online.mokkoji.result.domain.Photo;
 import online.mokkoji.result.domain.Result;
@@ -41,7 +44,6 @@ public class S3ServiceImpl implements S3Service {
     private String bucket;
     private final String LOCAL_PATH = System.getProperty("user.home") + File.separator + "Downloads" +
             File.separator + "mokkoji" + File.separator;
-
 
     private final AmazonS3Client amazonS3Client;
     private final ResultRepository resultRepository;
@@ -204,8 +206,9 @@ public class S3ServiceImpl implements S3Service {
         }
     }
 
+    //Url로 다운로드
     @Override
-    public String downloadWithUrl(String s3Url, String provider, String email) {
+    public String downloadWithUrl(String s3Url) {
         URL url;
         try {
             url = new URL(s3Url);
@@ -214,13 +217,6 @@ public class S3ServiceImpl implements S3Service {
         }
 
         String key = url.getPath().substring(1);
-        String userId = key.substring(0, key.indexOf('/'));
-
-        User loginUser = userRepository.findByProviderAndEmail(Provider.valueOf(provider), email)
-                .orElseThrow(() -> new RestApiException(UserErrorCode.USER_NOT_FOUND));
-
-        if(!userId.equals(loginUser.getId().toString()))
-            throw new RestApiException(S3ErrorCode.PERMISSION_NOT_GRANTED);
 
         File localFile = new File(LOCAL_PATH + key.substring(key.lastIndexOf('/') + 1));
 
@@ -236,18 +232,13 @@ public class S3ServiceImpl implements S3Service {
         return localFile.getAbsolutePath();
     }
 
+    //S3 photoList 전체 다운로드
     @Override
-    public String downloadAllPhotos(Long resultId, String provider, String email) {
-        User loginUser = userRepository.findByProviderAndEmail(Provider.valueOf(provider), email)
-                .orElseThrow(() -> new RestApiException(UserErrorCode.USER_NOT_FOUND));
-
+    public String downloadCellImages(Long resultId) {
         Result findResult = resultRepository.findById(resultId)
                 .orElseThrow(() -> new RestApiException(ResultErrorCode.RESULT_NOT_FOUND));
 
         Long userId = findResult.getUser().getId();
-
-        if(loginUser.getId() != userId)
-            throw new RestApiException(S3ErrorCode.PERMISSION_NOT_GRANTED);
 
         String folderPrefix = userId + "/" + resultId + "/photos/photoList/";
 
@@ -260,7 +251,7 @@ public class S3ServiceImpl implements S3Service {
         for(S3ObjectSummary s3ObjectSummary : listResponse.getObjectSummaries()) {
             String key = s3ObjectSummary.getKey();
 
-            File localFile = new File(LOCAL_PATH + key.substring(key.lastIndexOf('/') + 1));
+            File localFile = new File(LOCAL_PATH + key.substring(key.indexOf('/') + 1));
 
             File parentDir = localFile.getParentFile();
             if(!parentDir.exists()) {
@@ -275,6 +266,7 @@ public class S3ServiceImpl implements S3Service {
         return LOCAL_PATH;
     }
 
+    //다운로드 링크 생성(presigned URL, 공유)
     @Override
     public String createDownloadUrl(String fileName) {
         Date expiration = new Date();
@@ -289,32 +281,31 @@ public class S3ServiceImpl implements S3Service {
         return amazonS3Client.generatePresignedUrl(generatePresignedUrlRequest).toString();
     }
 
+    //포토모자이크 업로드
     @Override
-    public String uploadPhotomosaic(MultipartFile multipartFile, Long resultId, String provider, String email) {
-        User loginUser = userRepository.findByProviderAndEmail(Provider.valueOf(provider), email)
-                .orElseThrow(() -> new RestApiException(UserErrorCode.USER_NOT_FOUND));
-        Long loginId = loginUser.getId();
-
+    public String uploadPhotomosaic(String localPath, Long resultId) {
         Result result = resultRepository.findById(resultId)
                 .orElseThrow(() -> new RestApiException(ResultErrorCode.RESULT_NOT_FOUND));
-        Long userId = result.getUser().getId();
 
-        if(loginId != userId)
-            throw new RestApiException(S3ErrorCode.PERMISSION_NOT_GRANTED);
+        String key = result.getUser().getId() + "/" + resultId + "/photos/photomosaic.jpeg";
 
-        String fileName = userId + "/" + resultId + "/photos/photomosaic.jpeg";
-
-        if (amazonS3Client.doesObjectExist(bucket, fileName)) {
-            amazonS3Client.deleteObject(bucket, fileName);
+        if (amazonS3Client.doesObjectExist(bucket, key)) {
+            amazonS3Client.deleteObject(bucket, key);
         }
+
+        File photomosaic = new File(System.getProperty("user.home") + File.separator + "Desktop" +
+                File.separator + "photomosaic.jpeg");
+
+        PutObjectRequest request = new PutObjectRequest(bucket, key, photomosaic);
 
         try {
-            upload(multipartFile, fileName);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            amazonS3Client.putObject(request);
+        } catch (AmazonServiceException e) {
+            e.printStackTrace();
+        } catch (SdkClientException e) {
+            e.printStackTrace();
         }
 
-        return amazonS3Client.getUrl(bucket, fileName).toString();
+        return amazonS3Client.getUrl(bucket, key).toString();
     }
-
 }

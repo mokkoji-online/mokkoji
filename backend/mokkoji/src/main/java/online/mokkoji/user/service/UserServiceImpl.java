@@ -9,7 +9,7 @@ import online.mokkoji.user.dto.response.MyPageResDto;
 import online.mokkoji.user.dto.response.UpdatePageResDto;
 import online.mokkoji.common.auth.jwt.util.JwtUtil;
 import online.mokkoji.common.exception.RestApiException;
-import online.mokkoji.common.exception.errorCode.UserErrorCode;
+import online.mokkoji.common.exception.errorcode.UserErrorCode;
 import online.mokkoji.user.domain.UserAccount;
 import online.mokkoji.user.repository.AccountRepository;
 import online.mokkoji.user.repository.RecordRepository;
@@ -96,28 +96,25 @@ public class UserServiceImpl implements UserService{
         User newUser = findUser.get();
         newUser.updateAuthority();
         newUser.updateRefreshToken(refreshToken);
+        userRepository.save(newUser);
 
         Record record = Record.builder()
                 .user(newUser)
-                .eventCount(0)
-                .totalMessage(0)
-                .totalParticipant(0)
-                .totalTime(0)
                 .build();
-
-        userRepository.save(newUser);
         recordRepository.save(record);
 
         String bank = userInputReqDto.getBank();
         String accountNumber = userInputReqDto.getAccountNumber();
 
-        UserAccount userAccount = UserAccount.builder()
-                .user(newUser)
-                .bank(bank)
-                .number(accountNumber)
-                .build();
+        if(!bank.equals("") && !accountNumber.equals("")) {
+            UserAccount userAccount = UserAccount.builder()
+                    .user(newUser)
+                    .bank(bank)
+                    .number(accountNumber)
+                    .build();
 
-        accountRepository.save(userAccount);
+            accountRepository.save(userAccount);
+        }
     }
 
     @Override
@@ -160,9 +157,6 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public User getByProviderAndEmail(String provider, String email) {
-        log.info("회원 조회(provider, email) : {}, {}", provider, email);
-
-
         return userRepository.findByProviderAndEmail(Provider.valueOf(provider), email)
                 .orElseThrow(()->new RestApiException(UserErrorCode.USER_NOT_FOUND));
     }
