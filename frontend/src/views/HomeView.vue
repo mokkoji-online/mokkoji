@@ -63,7 +63,7 @@
             <swiper
               :spaceBetween="30"
               :autoplay="{
-                delay: 7500,
+                delay: 5000,
                 pauseOnMouseEnter: true,
                 waitForTransition: 500
               }"
