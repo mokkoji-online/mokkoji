@@ -71,7 +71,9 @@
               </button>
             </div>
           </div>
-          <div class="bg-gray h-[80%] flex flex-col justify-center items-center overflow-hidden">
+          <div
+            class="bg-gray pt-[1vh] h-[80%] flex flex-col justify-start items-center overflow-y-scroll"
+          >
             <UserList
               v-for="user in userList"
               :key="user.stream.connection.connectionId"
@@ -230,10 +232,10 @@
             <span @click="showGiftModal" class="button-text">선물하기</span>
           </div>
           <div>
-            <button id="button-picture" class="bg-purple-200" @click="captureMyVideo">
+            <button id="button-picture" class="bg-purple-200" @click="showCaptureModal">
               <IconCamera class="size-[50%]" />
             </button>
-            <span @click="captureMyVideo" class="button-text">사진찍기</span>
+            <span @click="showCaptureModal" class="button-text">사진찍기</span>
           </div>
         </div>
         <div id="button-container-right" class="w-[25%] h-full flex">
@@ -298,6 +300,11 @@
       />
       <LetterModal v-if="isLetterModal" @remove-letter-modal="showLetterModal" />
       <GiftModal v-if="isGiftModal" />
+      <CaptureModal
+        v-if="isCaptureModal"
+        @capture-my-video="captureMyVideo"
+        @capture-group-video="captureGroupVideo"
+      />
     </transition-group>
     <transition-group name="down">
       <InviteModal v-if="isInviteModal" />
@@ -346,6 +353,7 @@ import GiftModal from '@/components/modal/meeting/GiftModal.vue'
 import LetterModal from '@/components/modal/meeting/LetterModal.vue'
 import GroupModal from '@/components/modal/meeting/GroupModal.vue'
 import GroupAlertModal from '@/components/modal/meeting/GroupAlertModal.vue'
+import CaptureModal from '@/components/modal/meeting/CaptureModal.vue'
 import CaptureCheckModal from '@/components/modal/meeting/CaptureCheckModal.vue'
 import LoginCheckModal from '@/components/modal/meeting/LoginCheckModal.vue'
 
@@ -371,6 +379,7 @@ const isGroup = ref(false)
 const isGroupAlertModal = ref(false)
 const isGiftModal = ref(false)
 const isCount = ref(false)
+const isCaptureModal = ref(false)
 const isCaptureCheckModal = ref(false)
 const isUserList = ref(false)
 const isChat = ref(false)
@@ -471,6 +480,10 @@ const showGiftModal = () => {
   isGiftModal.value = !isGiftModal.value
 }
 
+const showCaptureModal = () => {
+  isCaptureModal.value = !isCaptureModal.value
+}
+
 // 사진 촬영 확인 모달
 const showCaptureCheckModal = () => {
   isCaptureCheckModal.value = true
@@ -535,12 +548,7 @@ const joinSession = () => {
           mirror: false
         })
 
-        if (sessionStorage.getItem('isHost') === 'true') {
-          state.mainStreamManager = publisher
-        } else {
-          state.subscribers.unshift(publisher)
-        }
-
+        state.mainStreamManager = publisher
         state.publisher = publisher
         state.session.publish(publisher)
         userList.value.unshift(publisher)
@@ -559,22 +567,8 @@ const joinSession = () => {
   // 새로운 참가자 입장
   state.session.on('streamCreated', ({ stream }) => {
     const subscriber = state.session.subscribe(stream, undefined)
+    state.subscribers.push(subscriber)
     userList.value.push(subscriber)
-
-    if (sessionStorage.getItem('isHost') === 'false') {
-      for (let idx = 0; idx < userList.value.length; idx++) {
-        const name = JSON.parse(userList.value[idx].stream.connection.data)
-        const subscriberName = JSON.parse(subscriber.stream.connection.data)
-
-        if (subscriberName.clientData === sessionStorage.getItem('host')) {
-          state.mainStreamManager = subscriber
-        } else if (name.clientData === subscriberName.clientData) {
-          state.subscribers.push(subscriber)
-        }
-      }
-    } else {
-      state.subscribers.push(subscriber)
-    }
 
     // 최대 유저수 갱신
     maxUserNum.value = Math.max(maxUserNum.value, userList.value.length)
@@ -754,10 +748,6 @@ const toggleCamera = async () => {
 // 개인 사진 촬영
 const captureMyVideo = () => {
   if ($cookies.get('user') !== null) {
-    const hostStream = state.mainStreamManager
-
-    state.mainStreamManager = state.publisher
-
     isCount.value = true
 
     const countTime = setInterval(() => {
@@ -765,14 +755,12 @@ const captureMyVideo = () => {
     }, 1000)
 
     setTimeout(() => {
-      isCount.value = false
-      setTime.value = 3
-      clearInterval(countTime)
-
       const target = myVideo.value
 
       if (!target) {
-        state.mainStreamManager = hostStream
+        isCount.value = false
+        setTime.value = 3
+        clearInterval(countTime)
         return alert('사진 촬영 실패')
       }
 
@@ -783,11 +771,52 @@ const captureMyVideo = () => {
         })
       })
 
+      isCount.value = false
+      setTime.value = 3
       showCaptureCheckModal()
-      state.mainStreamManager = hostStream
+      clearInterval(countTime)
     }, 3000)
   } else {
-    showLoginCheckModal()
+    isLoginCheckModal.value = true
+  }
+}
+
+// 단체 사진 촬영
+const captureGroupVideo = async () => {
+  if ($cookies.get('user') !== null) {
+    isGrid.value = true
+    isCount.value = true
+
+    const countTime = setInterval(() => {
+      setTime.value--
+    }, 1000)
+
+    setTimeout(() => {
+      const target = groupVideo.value
+
+      if (!target) {
+        isGrid.value = false
+        isCount.value = false
+        setTime.value = 3
+        clearInterval(countTime)
+        return alert('사진 촬영 실패')
+      }
+
+      html2canvas(target).then((canvas) => {
+        canvas.toBlob((blob) => {
+          const file = new File([blob], 'groupVideo.png', { type: 'image/png' })
+          store.sendPicture(file)
+        })
+      })
+
+      isGrid.value = false
+      isCount.value = false
+      setTime.value = 3
+      showCaptureCheckModal()
+      clearInterval(countTime)
+    }, 3000)
+  } else {
+    isLoginCheckModal.value = true
   }
 }
 

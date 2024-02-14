@@ -1,18 +1,21 @@
 <template>
   <div
-    v-if="streamManager && userName.includes(props.searchUserName)"
+    v-if="shouldRender"
     action="/ses_AucL2KJFyW"
     name="group-user-list"
     accept-charset="utf-8"
     class="mb-[1vh] w-[95%] h-[15%] bg-white border-sm border-purple-300 rounded-r-md flex items-center"
   >
     <div class="w-full h-full flex items-center">
-      <img :src="image" alt="사용자 프로필" class="ml-[0.5vw] h-[80%] aspect-square rounded-full" />
+      <img
+        src="@/assets/landing/profile.png"
+        alt="사용자 프로필"
+        class="ml-[0.5vw] h-[90%] aspect-square rounded-full"
+      />
       <div class="ml-[1vw] text-[1vw] w-[40%] flex">
         {{ userName }}
         <div v-if="buttonType === 'user-list' && userName === myName" class="ml-[0.3vw]">(나)</div>
       </div>
-
       <div v-if="buttonType === 'group'" class="mr-[1vw] w-full h-full flex justify-end">
         <input
           type="checkbox"
@@ -28,7 +31,7 @@
           @click="checkUser"
         >
           <div class="flex justify-center items-center hover:bg-[#e7c6ff]">
-            <IconCheck v-if="isChecked" class="h-[4vh]" />
+            <IconCheck v-if="isChecked" class="size-[100%]" />
           </div>
         </label>
       </div>
@@ -37,7 +40,7 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import IconCheck from '@/icons/meeting/IconCheck.vue'
 
 const props = defineProps({
@@ -61,8 +64,9 @@ const props = defineProps({
 const emit = defineEmits(['user-checked']['user-unchecked'])
 
 const isChecked = ref(false)
-const image = ref('')
+const typeCheck = ref('')
 const userName = ref('')
+const hostName = ref(sessionStorage.getItem('host'))
 const checkBox = ref()
 
 // 사용자 이름 가져오기
@@ -99,18 +103,24 @@ const handleUserCheck = () => {
   }
 }
 
-onBeforeMount(() => {
-  getUserName()
+// 조건부 렌더링을 활용해 소그룹 리스트에서는 호스트가 보이지 않고
+// 참여자 목록에서는 호스트가 보이도록 값 지정
+const shouldRender = computed(() => {
+  if (props.buttonType === 'user-list') {
+    return props.streamManager && userName.value.includes(props.searchUserName)
+  } else {
+    return (
+      props.streamManager &&
+      userName.value.includes(props.searchUserName) &&
+      userName.value !== hostName.value
+    )
+  }
+})
 
+onMounted(() => {
+  getUserName()
   // 사용자 별로 체크박스 영역 나누기
   checkBox.value = document.getElementById(`user-${props.userIndex}`)
-
-  // 로그인 유저는 프로필 정보를 가져오고 비로그인 유저는 디폴트 프로필 사진 부여
-  if ($cookies.get('user') !== null) {
-    image.value = $cookies.get('user').image
-  } else {
-    image.value = '@/assets/landing/profile_icon.jpg'
-  }
 })
 </script>
 

@@ -29,6 +29,8 @@ const props = defineProps({
   }
 })
 
+console.log('changed')
+
 const userName = ref()
 const videoElement = ref(null)
 

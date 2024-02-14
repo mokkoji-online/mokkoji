@@ -49,6 +49,6 @@ export const useUserStore = defineStore('user', () => {
     isLogin,
     forceReload,
     getLoginStatus,
-    getBankAccount,
+    getBankAccount
   }
 })
