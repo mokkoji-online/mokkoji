@@ -471,7 +471,7 @@ const showLetterModal = () => {
   if ($cookies.get('user') !== null) {
     isLetterModal.value = !isLetterModal.value
   } else {
-    showLoginCheckModal()
+    isLoginCheckModal.value = true
   }
 }
 
@@ -481,7 +481,11 @@ const showGiftModal = () => {
 }
 
 const showCaptureModal = () => {
-  isCaptureModal.value = !isCaptureModal.value
+  if ($cookies.get('user') !== null) {
+    isCaptureModal.value = !isCaptureModal.value
+  } else {
+    isLoginCheckModal.value = true
+  }
 }
 
 // 사진 촬영 확인 모달
@@ -747,77 +751,69 @@ const toggleCamera = async () => {
 
 // 개인 사진 촬영
 const captureMyVideo = () => {
-  if ($cookies.get('user') !== null) {
-    isCount.value = true
+  isCount.value = true
 
-    const countTime = setInterval(() => {
-      setTime.value--
-    }, 1000)
+  const countTime = setInterval(() => {
+    setTime.value--
+  }, 1000)
 
-    setTimeout(() => {
-      const target = myVideo.value
+  setTimeout(() => {
+    const target = myVideo.value
 
-      if (!target) {
-        isCount.value = false
-        setTime.value = 3
-        clearInterval(countTime)
-        return alert('사진 촬영 실패')
-      }
-
-      html2canvas(target).then((canvas) => {
-        canvas.toBlob((blob) => {
-          const file = new File([blob], 'myVideo.png', { type: 'image/png' })
-          store.sendPicture(file)
-        })
-      })
-
+    if (!target) {
       isCount.value = false
       setTime.value = 3
-      showCaptureCheckModal()
       clearInterval(countTime)
-    }, 3000)
-  } else {
-    isLoginCheckModal.value = true
-  }
+      return alert('사진 촬영 실패')
+    }
+
+    html2canvas(target).then((canvas) => {
+      canvas.toBlob((blob) => {
+        const file = new File([blob], 'myVideo.png', { type: 'image/png' })
+        store.sendPicture(file)
+      })
+    })
+
+    isCount.value = false
+    setTime.value = 3
+    showCaptureCheckModal()
+    clearInterval(countTime)
+  }, 3000)
 }
 
 // 단체 사진 촬영
 const captureGroupVideo = async () => {
-  if ($cookies.get('user') !== null) {
-    isGrid.value = true
-    isCount.value = true
+  isGrid.value = true
+  isCount.value = true
 
-    const countTime = setInterval(() => {
-      setTime.value--
-    }, 1000)
+  const countTime = setInterval(() => {
+    setTime.value--
+  }, 1000)
 
-    setTimeout(() => {
-      const target = groupVideo.value
+  setTimeout(() => {
+    const target = groupVideo.value
 
-      if (!target) {
-        isGrid.value = false
-        isCount.value = false
-        setTime.value = 3
-        clearInterval(countTime)
-        return alert('사진 촬영 실패')
-      }
-
-      html2canvas(target).then((canvas) => {
-        canvas.toBlob((blob) => {
-          const file = new File([blob], 'groupVideo.png', { type: 'image/png' })
-          store.sendPicture(file)
-        })
-      })
-
+    if (!target) {
       isGrid.value = false
       isCount.value = false
       setTime.value = 3
-      showCaptureCheckModal()
       clearInterval(countTime)
-    }, 3000)
-  } else {
-    isLoginCheckModal.value = true
-  }
+      return alert('사진 촬영 실패')
+    }
+
+    html2canvas(target).then((canvas) => {
+      canvas.toBlob((blob) => {
+        const file = new File([blob], 'groupVideo.png', { type: 'image/png' })
+        store.sendPicture(file)
+      })
+    })
+
+    isGrid.value = false
+    isCount.value = false
+    setTime.value = 3
+    showCaptureCheckModal()
+    clearInterval(countTime)
+  }, 3000)
 }
 
 const updateMainVideoStreamManager = (stream) => {
