@@ -8,7 +8,7 @@
     >
       <div class="relative w-full h-[100%] flex items-center">
         <div class="absolute w-full h-full flex justify-center items-center">
-          <img src="@/assets/logo/mokkoji_logo.png" alt="" class="w-[60%] opacity-10 z-0" />
+          <img src="@/assets/logo/mokkoji_logo.png" alt="" class="w-[50%] opacity-10 z-0" />
         </div>
         <div
           class="w-full h-full flex flex-col py-[10vh] justify-center items-center text-r-md font-bold z-10"

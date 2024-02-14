@@ -174,7 +174,7 @@ pre {
     );
   }
   #card-div {
-    @apply rounded-md shadow-lg bg-white p-10 flex flex-col mt-24 mb-40 border-2 border-slate-200 w-fit;
+    @apply rounded-md shadow-lg bg-white p-10 flex flex-col mt-24 mb-40 border-2 border-slate-200; 
   }
 
   #button-submit {
@@ -222,7 +222,7 @@ pre {
   }
 
   #section-main {
-    @apply h-[] justify-between flex flex-col;
+    @apply justify-between flex flex-col ;
   }
 
   #svg-curve-1 {

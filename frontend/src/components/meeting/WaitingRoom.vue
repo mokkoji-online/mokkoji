@@ -73,6 +73,7 @@ const joinMeeting = async () => {
 
     if (result === 'success') {
       isInputError.value = false
+      sessionStorage.setItem('userName', userName.value)
       router.push('/meetings')
     } else {
       isInputError.value = true

@@ -23,19 +23,19 @@
     <div class="h-2/3 flex justify-center">
       <div class="h-[100%] w-[100%] pl-1 pt-5 rounded-lg bg-[#ffffff] border-2 border-solid border-[#e7cffe] text-center">
         <p class="flex  justify-center items-center">
-          모꼬지 날짜 <Icon-calen /> : {{ memory.eventDay }} ({{ lastDayToEdit.dayOfWeek }})
+          모꼬지 날짜 <Icon-calen /> : {{ memory.date }} ({{ lastDayToEdit.dayOfWeek }})
         </p>
-        <p class="flex  justify-center items-center"> 모꼬지 진행 시간 <IconClock />: {{ memory.eventRunTime }}</p>
-        <p class="flex justify-center items-center"> 참여 인원 수 <IconPeople />: {{ memory.participants }}</p>
+        <!-- <p class="flex  justify-center items-center"> 모꼬지 진행 시간 <IconClock />: {{ memory.eventRunTime }}</p> -->
+        <p class="flex justify-center items-center"> 참여 인원 수 <IconPeople />: {{ memory.participantCount }}</p>
         <p>편집 가능 기간 : <a class="effect-yellow"> {{ lastDayToEdit.expireDay }}</a></p>
         <p class="text-center mt-8">
           편집 가능 기간이 <strong> {{ lastDayToEdit.editablePeriod }}일 </strong> 남았어요
         </p>
         <div class="flex justify-center items-center pb-3">
-        <button class= "bg-[#f5eefc] mr-5 rounded-2xl h-8 w-20 mt-2  hover:bg-[#e7cffe]" @click="showWarningModal">
+        <button class= "bg-[#f5eefc] mr-5 rounded-2xl h-8 w-20 mt-2  hover:bg-[#e7cffe]" @click='showWarningModal'>
           추억쌓기
           </button>
-         <router-link to="/editpage"><button class="text-md  bg-[#fff8c6]  mr-3 rounded-2xl h-8 w-20 mt-2 hover:bg-[#fff396]"  >
+         <router-link to="/editpage"><button class="text-md  bg-[#fff8c6]  mr-3 rounded-2xl h-8 w-20 mt-2 hover:bg-[#fff396]" @click="bindResultID">
           편집
         </button></router-link>
         </div>
@@ -47,7 +47,7 @@
     name="modal-fade"
     class="fixed top-0 left-0 h-full w-full border-solid custom-modal-bg z-20 flex items-center justify-center"
   >
-    <div v-if="isOpenWarningModal" class="">
+    <div v-if='isOpenWarningModal' class="">
       <div class="bg-violet-50 fixed top-[100px] w-[800px] h-[500px] rounded-lg custom-background">
         <div
           class="absolute h-[22rem] w-72 top-[80px] left-[420px]  bg-[#e7cffe] rounded-2xl"
@@ -74,10 +74,10 @@
           <div class="h-2/3 flex justify-center">
       <div class="h-[100%] w-[100%] pl-1 pt-5 rounded-lg bg-[#ffffff] border-2 border-solid border-[#e7cffe] text-center">
         <p class="flex  justify-center items-center">
-          모꼬지 날짜 <Icon-calen /> : {{ memory.eventDay }} ({{ lastDayToEdit.dayOfWeek }})
+          모꼬지 날짜 <Icon-calen /> : {{ memory.date }} ({{ lastDayToEdit.dayOfWeek }})
         </p>
-        <p class="flex justify-center items-center"> 모꼬지 진행 시간 <IconClock />: {{ memory.eventRunTime }}</p>
-        <p class="flex justify-center items-center"> 참여 인원 수 <IconPeople />: {{ memory.participants }}</p>
+        <!-- <p class="flex justify-center items-center"> 모꼬지 진행 시간 <IconClock />: {{ memory.eventRunTime }}</p> -->
+        <p class="flex justify-center items-center"> 참여 인원 수 <IconPeople />: {{ memory.participantCount }}</p>
         <p>편집 가능 기간 : <a class="effect-yellow"> {{ lastDayToEdit.expireDay }}</a></p>
         <p class="text-center mt-8">
           편집 가능 기간이 <strong> {{ lastDayToEdit.editablePeriod }}일 </strong> 남았어요
@@ -130,18 +130,18 @@
         </p>
         <p class="absolute top-[120px] left-[30px]"><IconSingleFlower/></p>
         <p class="absolute top-[115px] text-2xl left-[50px] effect-purple">행사명</p>
-        <input type="text" @input="inputHandlerName" :disabled="isDisabledName" maxlength = "15" placeholder="ex. 결혼식" class="text-center bg-white placeholder:text-2xl absolute top-[100px] text-2xl left-[150px] rounded-lg w-[350px] border-violet-300  border-2 border-solid placeholder:text-center focus:border-black" ></input>
+        <input v-model="eventDataAdd.name" type="text" @input="inputHandlerName" :disabled="isDisabledName" maxlength = "10" placeholder="ex. 결혼식" class="text-center bg-white placeholder:text-2xl absolute top-[100px] text-2xl left-[150px] rounded-lg w-[350px] border-violet-300  border-2 border-solid placeholder:text-center focus:border-black" ></input>
         <p class="absolute top-[195px] left-[30px]"><IconSingleFlower/></p>
         <p class="absolute top-[190px] text-2xl left-[50px] effect-purple">행사설명</p>
-        <textarea @input="inputHandlerContent" :disabled="isDisabledContent" placeholder="ex. 검은 머리 파뿌리 될때까지... &#13;ex. Will you marry me? 가장 많이 웃은 날" maxlength = "99" class="resize-none bg-white absolute top-[190px] text-2xl left-[160px] rounded-lg w-[350px] h-[200px] focus:border-black border-violet-300  border-2 border-solid placeholder: text-center"></textarea>
-        <button @click="showInputModal" class="absolute top-[415px] text-lg left-[160px] border-violet-300 border-2 border-solid rounded-lg px-4 py-2 w-[350px]  hover:bg-[#e7cffe] ">입력 완료 및 추억 쌓기</button>
+        <textarea v-model="eventDataAdd.memo" @input="inputHandlerContent" :disabled="isDisabledContent" placeholder="ex. 검은 머리 파뿌리 될때까지... &#13;ex. Will you marry me? 가장 많이 웃은 날" maxlength = "35" class="resize-none bg-white absolute top-[190px] text-2xl left-[160px] rounded-lg w-[350px] h-[200px] focus:border-black border-violet-300  border-2 border-solid placeholder: text-center"></textarea>
+        <button @click="closeAndRecollection" class="absolute top-[415px] text-lg left-[160px] border-violet-300 border-2 border-solid rounded-lg px-4 py-2 w-[350px]  hover:bg-[#e7cffe] ">입력 완료 및 추억 쌓기</button>
       </div>
     </div>
   </transition>
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import IconCalen from '@/icons/result/IconCalen.vue'
 import IconClock from '@/icons/result/IconClock.vue'
 import IconPeople from '@/icons/result/IconPeople.vue'
@@ -150,20 +150,36 @@ import IconCheckMark from '@/icons/result/IconCheckMark.vue'
 import IconWarning from '@/icons/result/IconWarning.vue'
 import IconSingleFlower from '@/icons/result/IconSingleFlower.vue'
 import IconClosePurple from '@/icons/result/IconClosePurple.vue'
+import {useToRecollection, useResultIDStore } from '@/stores/result.js'
 
 const props = defineProps(['memory'])
+const toRecollectionStore = useToRecollection()
+const resultIDStore = useResultIDStore()
+const eventDataAdd = ref({
+  name: '',
+  memo: ''
+})
 
 const { VITE_MEMORY_IMG_COUNT } = import.meta.env
-const isRollingDone = true
-const isPhotoDone = false
+const isRollingDone = ref(false)
+const isPhotoDone = ref(false)
 const isOpenWarningModal = ref(false)
 const isOpenInputModal = ref(false)
 
 
 const isDisabledName= ref(false)
 const isDisabledContent=ref(false)
-const eventName = ref("")
-const eventContent = ref("")
+
+
+const toRecollection = (id) => {
+  console.log(`${id}를 기억에서 추억으로....`)
+  console.log(eventDataAdd.value)
+  toRecollectionStore.toRecollection(id, eventDataAdd.value, (res) => {
+    console.log(res)
+  }, (error) => {
+    console.log(error)
+  })
+}
 
 
 //입력 글자수 제한
@@ -176,7 +192,7 @@ const inputHandlerName = (e) => {
     else {
       this.isDisabledName = false
     }
-    eventName.value = target.value;
+    
 
 }
 
@@ -191,18 +207,18 @@ const inputHandlerContent = (e) => {
     else {
       this.isDisabledContent = false
     }
-    eventContent.value = target.value;
+    
 
 }
 
 //기억 카드 무작위 행사 이미지 배치
 const imgNo = computed(() => {
-  let no = props.memory.eventId % VITE_MEMORY_IMG_COUNT
+  let no = props.memory.resultId % VITE_MEMORY_IMG_COUNT
   return no === 0 ? VITE_MEMORY_IMG_COUNT : no
 })
 
 const lastDayToEdit = computed(() => {
-  let eventDate = new Date(props.memory.eventDay) //편집 마감 기한 계산하기
+  let eventDate = new Date(props.memory.date) //편집 마감 기한 계산하기
   let expireMonth = eventDate.getMonth() + 2 //0 - 11월
   let expireDay = eventDate.getDate()
   let expireYear = eventDate.getYear() + 1900
@@ -219,9 +235,37 @@ const lastDayToEdit = computed(() => {
   return {
     editablePeriod: editablePeriod,
     expireDay: '~' + expireMonth + '월 ' + expireDay +'일',
-    dayOfWeek: eventDate.getDay()
+    dayOfWeek: dayToKorean(eventDate.getDay())
   }
 })
+
+const dayToKorean = (value) => {
+  let day = ''
+  switch (value) {
+    case 0:
+      day = '일'
+      break
+    case 1:
+      day = '월'
+      break
+    case 2:
+      day = '화'
+      break
+    case 3:
+      day = '수'
+      break
+    case 4:
+      day = '목'
+      break
+    case 5:
+      day = '금'
+      break
+    case 6:
+      day = '토'
+      break
+  }
+  return day
+}
 
 
 const showWarningModal = () => {
@@ -233,7 +277,22 @@ const showInputModal = () => {
   isOpenInputModal.value = !isOpenInputModal.value
 
 }
+const closeAndRecollection = () => {
+  showInputModal()
+  toRecollection(props.memory.resultId)
+  location.reload()
+}
 
+const bindResultID = () => {
+  resultIDStore.assignID(props.memory.resultId)
+  console.log(`바인딩된 resultID - ${resultIDStore.getID}`)
+}
+
+onMounted(() => {
+  isRollingDone.value = props.memory.paperEdited
+  isPhotoDone.value = props.memory.mosaicCreated
+
+})
 </script>
 
 <style>

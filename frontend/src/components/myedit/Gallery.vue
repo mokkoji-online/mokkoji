@@ -37,21 +37,21 @@
         </div> -->
 
         <div
-          class="mt-[3vh] opacity-70 border-[3px] rounded-lg h-[2vw] w-[15vw] mx-auto border-[#9f46c8] justify-center items-center flex hover:cursor-pointer hover:opacity-100"
+          class="mt-[3vh] opacity-70 border-[3px] rounded-lg h-[2.5vw] w-[15vw] mx-auto border-[#9f46c8] justify-center items-center flex hover:cursor-pointer hover:opacity-100"
           @click="showSaved('대표이미지')"
         >
           <p class="text-[20px] flex text-center">대표이미지 설정하기 <IconMainPhoto /></p>
         </div>
 
         <div
-          class="mt-[3vh] opacity-70 border-[3px] rounded-lg h-[2vw] w-[15vw] mx-auto border-[#9f46c8] justify-center items-center flex hover:cursor-pointer hover:opacity-100"
+          class="mt-[3vh] opacity-70 border-[3px] rounded-lg h-[2.5vw] w-[15vw] mx-auto border-[#9f46c8] justify-center items-center flex hover:cursor-pointer hover:opacity-100"
           @click="showSaved('포토모자이크')"
         >
           <p class="text-[20px] flex text-center">포토모자이크 생성하기 <IconMosaic /></p>
         </div>
       </div>
     </div>
-    <div class="w-[5%]"></div>
+    <div class="w-[2vw]"></div>
     <div class="">
       <div class="flex justify-end items-end pt-[1vh]">
         <button
@@ -89,7 +89,7 @@
       v-if="isSaved"
       class="fixed bottom-[50%] left-[50%] custom-translate rounded-lg bg-slate-50 px-14 py-3 z-30"
     >
-      <p class="flex text-[30px]">{{ alertText }} <IconConfetti /></p>
+      <p class="flex text-[30px]">{{ alertText }}</p>
     </div>
   </transition>
   <!-- 사진 업로드 모달 - 자르기 -->
@@ -102,7 +102,7 @@
       <p class="text-lg my-5 ml-40">
         원하는 이미지를 정사각형 형태로 자른 뒤, 이미지 업로드를 진행해 주세요
       </p>
-      <button class="ml-24 mb-4" @click="showCutPhotoUploadModal"><IconClose /></button>
+      <button class="ml-24 mb-4" @click="closeCutPhotoUploadModal"><IconClose /></button>
     </div>
     <div class="flex content-center items-center">
       <ImgUpload />
@@ -116,19 +116,11 @@
     v-if="isPhotoUploadModal"
     class="fixed bottom-[30px] left-[200px] w-[1000px] h-[700px] border-2 rounded-lg border-[#5da2bd] z-20 bg-[#f5fcff]"
   >
-    <button class="absolute right-[10px] top-[10px]" @click="showPhotoUploadModal">
+    <button class="absolute right-[10px] top-[10px]" @click="closePhotoUploadModal">
       <IconClose />
     </button>
     <div class="flex content-center items-center">
       <ImgUploadBulk />
-    </div>
-    <div>
-      <button
-        class="absolute left-[430px] bottom-[-10px] opacity-70 text-[16px] border-[#5da2bd] flex pt-1 rounded-lg hover:opacity-100 border-2 border-solid mb-5 px-10 py-1"
-        @click="uploadImage"
-      >
-        이미지 업로드
-      </button>
     </div>
   </div>
   <!-- 사진 업로드 설명 모달-->
@@ -137,7 +129,13 @@
 <script setup>
 import { ref, onMounted, onUnmounted, defineProps } from 'vue'
 import getImages from '@/api/get_images'
-import { useMainImageStore } from '@/stores/result.js'
+import {
+  useMainImageStore,
+  useGalleryStore,
+  useSaveThumbnail,
+  useResultIDStore,
+  useCreatePhotomosaic
+} from '@/stores/result.js'
 import IconConfetti from '@/icons/result/IconConfetti.vue'
 import IconPhotoAdd from '@/icons/result/IconPhotoAdd.vue'
 import IconClose from '@/icons/result/IconClose.vue'
@@ -148,6 +146,12 @@ import IconQuestionMarkBlue from '@/icons/result/IconQuestionMarkBlue.vue'
 import IconMosaic from '@/icons/result/IconMosaic.vue'
 import IconMainPhoto from '@/icons/result/IconMainPhoto.vue'
 import IconCheckBlue from '@/icons/result/IconCheckMark.vue'
+import { Endpoint } from 'aws-sdk'
+
+const galleryStore = useGalleryStore()
+const saveThumbnailStore = useSaveThumbnail()
+const resultIDStore = useResultIDStore()
+const createPhotomosaicStore = useCreatePhotomosaic()
 
 const props = defineProps({
   scrollToHelp: Function
@@ -164,9 +168,11 @@ const alertText = ref('')
 const isSaved = ref(false)
 const isCutPhotoUploadModal = ref(false)
 const isPhotoUploadModal = ref(false)
+const isSelectedImage = ref(false)
 
-const pageSize = 30
 const photos = ref([])
+const gallery = ref([])
+const endPoint = ref(0)
 const totalPhotos = ref(0)
 const scrollContainer = ref(null)
 const scrollComponent = ref(null)
@@ -178,15 +184,27 @@ const showCutPhotoUploadModal = () => {
   isCutPhotoUploadModal.value = !isCutPhotoUploadModal.value
 }
 
+const closeCutPhotoUploadModal = () => {
+  isPhotoUploadModal.value = false
+  isCutPhotoUploadModal.value = !isCutPhotoUploadModal.value
+  loadGallery()
+}
+
 const showPhotoUploadModal = () => {
   isCutPhotoUploadModal.value = false
   isPhotoUploadModal.value = !isPhotoUploadModal.value
 }
 
-const loadPhotos = (count) => {
-  const newImages = getImages(count)
+const closePhotoUploadModal = () => {
+  isCutPhotoUploadModal.value = false
+  isPhotoUploadModal.value = !isPhotoUploadModal.value
+  loadGallery()
+}
+
+const loadPhotos = (number) => {
+  const newImages = getImages(0, number, gallery.value)
+  endPoint.value = number
   photos.value = newImages
-  totalPhotos.value = newImages.length
 }
 
 const deletePhoto = (index) => {
@@ -194,8 +212,13 @@ const deletePhoto = (index) => {
 }
 
 const loadMorePhotos = () => {
-  const remainingPhotosCount = totalPhotos.value - photos.value.length
-  const newImages = getImages(Math.min(10, remainingPhotosCount))
+  const remainingPhotosCount = totalPhotos.value - endPoint.value
+  const newImages = getImages(
+    endPoint.value,
+    endPoint.value + Math.min(10, remainingPhotosCount),
+    gallery.value
+  )
+  endPoint.value = endPoint.value + Math.min(10, remainingPhotosCount)
   photos.value.push(...newImages)
 }
 
@@ -208,13 +231,42 @@ const handleScroll = () => {
 }
 
 const selectedPhoto = (photo) => {
-  //accesssing state
-  console.log(store.selectedImage)
   store.selectedImage(photo) //data 보내기
-  //accessing getters
-  console.log(store.getSelectedImage)
-
   selectedImage.value = store.getSelectedImage
+  isSelectedImage.value = true
+}
+
+const saveThumbnail = (id) => {
+  console.log(`행사번호 ${id}의 대표이미지 저장하기`)
+  let result = 1
+  saveThumbnailStore.saveThumbnail(
+    id,
+    selectedImage.value,
+    (res) => {
+      console.log(res)
+      console.log('대표이미지가 저장되었습니다.')
+      result = 1
+    },
+    (error) => {
+      console.log(error)
+      result = 0
+    }
+  )
+  return result
+}
+
+const createPhotomosaic = (id) => {
+  console.log(`행사번호 ${id}의 포토모자이크 생성하기`)
+  let result = 1
+  createPhotomosaicStore.createPhotomosaic(
+    id,
+    (res) => {
+      console.log(res)
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
 }
 
 const showSaved = (e) => {
@@ -223,20 +275,49 @@ const showSaved = (e) => {
     isSaved.value = false
   }, 2000)
   switch (e) {
-    case '템플릿':
-      alertText.value = '선택한 템플릿을 저장했어요'
-      break
     case '포토모자이크':
-      alertText.value = '포토모자이크를 생성했어요'
+      if (createPhotomosaic(resultIDStore.getID) === 1) {
+        alertText.value = '포토모자이크를 생성했어요'
+      } else {
+        alertText.value = '포토모자이크 생성에 실패했어요'
+      }
       break
     case '대표이미지':
-      alertText.value = '대표 이미지를 설정했어요'
+      if (!isSelectedImage.value) {
+        alertText.value = '대표이미지 설정에 실패했어요'
+      } else {
+        if (saveThumbnail(resultIDStore.getID) === 1) {
+          alertText.value = '대표이미지를 설정했어요'
+        } else {
+          alertText.value = '대표이미지 설정에 실패했어요'
+        }
+      }
       break
   }
 }
 
+const loadGallery = () => {
+  // setTimeout(() => {
+  //   totalPhotos.value = galleryStore.uploadedPhotos.length //총 사진의 수
+  //   console.log(totalPhotos.value)
+  //   gallery.value = galleryStore.uploadedPhotos //사진 전체
+  // }, 200)
+  location.reload()
+}
+
 onMounted(() => {
-  loadPhotos(pageSize)
+  setTimeout(() => {
+    totalPhotos.value = galleryStore.uploadedPhotos.length //총 사진의 수
+    console.log(totalPhotos.value)
+    gallery.value = galleryStore.uploadedPhotos //사진 전체
+
+    if (totalPhotos.value < 30) {
+      //20장 이하이면 그 갯수만
+      loadPhotos(totalPhotos.value)
+    } else {
+      loadPhotos(30)
+    }
+  }, 200)
   scrollContainer.value.addEventListener('scroll', handleScroll)
 })
 
@@ -252,7 +333,7 @@ onUnmounted(() => {
 
 .custom-scroll-container {
   overflow-y: scroll;
-  height: 70vh;
+  height: 68vh;
   scrollbar-width: thin; /* For Firefox */
   scrollbar-color: rgb(255, 255, 255) rgb(190, 212, 244); /* For Firefox */
 }

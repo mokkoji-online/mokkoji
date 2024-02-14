@@ -85,7 +85,6 @@ const checkedUserList = ref([])
 const handleUserChecked = (checkedUser) => {
   if (checkedUser.userName !== undefined) {
     checkedUserList.value.push(checkedUser)
-    console.log(checkedUserList.value)
   } else {
     checkedUserList.value.forEach((user, index) => {
       if (user.userIndex === checkedUser.userIndex) {

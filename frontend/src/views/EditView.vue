@@ -38,7 +38,7 @@
   </div>
   <!-- 섹션 3/6 롤링페이퍼 편집 -->
   <div class="bg-slate-100 h-[100vh] flex" ref="rollingpaper">
-    <div class="w-[22vw] flex items-center">
+    <div class="w-[24vw] flex items-center">
       <div class="ml-[10vb]">
         <p class="flex items-center justify-center"><IconLoveLetterBlue /></p>
         <p class="flex items-center text-[25px] justify-center pt-2">원하는 템플릿을 선택한 후</p>
@@ -59,60 +59,80 @@
           <p class="justify-center flex text-[25px]">배경지</p>
           <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
             <p class="effect-blue flex" v-if="isSelectedBasic">기본 <IconCheckBlue /></p>
-            <p class="highlight-blue" v-if="isNotSelectedBasic" @click="selectOpt('기본')">기본</p>
+            <p class="highlight-blue" v-if="isNotSelectedBasic" @click="selectBackground('BASIC')">
+              기본
+            </p>
           </div>
           <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
             <p class="effect-blue flex" v-if="isSelectedWedding">결혼식<IconCheckBlue /></p>
-            <p class="highlight-blue" v-if="isNotSelectedWedding" @click="selectOpt('결혼식')">
+            <p
+              class="highlight-blue"
+              v-if="isNotSelectedWedding"
+              @click="selectBackground('WEDDING')"
+            >
               결혼식
             </p>
           </div>
           <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
             <p class="effect-blue flex" v-if="isSelectedSchool">졸업식 <IconCheckBlue /></p>
-            <p class="highlight-blue" v-if="isNotSelectedSchool" @click="selectOpt('졸업식')">
+            <p
+              class="highlight-blue"
+              v-if="isNotSelectedSchool"
+              @click="selectBackground('SCHOOL')"
+            >
               졸업식
             </p>
           </div>
           <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
             <p class="effect-blue flex" v-if="isSelectedBaby">돌잔치 <IconCheckBlue /></p>
-            <p class="highlight-blue" v-if="isNotSelectedBaby" @click="selectOpt('돌잔치')">
+            <p class="highlight-blue" v-if="isNotSelectedBaby" @click="selectBackground('BABY')">
               돌잔치
             </p>
           </div>
           <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
             <p class="effect-blue flex" v-if="isSelectedLunar">명절 <IconCheckBlue /></p>
-            <p class="highlight-blue" v-if="isNotSelectedLunar" @click="selectOpt('명절')">명절</p>
+            <p class="highlight-blue" v-if="isNotSelectedLunar" @click="selectBackground('LUNAR')">
+              명절
+            </p>
           </div>
         </div>
         <div class="w-1/2">
           <p class="justify-center flex text-[25px]">속지</p>
           <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
             <p class="effect-skyblue flex" v-if="isSelectedPastel">파스텔 <IconCheckSkyBlue /></p>
-            <p class="highlight-skyblue" v-if="isNotSelectedPastel" @click="selectOptTwo('파스텔')">
+            <p
+              class="highlight-skyblue"
+              v-if="isNotSelectedPastel"
+              @click="selectInground('RAINBOW')"
+            >
               파스텔
             </p>
           </div>
           <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
             <p class="effect-skyblue flex" v-if="isSelectedGreen">초록색 <IconCheckSkyBlue /></p>
-            <p class="highlight-skyblue" v-if="isNotSelectedGreen" @click="selectOptTwo('초록색')">
+            <p class="highlight-skyblue" v-if="isNotSelectedGreen" @click="selectInground('GREEN')">
               초록색
             </p>
           </div>
           <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
             <p class="effect-skyblue flex" v-if="isSelectedBlue">파랑색 <IconCheckSkyBlue /></p>
-            <p class="highlight-skyblue" v-if="isNotSelectedBlue" @click="selectOptTwo('파랑색')">
+            <p class="highlight-skyblue" v-if="isNotSelectedBlue" @click="selectInground('BLUE')">
               파랑색
             </p>
           </div>
           <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
             <p class="effect-skyblue flex" v-if="isSelectedPink">분홍색 <IconCheckSkyBlue /></p>
-            <p class="highlight-skyblue" v-if="isNotSelectedPink" @click="selectOptTwo('분홍색')">
+            <p class="highlight-skyblue" v-if="isNotSelectedPink" @click="selectInground('PINK')">
               분홍색
             </p>
           </div>
           <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
             <p class="effect-skyblue flex" v-if="isSelectedYellow">노랑색 <IconCheckSkyBlue /></p>
-            <p class="highlight-skyblue" v-if="isNotSelectedYellow" @click="selectOptTwo('노랑색')">
+            <p
+              class="highlight-skyblue"
+              v-if="isNotSelectedYellow"
+              @click="selectInground('YELLOW')"
+            >
               노랑색
             </p>
           </div>
@@ -152,12 +172,12 @@
         v-if="isSaved"
         class="fixed bottom-[50%] left-[50%] custom-translate rounded-lg bg-slate-50 px-14 py-3 z-30"
       >
-        <p class="flex text-[30px]">{{ alertText }} <IconConfetti /></p>
+        <p class="flex text-[30px]">{{ alertText }}</p>
       </div>
     </transition>
   </div>
   <!-- 섹션 4/6 도움말, 올라가기, 내려가기 -->
-  <div class="h-[100vh] mt-5" ref="help">
+  <div class="h-[100vh] pt-5 bg-white" ref="help">
     <div class="flex justify-center items-center h-[120px]">
       <div class="mr-5" @click="scrollToPhotoMosaic"><IconScrollDownBlue /></div>
       <div class="ml-5" @click="scrollToTop"><IconUpArrowPurple /></div>
@@ -186,7 +206,7 @@
       >
       <p />
     </div>
-    <div class="h-[300px] flex items-center justify-center">
+    <div class="h-[300px] bg-white flex items-center justify-center">
       <div v-if="isDefaultHelp">
         <div class="mb-10 flex items-center justify-center">
           <IconQuestionMarkGray />
@@ -225,7 +245,7 @@
       <div v-if="isHoveredPhotoUpload" data-aos="fade-up" data-aos-duration="2000">
         <div class="flex">
           <div class="">
-            <img src="@/assets/eventlist/img_crop_ex.png" class="ㅔt-10 mr-10 w-48" />
+            <img src="@/assets/eventlist/img_crop_ex.png" class="t-10 mr-10 w-48" />
           </div>
           <div class="ml-10 text-xl">
             <p class="pt-5">
@@ -255,7 +275,7 @@
       </p>
     </div>
     <div class="h-[100vh] flex">
-      <div class="w-[23vw] flex items-center">
+      <div class="w-[27vw] flex items-center">
         <div class="ml-[10vb]">
           <p class="flex items-center justify-center"><IconGalleryColored /></p>
           <p class="flex items-center text-[25px] justify-center pt-5">대표 이미지를 지정하고</p>
@@ -271,7 +291,7 @@
     </div>
   </div>
   <!-- 섹션 6/6 올라가기 -->
-  <div class="h-[200px]">
+  <div class="h-[200px] bg-white">
     <div class="justify-center flex" @click="scrollToRollingPaper"><IconUpArrowPurple /></div>
     <div class="text-slate-500 justify-center flex" @click="scrollToTop">
       <strong>처음으로</strong>
@@ -281,11 +301,15 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-
+import {
+  useEditMemory,
+  useSaveTemplate,
+  useGalleryStore,
+  useResultIDStore
+} from '@/stores/result.js'
 import IconLoveLetterColored from '@/icons/result/IconLoveLetterColored.vue'
 import IconGalleryColored from '@/icons/result/IconGalleryColored.vue'
 import IconGalleryTitle from '@/icons/result/IconGalleryTitle.vue'
-import IconFlowersColoredTwo from '@/icons/result/IconFlowersColoredTwo.vue'
 import IconScrollDownBlue from '@/icons/result/IconScrollDownBlue.vue'
 import IconUpArrowPurple from '@/icons/result/IconScrollUpPurple.vue'
 import IconScrollDownGray from '@/icons/result/IconScrollDownGray.vue'
@@ -295,15 +319,17 @@ import IconLocation from '@/icons/result/IconLocation.vue'
 import IconWifi from '@/icons/result/IconWifi.vue'
 import IconLoveLetterBlue from '@/icons/result/IconLoveLetterBlue.vue'
 import IconCheckMark from '@/icons/result/IconCheck.vue'
-import IconSearch from '@/icons/result/IconSearch.vue'
 import IconConfetti from '@/icons/result/IconConfetti.vue'
 import IconQuestionMark from '@/icons/result/IconQuestionMark.vue'
 import IconCheckSkyBlue from '@/icons/result/IconCheckSkyBlue.vue'
 import IconCheckBlue from '@/icons/result/IconCheckBlue.vue'
 import Gallery from '@/components/myedit/Gallery.vue'
-import IconCrop from '@/icons/result/IconCrop.vue'
-import IconPhotoAdd from '@/icons/result/IconPhotoAdd.vue'
 import IconQuestionMarkGray from '@/icons/result/IconQuestionMarkGray.vue'
+
+const editMemoryStore = useEditMemory()
+const saveTemplateStore = useSaveTemplate()
+const galleryStore = useGalleryStore()
+const resultIDStore = useResultIDStore()
 
 const isSaved = ref(false)
 const isHoveredHelp = ref(false)
@@ -318,13 +344,14 @@ const rollingpaper = ref(null)
 const photomosaic = ref(null)
 const help = ref(null)
 const top = ref(null)
-const canvas = ref(null)
+const resultID = ref('')
+
+let uploadedPhotos = []
 
 const direction = ref('대표이미지란?')
 
 const design = ref('basic')
 const color = ref('rainbow')
-const fileName = ref('')
 const alertText = ref('')
 
 const isSelectedBasic = ref(true)
@@ -350,6 +377,12 @@ const isNotSelectedBlue = ref(true)
 const isNotSelectedYellow = ref(true)
 const isNotSelectedGreen = ref(true)
 const isNotSelectedPink = ref(true)
+
+//아무것도 지정 안해도 값을 넘겨줌
+const rollingPaperTemplate = ref({
+  backgroundName: 'basic',
+  postitName: 'rainbow'
+})
 
 const onHelp = () => {
   isHoveredHelp.value = true
@@ -408,19 +441,56 @@ const showSaved = (e) => {
   }, 2000)
   switch (e) {
     case '템플릿':
-      alertText.value = '선택한 템플릿을 저장했어요'
-      break
-    case '포토모자이크':
-      alertText.value = '포토모자이크를 생성했어요'
-      break
-    case '대표이미지':
-      alertText.value = '대표 이미지를 설정했어요'
+      if (saveTemplate(resultID.value) === 1) {
+        alertText.value = '선택한 템플릿을 저장했어요'
+      } else {
+        alertText.value = '저장에 실패했어요'
+      }
       break
   }
 }
 
+const saveTemplate = (id) => {
+  console.log(`행사번호 ${id}의 템플릿 저장하기`)
+  let result = 1
+  saveTemplateStore.saveTemplate(
+    id,
+    rollingPaperTemplate.value,
+    (res) => {
+      console.log(res)
+      console.log('저장되었습니다.')
+      result = 1
+    },
+    (error) => {
+      console.log(error)
+      result = 0
+    }
+  )
+  return result
+}
+
+const getEditView = (id) => {
+  console.log(`행사번호 ${id}의 edit view 불러오기`)
+  editMemoryStore.editMemory(
+    id,
+    (res) => {
+      console.log(res)
+
+      selectBackground(res.data.rollingpaperTemplate.backgroundTemplate.backgroundName)
+      selectInground(res.data.rollingpaperTemplate.postitTemplate.postitName)
+      galleryStore.setUploadedPhotos(res.data.photoPath)
+      console.log(res.data.photoPath)
+      console.log(galleryStore.uploadedPhotos)
+      console.log('edit view 데이터 불러옴')
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
 //배경지
-const selectOpt = (value) => {
+const selectBackground = (value) => {
   isSelectedBasic.value = false
   isSelectedBaby.value = false
   isSelectedWedding.value = false
@@ -434,35 +504,45 @@ const selectOpt = (value) => {
   isNotSelectedSchool.value = true
 
   switch (value) {
-    case '기본':
+    case 'BASIC':
       design.value = 'basic'
+      rollingPaperTemplate.value.backgroundName = 'basic'
       isSelectedBasic.value = true
       isNotSelectedBasic.value = false
       break
-    case '결혼식':
+    case 'WEDDING':
       design.value = 'wedding'
+      rollingPaperTemplate.value.backgroundName = 'wedding'
       isSelectedWedding.value = true
       isNotSelectedWedding.value = false
       break
-    case '졸업식':
+    case 'SCHOOL':
       design.value = 'school'
+      rollingPaperTemplate.value.backgroundName = 'school'
       isSelectedSchool.value = true
       isNotSelectedSchool.value = false
       break
-    case '명절':
+    case 'LUNAR':
       design.value = 'lunar'
+      rollingPaperTemplate.value.backgroundName = 'lunar'
       isSelectedLunar.value = true
       isNotSelectedLunar.value = false
       break
-    case '돌잔치':
+    case 'BABY':
       design.value = 'baby'
+      rollingPaperTemplate.value.backgroundName = 'baby'
       isSelectedBaby.value = true
       isNotSelectedBaby.value = false
       break
+    default:
+      design.value = 'basic'
+      rollingPaperTemplate.value.backgroundName = 'basic'
+      isSelectedBasic.value = true
+      isNotSelectedBasic.value = false
   }
 }
 //속지
-const selectOptTwo = (value) => {
+const selectInground = (value) => {
   isSelectedPastel.value = false
   isSelectedYellow.value = false
   isSelectedBlue.value = false
@@ -475,37 +555,49 @@ const selectOptTwo = (value) => {
   isNotSelectedGreen.value = true
   isNotSelectedPink.value = true
   switch (value) {
-    case '파스텔':
+    case 'RAINBOW':
       color.value = 'rainbow'
+      rollingPaperTemplate.value.postitName = 'rainbow'
       isNotSelectedPastel.value = false
       isSelectedPastel.value = true
       break
-    case '초록색':
+    case 'GREEN':
       color.value = 'green'
+      rollingPaperTemplate.value.postitName = 'green'
       isNotSelectedGreen.value = false
       isSelectedGreen.value = true
       break
-    case '파랑색':
+    case 'BLUE':
       color.value = 'blue'
+      rollingPaperTemplate.value.postitName = 'blue'
       isNotSelectedBlue.value = false
       isSelectedBlue.value = true
       break
-    case '분홍색':
+    case 'PINK':
       color.value = 'pink'
+      rollingPaperTemplate.value.postitName = 'pink'
       isNotSelectedPink.value = false
       isSelectedPink.value = true
       break
-    case '노랑색':
+    case 'YELLOW':
       color.value = 'yellow'
+      rollingPaperTemplate.value.postitName = 'yellow'
       isNotSelectedYellow.value = false
       isSelectedYellow.value = true
       break
+    default:
+      color.value = 'rainbow'
+      rollingPaperTemplate.value.postitName = 'rainbow'
+      isNotSelectedPastel.value = false
+      isSelectedPastel.value = true
   }
 }
 
 //처음으로
 onMounted(() => {
   window.scrollTo(0, 0)
+  resultID.value = resultIDStore.getID
+  getEditView(resultIDStore.getID)
 })
 </script>
 

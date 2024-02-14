@@ -5,14 +5,14 @@ import EventListPage from '@/views/EventListView.vue'
 import MainMeetingView from '@/views/MainMeetingView.vue'
 import GroupMeetingView from '@/views/GroupMeetingView.vue'
 import EditPage from '@/views/EditView.vue'
-import RollingPaper from '@/views/RollingPaper.vue'
-import PhotoMosaic from '@/views/PhotoMosaic.vue'
+import ResultPage from '@/views/ResultView.vue'
 import MyPage from '@/components/mypage/MyPage.vue'
 import MyDetail from '@/components/mypage/MyDetail.vue'
 import Error404 from '@/components/common/Error404.vue'
 import HandleCallback from '@/components/common/HandleCallback.vue'
 import WaitingRoom from '@/components/meeting/WaitingRoom.vue'
 import ReloadingRoom from '@/components/meeting/ReloadingRoom.vue'
+import CloseRoom from '@/components/meeting/CloseRoom.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -92,22 +92,7 @@ const router = createRouter({
     {
       path: '/meetings'
     },
-    {
-      path: '/rollingpaper',
-      name: 'rollingpaper',
-      component: RollingPaper,
-      meta: {
-        requireAuth: true
-      }
-    },
-    {
-      path: '/photomosaic',
-      name: 'photomosaic',
-      component: PhotoMosaic,
-      meta: {
-        requireAuth: true
-      }
-    },
+
     {
       path: '/meetings/:sessionId',
       name: 'waitingroom',
@@ -118,6 +103,16 @@ const router = createRouter({
       path: '/reloadingroom',
       name: 'reloadingroom',
       component: ReloadingRoom
+    },
+    {
+      path: '/closeroom',
+      name: 'closeroom',
+      component: CloseRoom
+    },
+    {
+      path: '/resultpage',
+      name: 'resultpage',
+      component: ResultPage
     }
   ]
 })
@@ -125,25 +120,22 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   if (to.meta.requireAuth) {
     if (!($cookies.isKey('token') || $cookies.isKey('refresh-token'))) {
-      alert('서비스를 사용하기 위해 로그인을 해주세요.');
-      next('/');
-      return;
+      alert('서비스를 사용하기 위해 로그인을 해주세요.')
+      next('/')
+      return
     }
   }
 
-  next();
+  next()
 
   // if (from.path === '/meetings') {
   //   if (confirm('회의 페이지를 벗어나면 변경사항이 저장되지 않을 수 있습니다.')) {
   //     next();
-  //   } 
+  //   }
   //   else {
   //     next(false);
   //   }
   // }
-
-
-});
-
+})
 
 export default router

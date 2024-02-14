@@ -26,7 +26,6 @@ const createMeeting = () => {
 const leaveMeeting = () => {
   isMeeting.value = false
 }
-
 </script>
 
 <style scoped></style>

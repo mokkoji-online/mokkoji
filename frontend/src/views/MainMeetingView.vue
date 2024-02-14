@@ -1,5 +1,5 @@
 <template>
-  <MainMeeting @create-group-meeting="createGroupMeeting" />
+  <MainMeeting @create-group-meeting="createGroupMeeting(event)" />
 </template>
 
 <script setup>
@@ -11,7 +11,8 @@ const emit = defineEmits(['create-meeting'])
 
 const router = useRouter()
 
-const createGroupMeeting = () => {
+const createGroupMeeting = (event) => {
+  console.log(event)
   router.push({
     path: `/groupmeetings`
   })

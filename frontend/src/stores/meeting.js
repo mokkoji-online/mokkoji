@@ -58,13 +58,38 @@ export const useSessionStore = defineStore('session', () => {
     }
   }
 
-  const deleteSession = async (sessionId) => {
+  const deleteSession = async (sessionId, maxUserNum) => {
+    console.log(maxUserNum)
     try {
-      const res = await axiosJwt.delete(
+      await axiosJwt.delete(
         VITE_SERVER + `/meetings/sessions/${sessionId}`,
-        { participantCount: 1234, endTime: 12 },
+        {
+          data: {
+            participantCount: maxUserNum
+          }
+        },
         {
           headers: { 'Content-Type': 'application/json' }
+        }
+      )
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const sendPicture = async (pictureFile) => {
+    const formData = new FormData()
+
+    formData.append('photo', pictureFile)
+
+    try {
+      const res = await axiosJwt.post(
+        VITE_SERVER + `/events/${sessionStorage.getItem('sessionId')}/photos`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         }
       )
 
@@ -78,7 +103,8 @@ export const useSessionStore = defineStore('session', () => {
     createSession,
     createGroupSession,
     findSession,
-    deleteSession
+    deleteSession,
+    sendPicture
   }
 })
 
@@ -88,7 +114,6 @@ export const useLetterStore = defineStore('letter', () => {
     const formData = new FormData()
 
     console.log(videoFile)
-    console.log(textFile)
 
     const text = {
       writer: $cookies.get('user').name,
@@ -103,12 +128,10 @@ export const useLetterStore = defineStore('letter', () => {
     if (textFile !== '') formData.append('writerAndText', blob)
 
     try {
-      // axios를 사용하여 POST 요청 보내기
       const response = await axiosJwt.post(
-        VITE_SERVER + `/events/rollingpapers/${sessionStorage.getItem('sessionId')}`,
+        VITE_SERVER + `/events/${sessionStorage.getItem('sessionId')}/rollingpapers`,
         formData,
         {
-          // 필수: FormData를 사용할 때는 이 헤더를 설정해야 함
           headers: {
             'Content-Type': 'multipart/form-data'
           }

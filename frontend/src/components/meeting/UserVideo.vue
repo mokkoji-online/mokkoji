@@ -1,10 +1,5 @@
 <template>
-  <ov-video
-    v-if="streamManager"
-    :stream-manager="streamManager"
-    :main-stream="mainStream"
-    @toggle-camera="toggleCamera"
-  />
+  <ov-video v-if="streamManager" :stream-manager="streamManager" :main-stream="mainStream" />
 </template>
 
 <script setup>
@@ -16,17 +11,8 @@ const props = defineProps({
   },
   mainStream: {
     type: Boolean
-  },
-  isFront: {
-    type: Boolean
   }
 })
-
-const emit = defineEmits(['toggle-camera'])
-
-const toggleCamera = () => {
-  emit('toggle-camera')
-}
 </script>
 
 <style></style>

@@ -35,7 +35,7 @@
   </svg>
 </template>
 
-<style type="text/css">
+<style scoped>
 .st0 {
   fill: #ffffff;
 }

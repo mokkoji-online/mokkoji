@@ -6,14 +6,8 @@
     >
       {{ userName }}
     </div>
-    <button
-      class="absolute bg-black text-white top-[90%] left-[90%] w-[7%] h-[8%] text-r-sm rounded-r-xl hover:bg-neutral-800"
-      @click="$emit('toggle-camera')"
-    >
-      <IconScreenChange class="size-[70%]" />
-    </button>
   </div>
-  <div v-else class="relative w-full h-1/3 top-0 left-0">
+  <div v-else class="relative w-full top-0 left-0">
     <video ref="videoElement" autoplay class="w-full h-full rounded-[3vb] object-cover" />
     <div
       class="absolute top-[80%] left-[3%] w-[35%] h-[15%] flex justify-center items-center bg-black rounded-r-xl text-white text-r-sm"
@@ -25,9 +19,6 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import IconScreenChange from '@/icons/meeting/IconScreenChange.vue'
-
-defineEmits(['toggle-camera'])
 
 const props = defineProps({
   streamManager: {

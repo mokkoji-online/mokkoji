@@ -6,7 +6,7 @@
           class="h-full text-center ml-[2vw] w-1/2 flex flex-col justify-center items-center whitespace-wrap"
         >
           <div class="m-2 rounded-2xl p-6">
-            <h1 id="title" class="underline decoration-primary2">모꼬지</h1>
+            <h1 id="title" class="underline decoration-red-300">모꼬지</h1>
             <div class="text-[1.5vw]">
               <p>
                 화상 모임 플랫폼 ‘모꼬지’를 통해
@@ -135,10 +135,11 @@
           ></path>
         </svg>
       </div>
-      <div class="mt-[2vh] mb-[2vh] flex grid-cols-2 items-center" 
-      data-aos="fade-up"
-      data-aos-once="false"
->
+      <div
+        class="mt-[2vh] mb-[2vh] flex grid-cols-2 items-center"
+        data-aos="fade-up"
+        data-aos-once="false"
+      >
         <div class="basis-2/5 flex justify-end">
           <img class="size-[60%]" src="@/assets/landing/main2.png" />
         </div>
@@ -171,10 +172,7 @@
           ></path>
         </svg>
       </div>
-      <div class="mt-[2vh] grid grid-cols-2 items-center" 
-      data-aos="fade-up"
-      data-aos-once="false"
->
+      <div class="mt-[2vh] grid grid-cols-2 items-center" data-aos="fade-up" data-aos-once="false">
         <div class="ml-[5vw] text-center">
           <h1 id="title-sub-bold">소그룹을 형성하여 친구들과</h1>
           <h1 id="title-sub-bold">자유롭게 소통하세요.</h1>
@@ -205,10 +203,7 @@
           ></path>
         </svg>
       </div>
-      <div class="mt-[1vh] grid grid-cols-2 items-center" 
-      data-aos="fade-up"
-      data-aos-once="false"
->
+      <div class="mt-[1vh] grid grid-cols-2 items-center" data-aos="fade-up" data-aos-once="false">
         <div class="flex justify-center">
           <img src="@/assets/landing/main4.png" class="size-[60%]" />
         </div>
@@ -240,7 +235,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { toast } from 'vue3-toastify'
 import { Swiper, SwiperSlide } from 'swiper/vue'
@@ -252,12 +247,17 @@ import 'vue3-toastify/dist/index.css'
 import 'swiper/css'
 import 'swiper/css/pagination'
 
+const emit = defineEmits(['load-home'])
+
 const store = useSessionStore()
 const router = useRouter()
 
 const conferenceIdInput = ref('')
 const isInputError = ref(false)
 const isModal = ref(false)
+
+const modules = [Autoplay, Pagination]
+const photos = ['carousel1.png', 'carousel2.png', 'carousel3.png', 'carousel4.png']
 
 const showModal = () => {
   isModal.value = !isModal.value
@@ -299,9 +299,10 @@ const toTop = () => {
     behavior: 'smooth'
   })
 }
-const modules = [Autoplay, Pagination]
 
-const photos = ['carousel1.png', 'carousel2.png', 'carousel3.png', 'carousel4.png']
+onMounted(() => {
+  emit('load-home')
+})
 </script>
 
 <style>
@@ -310,6 +311,6 @@ const photos = ['carousel1.png', 'carousel2.png', 'carousel3.png', 'carousel4.pn
 }
 
 .swiper-pagination-bullet-active {
- @apply bg-primary3 size-[0.75lvw];
+  @apply bg-primary3 size-[0.75lvw];
 }
 </style>

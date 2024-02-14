@@ -8,7 +8,7 @@
         <img alt="프로필 사진" id="image-profile" :src="userData.image" />
       </div>
       <div class="gap-4 flex max-md:flex-col max-md:gap-2 mt-20">
-        <div class="flex flex-col w-[15lvw] items-center justify-center border-2 border-slate-300 rounded-lg shadow-md m-3">
+        <div class="flex flex-col w-6/12 ml-10">
           <span class="flex flex-col mt-10 max-md:mt-10"
             ><div class="text-3xl font-bold">{{ userData.name }}님</div>
           </span>
@@ -22,9 +22,12 @@
           <div class="text-sm font-light m-2 max-w-[24lvh] mt-5 whitespace-wrap text-center">
             계좌를 등록하시면 참가자들의 마음을 받을 수 있어요
           </div>
-            <button @click="$router.push('mypage/detail')" class="m-10 self-center text-primary3 hover:bg-natural-yellow hover:text-red-500">
-              회원정보 수정
-            </button>
+          <button
+            @click="$router.push('mypage/detail')"
+            class="m-10 self-center text-primary3 hover:bg-natural-yellow hover:text-red-500"
+          >
+            회원정보 수정
+          </button>
         </div>
         <div class="flex flex-col justify-around items-stretch">
           <div>
@@ -36,15 +39,11 @@
           </div>
           <div class="flex items-stretch justify-between gap-5 mt-6 pr-1.5">
             <div id="div-stat">
-              모꼬지 주최<br /><span class="text-purple-400">{{
-                userData.eventCount
-              }}</span
+              모꼬지 주최<br /><span class="text-purple-400">{{ userData.eventCount }}</span
               >번<br />
             </div>
             <div id="div-stat">
-              참여자 수<br /><span class="text-purple-400">{{
-                userData.totalParticipant
-              }}</span
+              참여자 수<br /><span class="text-purple-400">{{ userData.totalParticipant }}</span
               >명
             </div>
           </div>
@@ -54,9 +53,7 @@
               >시간
             </div>
             <div id="div-stat">
-              받은 메세지<br /><span class="text-purple-400">{{
-                userData.totalMessage
-              }}</span
+              받은 메세지<br /><span class="text-purple-400">{{ userData.totalMessage }}</span
               >개
             </div>
           </div>
@@ -67,24 +64,21 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
-import axios from "@/services/api";
+import { ref, onBeforeMount } from 'vue'
+import axios from '@/services/api'
 
-const userData = ref({});
-const getUserDetail = () => {
-  -axios
-    .get(import.meta.env.VITE_SERVER + "/users/mypage")
+const userData = ref({})
+
+onBeforeMount(() => {
+  axios
+    .get(import.meta.env.VITE_SERVER + '/users/mypage')
     .then((res) => {
-      userData.value = res.data;
+      userData.value = res.data
     })
     .catch((err) => {
-      console.error(err);
-    });
-};
-
-onMounted(() => {
-  getUserDetail();
-});
+      console.error(err)
+    })
+})
 </script>
 
 <style></style>

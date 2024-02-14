@@ -3,7 +3,7 @@
     <section class="w-full h-[85%] flex justify-center">
       <!-- 스포트라이트 레이아웃 -->
       <div v-if="!isGrid" class="w-full h-full flex basis-3/4">
-        <div id="meeting-container" ref="groupVideo" class="w-full h-full flex justify-center">
+        <div id="meeting-container" class="w-full h-full flex justify-center">
           <div
             v-if="state.subscribers.length > 0"
             class="h-full basis-1/4 flex flex-col justify-start items-center overflow-y-scroll gap-[1vh]"
@@ -15,24 +15,20 @@
               :stream-manager="sub"
               :main-stream="false"
               @click="updateMainVideoStreamManager(sub)"
-              @toggle-camera="toggleCamera"
             />
           </div>
           <div
             ref="myVideo"
             class="mr-[1vh] w-full h-full basis-3/4 flex justify-center items-start"
           >
-            <user-Video
-              :stream-manager="state.mainStreamManager"
-              :main-stream="true"
-              @toggle-camera="toggleCamera"
-            />
+            <user-Video :stream-manager="state.mainStreamManager" :main-stream="true" />
           </div>
         </div>
       </div>
       <!-- 그리드 레이아웃 -->
       <div
         v-else
+        ref="groupVideo"
         class="w-full h-full basis-3/4 grid grid-cols-3 gap-[1vh] overflow-y-scroll items-center"
       >
         <user-Video
@@ -41,7 +37,6 @@
           :key="user.stream.connection.connectionId"
           :stream-manager="user"
           :main-stream="false"
-          @toggle-camera="toggleCamera"
         />
       </div>
       <!-- 참여자 목록, 채팅방-->
@@ -157,7 +152,7 @@
     <!-- 기능 버튼 -->
     <section class="h-[15%] flex justify-center items-center">
       <div class="w-[75%] h-full flex justify-center items-center">
-        <div class="w-[15%] h-full flex items-center">
+        <div class="w-[20%] h-full flex items-center">
           <button
             class="w-[20%] aspect-square rounded-full bg-white hover:bg-slate-200"
             @click="showMeetingDetailModal"
@@ -172,6 +167,13 @@
               <IconLayout class="size-[80%]" />
             </div>
             <div class="w-[60%] button-text">화면 배치</div>
+          </button>
+          <button
+            class="ml-[1lvh] w-[30%] aspect-square bg-neutral-500 hover:bg-neutral-800 rounded-full flex justify-center items-center"
+            @click="toggleCamera"
+          >
+            <IconScreenChange id="screen-change-button" class="size-[80%]" />
+            <ScreenChangeModal id="screen-change" />
           </button>
         </div>
         <div
@@ -267,41 +269,36 @@
           </div>
         </div>
       </div>
+      <div v-if="isCount" class="fixed top-[10%] text-[20vw] text-purple-200 text-stroke">
+        {{ setTime }}
+      </div>
     </section>
-    <transition-group name="down">
-      <InviteModal v-if="isInviteModal" />
-    </transition-group>
     <transition-group name="up">
       <MeetingDetailModal
         v-if="isMeetingDetailModal"
         :session="state.session"
         @remove-detail-modal="showMeetingDetailModal"
       />
-    </transition-group>
-    <transition-group name="down">
-      <MicModal v-if="isMicModal" :is-mic="isMic" />
-    </transition-group>
-    <transition-group name="down">
-      <CameraModal v-if="isCameraModal" :is-camera="isCamera" />
-    </transition-group>
-    <transition-group name="up">
       <LetterModal v-if="isLetterModal" @remove-letter-modal="showLetterModal" />
-    </transition-group>
-    <transition-group name="up">
       <GiftModal v-if="isGiftModal" />
-    </transition-group>
-    <transition-group name="up">
       <LeaveGroupModal
         v-if="isLeaveGroupModal"
         @leave-main-meeting="leaveMainMeeting"
         @leave-group-meeting="leaveGroupMeeting"
       />
     </transition-group>
+    <transition-group name="down">
+      <InviteModal v-if="isInviteModal" />
+      <MicModal v-if="isMicModal" :is-mic="isMic" />
+      <CameraModal v-if="isCameraModal" :is-camera="isCamera" />
+      <CaptureCheckModal v-if="isCaptureCheckModal" />
+    </transition-group>
   </main>
 </template>
 
 <script setup>
 import { ref, reactive, onMounted, onBeforeUnmount } from 'vue'
+import { useSessionStore } from '@/stores/meeting'
 import { useRouter } from 'vue-router'
 import { OpenVidu } from 'openvidu-browser'
 import html2canvas from 'html2canvas'
@@ -310,6 +307,7 @@ import UserList from '@/components/meeting/UserList.vue'
 import UserVideo from '@/components/meeting/UserVideo.vue'
 import ChatLog from '@/components/meeting/ChatLog.vue'
 import IconInfo from '@/icons/meeting/IconInfo.vue'
+import IconScreenChange from '@/icons/meeting/IconScreenChange.vue'
 import IconSearch from '@/icons/meeting/IconSearch.vue'
 import IconInvite from '@/icons/meeting/IconInvite.vue'
 import IconCancelPurple from '@/icons/meeting/IconCancelPurple.vue'
@@ -326,19 +324,22 @@ import IconChat from '@/icons/meeting/IconChat.vue'
 import IconSendMessage from '@/icons/meeting/IconSendMessage.vue'
 import InviteModal from '@/components/modal/meeting/InviteModal.vue'
 import MeetingDetailModal from '@/components/modal/meeting/MeetingDetailModal.vue'
+import ScreenChangeModal from '@/components/modal/meeting/ScreenChangeModal.vue'
 import MicModal from '@/components/modal/meeting/MicModal.vue'
 import CameraModal from '@/components/modal/meeting/CameraModal.vue'
 import GiftModal from '@/components/modal/meeting/GiftModal.vue'
 import LetterModal from '@/components/modal/meeting/LetterModal.vue'
-import CaptureModal from '@/components/modal/meeting/CaptureModal.vue'
 import LeaveGroupModal from '@/components/modal/meeting/LeaveGroupModal.vue'
+import CaptureModal from '@/components/modal/meeting/CaptureModal.vue'
+import CaptureCheckModal from '@/components/modal/meeting/CaptureCheckModal.vue'
 
 const emit = defineEmits(['leave-meeting'])
 
 const router = useRouter()
+const store = useSessionStore()
 
-const videoWidth = window.screen.width * 0.65
-const videoHeight = window.screen.height * 0.85
+const videoWidth = window.screen.width
+const videoHeight = window.screen.height
 
 const isGrid = ref(false)
 const isMic = ref(true)
@@ -350,10 +351,12 @@ const isMeetingDetailModal = ref(false)
 const isLetterModal = ref(false)
 const isGiftModal = ref(false)
 const isCaptureModal = ref(false)
+const isCount = ref(false)
 const isUserList = ref(false)
 const isChat = ref(false)
 const isLeaveGroupModal = ref(false)
 const isFrontCamera = ref(true)
+const isCaptureCheckModal = ref(false)
 
 const searchUserName = ref('')
 const chatMessage = ref('')
@@ -361,35 +364,67 @@ const chatMessages = ref([])
 const userList = ref([])
 const myVideo = ref(null)
 const groupVideo = ref(null)
+const setTime = ref(3)
 
+// 개인 사진 촬영
 const captureMyVideo = () => {
-  const target = myVideo.value
-  if (!target) {
-    return alert('결과 저장 실패')
-  }
-  html2canvas(target).then((canvas) => {
-    onSaveAs(canvas.toDataURL('image/png'), 'test.png')
-  })
+  isCount.value = true
+
+  const countTime = setInterval(() => {
+    setTime.value--
+  }, 1000)
+
+  setTimeout(() => {
+    const target = myVideo.value
+
+    if (!target) {
+      return alert('사진 촬영 실패')
+    }
+
+    html2canvas(target).then((canvas) => {
+      canvas.toBlob((blob) => {
+        const file = new File([blob], 'myVideo.png', { type: 'image/png' })
+        store.sendPicture(file)
+      })
+    })
+
+    isCount.value = false
+    setTime.value = 3
+    showCaptureCheckModal()
+    clearInterval(countTime)
+  }, 3000)
 }
 
-const captureGroupVideo = () => {
-  const target = groupVideo.value
-  if (!target) {
-    return alert('결과 저장 실패')
-  }
-  html2canvas(target).then((canvas) => {
-    onSaveAs(canvas.toDataURL('image/png'), 'test.png')
-  })
-}
+// 단체 사진 촬영
+const captureGroupVideo = async () => {
+  isGrid.value = true
+  isCount.value = true
 
-// 캡쳐 사진 저장
-const onSaveAs = (uri, filename) => {
-  const link = document.createElement('a')
-  document.body.appendChild(link)
-  link.href = uri
-  link.download = filename
-  link.click()
-  document.body.removeChild(link)
+  const countTime = setInterval(() => {
+    setTime.value--
+  }, 1000)
+
+  setTimeout(() => {
+    const target = groupVideo.value
+
+    if (!target) {
+      isGrid.value = false
+      return alert('사진 촬영 실패')
+    }
+
+    html2canvas(target).then((canvas) => {
+      canvas.toBlob((blob) => {
+        const file = new File([blob], 'groupVideo.png', { type: 'image/png' })
+        store.sendPicture(file)
+      })
+    })
+
+    isGrid.value = false
+    isCount.value = false
+    setTime.value = 3
+    showCaptureCheckModal()
+    clearInterval(countTime)
+  }, 3000)
 }
 
 const showInviteModal = (event) => {
@@ -448,9 +483,19 @@ const showGiftModal = () => {
   isGiftModal.value = !isGiftModal.value
 }
 
-// const setCaptureState = () => {
-//   isCapture.value = !isCapture.value
-// }
+// 개인 사진, 단체 사진 버튼 모달
+const showCaptureModal = () => {
+  isCaptureModal.value = !isCaptureModal.value
+}
+
+// 사진 촬영 확인 모달 보여주기
+const showCaptureCheckModal = () => {
+  isCaptureCheckModal.value = true
+
+  setTimeout(() => {
+    isCaptureCheckModal.value = false
+  }, 600)
+}
 
 const showUserList = () => {
   isUserList.value = !isUserList.value
@@ -662,15 +707,7 @@ const toggleCamera = async () => {
   }
 }
 
-const noBack = () => {
-  history.pushState(null, null, location.href)
-  window.onpopstate = (event) => {
-    history.go(1)
-  }
-}
-
 onMounted(() => {
-  noBack()
   joinSession()
   window.addEventListener('beforeunload', deleteSession)
 })
@@ -738,6 +775,14 @@ onBeforeUnmount(() => {
   overflow-x: scroll;
 }
 
+#screen-change-button:hover ~ #screen-change {
+  display: block;
+}
+
+#screen-change {
+  display: none;
+}
+
 span {
   text-align: center;
 }
@@ -758,16 +803,6 @@ input {
 input::placeholder {
   align-content: center;
   font-size: 1vw;
-}
-
-::-webkit-scrollbar {
-  width: 0;
-  background-color: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: transparent;
-  border: none;
 }
 
 .up-enter-active {
