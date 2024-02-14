@@ -16,7 +16,7 @@
       <div class="p-[2vw] flex flex-col border-sm rounded-r-lg">
         <!-- 텍스트 파일 -->
         <textarea
-          v-if="!isAudioRecorder && !isVideoRecorder"
+          v-if="!isAudioRecorder"
           name="textFile"
           id="input-text"
           cols="30"
@@ -28,7 +28,7 @@
         </textarea>
         <!-- 음성 파일 -->
         <div
-          v-if="isAudioRecorder && !isVideoRecorder"
+          v-if="isAudioRecorder"
           class="h-[90%] aspect-[1.37] bg-yellow-100 rounded-r-xl flex flex-col justify-center items-center"
         >
           <div class="ml-[15vw] w-full flex items-center mb-[1vh]">
@@ -75,7 +75,7 @@
             <audio hidden ref="audio" crossorigin="anonymous" @ended="onAudioEnded"></audio>
           </div>
           <div v-if="isRecording" class="mt-[1vh] w-[8vw] aspect-[2.5] text-r-md font-semibold">
-            남은 시간 : {{ leftTime }}
+            남은 시간 : {{ setTime }}
           </div>
           <div
             v-if="recordedChunks.length !== 0 && !isRecording"
@@ -89,48 +89,6 @@
             </button>
           </div>
         </div>
-        <!-- 영상 파일 -->
-        <div
-          v-if="!isAudioRecorder && isVideoRecorder"
-          class="w-fit h-full self-center px-[4lvh] pt-[2lvh] bg-purple-200 rounded-r-lg flex flex-col gap-[1lvh] items-center"
-        >
-          <button
-            class="ml-auto mb-[1vh] w-[12%] aspect-square hover:bg-white rounded-full"
-            @click="showVideoRecorder"
-          >
-            <IconCancelBlack class="size-[60%]" />
-          </button>
-          <video
-            v-if="!isEndRecording"
-            ref="videoRef"
-            width="300"
-            autoplay
-            class="border-sm border-white rounded-r-lg"
-          ></video>
-          <video v-else ref="recordedVideo" width="300lwh" controls :src="recordedVideoSrc"></video>
-          <div class="flex flex-row justify-center h-[15.5lvh]">
-            <button
-              @click="startVideoRecording"
-              :disabled="isRecording"
-              :class="{
-                'h-[70%] aspect-square': isRecording,
-                'h-[70%] aspect-square hover:bg-purple-300 rounded-full': !isRecording
-              }"
-            >
-              <IconRecord class="size-[90%] fill-red-500"></IconRecord>
-            </button>
-            <button
-              @click="stopVideoRecording"
-              :disabled="!isRecording"
-              :class="{
-                'h-[70%] aspect-square': !isRecording,
-                'h-[70%] aspect-square hover:bg-purple-300 rounded-full': isRecording
-              }"
-            >
-              <IconStop class="size-[90%] fill-red-500" />
-            </button>
-          </div>
-        </div>
         <div class="flex h-[6vh]">
           <div class="basis-1/2 flex justify-start">
             <label
@@ -140,11 +98,12 @@
               <IconAudio class="size-[90%] hover:cursor-pointer" />
             </label>
             <label
+              for="input-video"
               class="hover:bg-red-100 w-[3vw] aspect-square rounded-full flex justify-center items-center"
-              @click="showVideoRecorder"
             >
               <IconVideo class="size-[85%] hover:cursor-pointer" />
             </label>
+            <input type="file" id="input-video" class="hidden" @change="uploadVideoFile" />
           </div>
           <div class="basis-1/2 flex justify-end">
             <button
@@ -203,6 +162,12 @@
         <p v-if="isFileCheck" style="color: red" class="text-[1.4vw]">
           작성한 내용이 존재하지 않습니다.
         </p>
+        <p v-if="isTypeCheck" style="color: red" class="text-[1.4vw]">
+          mov, mp4 파일만 업로드 가능합니다.
+        </p>
+        <p v-if="isSizeCheck" style="color: red" class="text-[1.4vw]">
+          최대 파일 용량은 40MB입니다.
+        </p>
         <button
           type="submit"
           form="letterForm"
@@ -217,7 +182,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue'
+import { ref, onBeforeUnmount } from 'vue'
 import { useLetterStore } from '@/stores/meeting'
 import IconAudio from '@/icons/meeting/IconAudio.vue'
 import IconVideo from '@/icons/meeting/IconVideo.vue'
@@ -233,8 +198,9 @@ defineEmits(['remove-letter-modal'])
 const store = useLetterStore()
 
 const isAudioRecorder = ref(false)
-const isVideoRecorder = ref(false)
 const isFileCheck = ref(false)
+const isTypeCheck = ref(false)
+const isSizeCheck = ref(false)
 const isVideoFile = ref(false)
 const isAudioFile = ref(false)
 const videoFile = ref(null)
@@ -242,9 +208,7 @@ const audioFile = ref(null)
 const textFile = ref('')
 const videoFileName = ref('')
 const audioFileName = ref('')
-
 // 음성 녹음 관련
-
 const audio = ref(null)
 const mediaRecorder = ref(null)
 const soundBarCanvas = ref(null)
@@ -256,61 +220,98 @@ const animationId = ref(null)
 const recordedChunks = ref([])
 const isRecording = ref(false)
 const isPlaying = ref(false)
-const leftTime = ref(60)
+const setTime = ref(60)
+const allowedExtensions = ref(['mp4', 'mov'])
 
-// 영상 촬영 관련
-
-const videoRef = ref(null)
-const videoStream = ref(null)
-const chunks = ref([])
-const recordedVideoSrc = ref('')
-const isEndRecording = ref(false)
-
+// 작성중인 롤링페이퍼 텍스트 모두 지우기
 const removeContents = () => {
   document.getElementById('input-text').value = ''
   textFile.value = ''
 }
 
+// 오디오 녹음기 보여주기
 const showAudioRecorder = () => {
   isAudioRecorder.value = !isAudioRecorder.value
-  isVideoRecorder.value = false
 }
 
-const showVideoRecorder = () => {
-  isVideoRecorder.value = !isVideoRecorder.value
-  isAudioRecorder.value = false
-}
-
+// 녹음한 오디오 파일 업로드하기
 const uploadAudioFile = () => {
   isAudioFile.value = true
   isAudioRecorder.value = false
-  audioFileName.value = '내 녹음 파일'
+  audioFileName.value = '나만의 녹음'
 }
 
-const uploadVideoFile = () => {
-  isVideoFile.value = true
-  videoFileName.value = '내 영상 파일'
+// 선택한 비디오 파일 업로드하기
+const uploadVideoFile = (event) => {
+  const fileName = event.target.files[0].name
+  const extension = fileName.split('.').pop().toLowerCase()
+
+  if (allowedExtensions.value.includes(extension) && checkFileSize()) {
+    isVideoFile.value = true
+    isTypeCheck.value = false
+    isFileCheck.value = false
+    isSizeCheck.value = false
+    videoFile.value = event.target.files[0]
+    videoFileName.value = '나만의 영상'
+  } else if (!allowedExtensions.value.includes(extension)) {
+    isTypeCheck.value = true
+    isFileCheck.value = false
+    isSizeCheck.value = false
+  } else if (!checkFileSize()) {
+    isSizeCheck.value = true
+    isTypeCheck.value = false
+    isFileCheck.value = false
+  }
 }
 
+// 선택한 비디오 파일 용량 체크(최대 40MB)
+const checkFileSize = () => {
+  const fileInput = document.getElementById('input-video')
+
+  if (fileInput.files.length > 0) {
+    const fileSize = fileInput.files[0].size // 파일 크기(바이트)
+    const maxSize = 40 * 1024 * 1024 // 40MB를 바이트 단위로 변환
+
+    if (fileSize > maxSize) {
+      isSizeCheck.value = true
+      isFileCheck.value = false
+      isTypeCheck.value = false
+      fileInput.value = ''
+      return false
+    }
+
+    return true
+  }
+}
+
+// 업로드한 오디오 파일 지우기
 const removeAudioFile = () => {
   isAudioFile.value = false
   audioFile.value = null
 }
 
+// 업로드한 비디오 파일 지우기
 const removeVideoFile = () => {
   isVideoFile.value = false
   videoFile.value = null
 }
 
+// 작성한 롤링페이퍼 보내기
 const sendLetter = () => {
+  // 텍스트, 음성, 영상 중 하나라도 작성 필수
   if (videoFile.value === null && audioFile.value === null && textFile.value === '') {
     isFileCheck.value = true
+    isTypeCheck.value = false
+    isSizeCheck.value = false
     return
   } else {
     store.sendLetter(videoFile.value, audioFile.value, textFile.value)
   }
 
+  // 값 초기화
   isFileCheck.value = false
+  isTypeCheck.value = false
+  isSizeCheck.value = false
   isVideoFile.value = false
   isAudioFile.value = false
   audioFile.value = null
@@ -320,8 +321,7 @@ const sendLetter = () => {
   textFile.value = ''
 }
 
-// 음성 녹음 관련
-
+// 오디오 녹음 시작
 const startAudioRecording = async () => {
   recordedChunks.value = []
   isRecording.value = true
@@ -347,14 +347,21 @@ const startAudioRecording = async () => {
   canvasContext.value = canvas.value.getContext('2d')
 
   drawSoundBar()
-}
 
-const countTime = () => {
-  setTimeout(() => {
-    leftTime.value--
+  // 현재 남은 녹음 가능 시간 보여주기
+  const countTime = setInterval(() => {
+    setTime.value--
   }, 1000)
+
+  // 60초가 지나면 녹음 종료
+  setTimeout(() => {
+    clearInterval(countTime)
+    setTime.value = 60
+    stopAudioRecording()
+  }, 60000)
 }
 
+// 사운드바 제작
 const drawSoundBar = () => {
   canvasContext.value.clearRect(0, 0, canvas.value.width, canvas.value.height)
 
@@ -374,7 +381,9 @@ const drawSoundBar = () => {
   animationId.value = requestAnimationFrame(drawSoundBar)
 }
 
+// 오디오 녹음 중지
 const stopAudioRecording = async () => {
+  setTime.value = 60
   isRecording.value = false
   await mediaRecorder.value.stop()
 
@@ -386,87 +395,26 @@ const stopAudioRecording = async () => {
   cancelAnimationFrame(animationId.value)
 }
 
+// 녹음된 오디오 재생
 const playAudioRecording = async () => {
   isPlaying.value = true
   await audio.value.play()
 }
 
+// 오디오 재생 중지
 const pauseAudioPlaying = () => {
   isPlaying.value = false
   audio.value.pause()
 }
 
+// 오디오 재생 완료
 const onAudioEnded = () => {
   isPlaying.value = false
-}
-
-// 영상 촬영 관련
-
-const startCamera = async () => {
-  console.log(navigator.mediaDevices.getUserMedia);
-  try {
-    videoStream.value = await navigator.mediaDevices.getUserMedia({ video: true })
-    videoRef.value.srcObject = videoStream.value
-  } catch (error) {
-    console.error('Error accessing camera:', error)
-  }
-}
-
-const startVideoRecording = () => {
-  isEndRecording.value = false
-  if (isEndRecording.value) startCamera()
-
-  if (!videoStream.value || !(videoStream.value instanceof MediaStream)) {
-    console.error('Invalid stream for recording')
-    return
-  }
-
-  try {
-    mediaRecorder.value = new MediaRecorder(videoStream.value)
-    chunks.value = []
-    mediaRecorder.value.ondataavailable = (event) => {
-      if (event.data.size > 0) {
-        chunks.value.push(event.data)
-      }
-    }
-    mediaRecorder.value.onstop = () => {
-      const recordedBlob = new Blob(chunks.value, { type: 'video/webm' })
-      videoFile.value = recordedBlob
-      isRecording.value = false
-      videoRef.value.srcObject = null
-      recordedVideoSrc.value = URL.createObjectURL(recordedBlob)
-    }
-    mediaRecorder.value.start()
-    isRecording.value = true
-  } catch (error) {
-    console.error('Error starting recording:', error)
-  }
-}
-
-const stopVideoRecording = () => {
-  if (mediaRecorder.value && isRecording.value) {
-    mediaRecorder.value.stop()
-    isEndRecording.value = true
-  }
-}
-
-const downloadRecording = () => {
-  if (videoFile.value) {
-    const url = URL.createObjectURL(videoFile.value)
-    const a = document.createElement('a')
-    a.style.display = 'none'
-    a.href = url
-    a.download = 'recorded_video.webm'
-    document.body.appendChild(a)
-    a.click()
-    window.URL.revokeObjectURL(url)
-  }
 }
 
 onBeforeUnmount(() => {
   if (isRecording.value) {
     stopAudioRecording()
-    stopVideoRecording()
   }
 })
 </script>

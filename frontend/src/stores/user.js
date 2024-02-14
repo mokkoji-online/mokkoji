@@ -8,7 +8,7 @@ export const useUserStore = defineStore('user', () => {
   const email = ref('')
   const image = ref('')
   const isLogin = ref(false)
-  const forceReload = ref(false);
+  const forceReload = ref(false)
 
   const getLoginStatus = () => {
     try {
@@ -18,29 +18,28 @@ export const useUserStore = defineStore('user', () => {
       user.image = image.value
       isLogin.value = true
     } catch (err) {
-      console.log(err);
+      console.log(err)
     }
   }
 
-  const getBankAccount = () => {
-    let bank = ref('');
-    let accountNumber = ref('');
-    axios
-    .get(import.meta.env.VITE_SERVER + '/users/userinfo')
-    .then((res) => {
-      bank.value = res.data.bank
-      accountNumber.value = res.data.accountNumber
-    })
-    .catch((error) => {
-      console.error(error)
-    })
+  const getBankAccount = async () => {
+    const bank = ref('')
+    const accountNumber = ref('')
+    await axios
+      .get(import.meta.env.VITE_SERVER + '/users/userinfo')
+      .then((res) => {
+        bank.value = res.data.bank
+        accountNumber.value = res.data.accountNumber
+      })
+      .catch((error) => {
+        console.error(error)
+      })
 
-    return [bank, accountNumber];
+    return [bank.value, accountNumber.value]
   }
 
   onBeforeMount(() => {
-    getLoginStatus;
-  
+    getLoginStatus
   })
 
   return {
@@ -50,6 +49,6 @@ export const useUserStore = defineStore('user', () => {
     isLogin,
     forceReload,
     getLoginStatus,
-    getBankAccount,
+    getBankAccount
   }
 })

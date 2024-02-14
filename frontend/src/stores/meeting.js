@@ -1,4 +1,3 @@
-import { ref } from 'vue'
 import { defineStore } from 'pinia'
 import { useRouter } from 'vue-router'
 import axiosJwt from '@/services/api'
@@ -12,11 +11,11 @@ export const useSessionStore = defineStore('session', () => {
 
   const createSession = async () => {
     try {
-      const response = await axiosJwt.post(VITE_SERVER + '/meetings/sessions', {
+      const res = await axiosJwt.post(VITE_SERVER + '/meetings/sessions', {
         headers: { 'Content-Type': 'application/json' }
       })
 
-      sessionStorage.setItem('sessionId', response.data)
+      sessionStorage.setItem('sessionId', res.data)
       sessionStorage.setItem('host', $cookies.get('user').name)
       sessionStorage.setItem('isHost', true)
 
@@ -28,7 +27,7 @@ export const useSessionStore = defineStore('session', () => {
 
   const createGroupSession = async (sessionId) => {
     try {
-      const response = await axiosJwt.post(
+      const res = await axiosJwt.post(
         VITE_SERVER + '/meetings/groupsessions',
         { customSessionId: sessionId },
         {
@@ -36,7 +35,7 @@ export const useSessionStore = defineStore('session', () => {
         }
       )
 
-      return response.data
+      return res.data
     } catch (error) {
       console.error(error)
     }
@@ -46,9 +45,14 @@ export const useSessionStore = defineStore('session', () => {
     try {
       const res = await axios.get(VITE_API_URL + VITE_SERVER + `/meetings/sessions/${sessionId}`)
       if (res.data !== undefined) {
+        const accounts = await getAccount(sessionId)
+
         sessionStorage.setItem('sessionId', res.data.session.sessionId)
         sessionStorage.setItem('host', res.data.hostName)
         sessionStorage.setItem('isHost', false)
+        sessionStorage.setItem('bank', accounts.bank)
+        sessionStorage.setItem('accountNumber', accounts.accountNumber)
+
         return 'success'
       } else {
         return 'fail'
@@ -59,7 +63,6 @@ export const useSessionStore = defineStore('session', () => {
   }
 
   const deleteSession = async (sessionId, maxUserNum) => {
-    console.log(maxUserNum)
     try {
       await axiosJwt.delete(
         VITE_SERVER + `/meetings/sessions/${sessionId}`,
@@ -75,6 +78,11 @@ export const useSessionStore = defineStore('session', () => {
     } catch (error) {
       console.error(error)
     }
+  }
+
+  const getAccount = async (sessionId) => {
+    const res = await axios.get(VITE_API_URL + VITE_SERVER + `/events/${sessionId}/accounts`)
+    return res.data
   }
 
   const sendPicture = async (pictureFile) => {
@@ -104,6 +112,7 @@ export const useSessionStore = defineStore('session', () => {
     createGroupSession,
     findSession,
     deleteSession,
+    getAccount,
     sendPicture
   }
 })
@@ -128,7 +137,7 @@ export const useLetterStore = defineStore('letter', () => {
     if (textFile !== '') formData.append('writerAndText', blob)
 
     try {
-      const response = await axiosJwt.post(
+      const res = await axiosJwt.post(
         VITE_SERVER + `/events/${sessionStorage.getItem('sessionId')}/rollingpapers`,
         formData,
         {
@@ -139,7 +148,7 @@ export const useLetterStore = defineStore('letter', () => {
       )
 
       // 성공 시 서버의 응답을 처리
-      console.log('서버 응답:', response.data)
+      console.log('서버 응답:', res.data)
     } catch (error) {
       // 오류 처리
       console.error('오류 발생:', error)

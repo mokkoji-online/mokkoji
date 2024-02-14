@@ -7,11 +7,7 @@
     class="mb-[1vh] w-[95%] h-[15%] bg-white border-sm border-purple-300 rounded-r-md flex items-center"
   >
     <div class="w-full h-full flex items-center">
-      <img
-        src="@/assets/landing/profile_icon.jpg"
-        alt=""
-        class="ml-[0.5vw] h-[80%] aspect-square rounded-full"
-      />
+      <img :src="image" alt="사용자 프로필" class="ml-[0.5vw] h-[80%] aspect-square rounded-full" />
       <div class="ml-[1vw] text-[1vw] w-[40%] flex">
         {{ userName }}
         <div v-if="buttonType === 'user-list' && userName === myName" class="ml-[0.3vw]">(나)</div>
@@ -41,7 +37,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onBeforeMount } from 'vue'
 import IconCheck from '@/icons/meeting/IconCheck.vue'
 
 const props = defineProps({
@@ -65,24 +61,28 @@ const props = defineProps({
 const emit = defineEmits(['user-checked']['user-unchecked'])
 
 const isChecked = ref(false)
+const image = ref('')
 const userName = ref('')
 const checkBox = ref()
 
-const clientData = () => {
+// 사용자 이름 가져오기
+const getUserName = () => {
   const { clientData } = getConnectionData()
   userName.value = clientData
 }
 
-// 사용자 데이터 가져오기
+// 연결돼 있는 사용자 정보 가져오기
 const getConnectionData = () => {
   const { connection } = props.streamManager.stream
   return JSON.parse(connection.data)
 }
 
+// 사용자 소그룹 초대 여부 확인
 const checkUser = () => {
   isChecked.value = !isChecked.value
 }
 
+// 소그룹에 초대하고 싶은 사용자들 체크하기
 const handleUserCheck = () => {
   if (checkBox.value.checked) {
     const checkedUser = {
@@ -99,9 +99,18 @@ const handleUserCheck = () => {
   }
 }
 
-onMounted(() => {
-  clientData()
+onBeforeMount(() => {
+  getUserName()
+
+  // 사용자 별로 체크박스 영역 나누기
   checkBox.value = document.getElementById(`user-${props.userIndex}`)
+
+  // 로그인 유저는 프로필 정보를 가져오고 비로그인 유저는 디폴트 프로필 사진 부여
+  if ($cookies.get('user') !== null) {
+    image.value = $cookies.get('user').image
+  } else {
+    image.value = '@/assets/landing/profile_icon.jpg'
+  }
 })
 </script>
 

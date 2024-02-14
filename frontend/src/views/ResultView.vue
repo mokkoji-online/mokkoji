@@ -39,6 +39,50 @@
             height="650px"
           />
         </div>
+        <div class="z-30 absolute">
+          <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[63px]">
+            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][0].name }}</p>
+            <p class="text-[9px]">{{ msg[currentPage - 1][0].content }}</p>
+          </div>
+          <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[63px]">
+            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][1].name }}</p>
+            <p class="text-[9px]">{{ msg[currentPage - 1][1].content }}</p>
+          </div>
+
+          <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[63px]">
+            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][2].name }}</p>
+            <p class="text-[9px]">{{ msg[currentPage - 1][2].content }}</p>
+          </div>
+
+          <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[203px]">
+            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][3].name }}</p>
+            <p class="text-[9px]">{{ msg[currentPage - 1][3].content }}</p>
+          </div>
+
+          <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[203px]">
+            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][4].name }}</p>
+            <p class="text-[9px]">
+              {{ msg[currentPage - 1][4].content }}
+            </p>
+          </div>
+
+          <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[203px]">
+            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][5].name }}</p>
+            <p class="text-[9px]">{{ msg[currentPage - 1][5].content }}</p>
+          </div>
+          <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[345px]">
+            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][6].name }}</p>
+            <p class="text-[9px]">{{ msg[currentPage - 1][6].content }}</p>
+          </div>
+          <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[345px]">
+            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][7].name }}</p>
+            <p class="text-[9px]">{{ msg[currentPage - 1][7].content }}</p>
+          </div>
+          <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[345px]">
+            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][8].name }}</p>
+            <p class="text-[9px]">{{ msg[currentPage - 1][8].content }}</p>
+          </div>
+        </div>
         <div class="w-[500px] h-[50px]">
           <PageNavigation
             :current-page="currentPage"
@@ -124,9 +168,9 @@
     <div class="h-[100vh] w-[5vw]"></div>
   </div>
   <div class="h-[15vh] w-[100vw] bg-[#fef6fb]"></div>
-  <div class="h-[15vh] w-[100vw] bg-pink-50">
+  <div class="h-[20vh] w-[100vw] bg-pink-50">
     <p class="text-center text-2xl pt-[5vh]">모꼬지가 마음에 드셨나요?</p>
-    <div class="flex justify-center items-center pt-[vh] pb-[3vh]">
+    <div class="flex justify-center items-center pb-[10vh]">
       <div class="rate">
         <input type="radio" id="star5" name="rate" value="5" />
         <label for="star5" title="text">5 stars</label>
@@ -150,7 +194,7 @@ import IconPhoto from '@/icons/result/IconPhoto.vue'
 import IconLetter from '@/icons/result/IconLetter.vue'
 import msg from '@/temp/result/messages.json'
 import PageNavigation from '@/components/common/PageNavigation.vue'
-
+import RollingPaperItem from '@/components/myresult/RollingPaperItem.vue'
 import RecollectionList from '@/components/myevent/RecollectionList.vue'
 // import PhotoCard from '@/temp/result/photocard.json'
 
@@ -174,7 +218,7 @@ const photocard = ref({
 })
 
 const currentPage = ref(1)
-const totalPage = ref(10)
+const totalPage = ref(8)
 
 const recollectionStore = useRecollection()
 const resultIDStore = useResultIDStore()
@@ -291,6 +335,10 @@ const getResultView = (id) => {
 onMounted(() => {
   getResultView(resultIDStore.getID)
   username.value = userNameStore.getName
+  console.log(msg[0][0].name)
+  console.log(msg[0][0].content)
+  console.log(msg[currentPage.value])
+  console.log(currentPage.value)
 })
 </script>
 <style scoped>

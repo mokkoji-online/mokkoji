@@ -85,7 +85,10 @@
       <p class="pt-2 text-[20px]">편집 버튼으로 롤링페이퍼와 포토모자이크를 만드세요.</p>
       <p class="pt-2 text-[20px] mb-10">추억 쌓기를 통해 모꼬지를 추억으로 간직하세요.</p>
     </div>
-    <div class="h-96 overflow-scroll mx-14 custom-cursor" ref="Memories">
+    <div
+      class="h-96 overflow-scroll overflow-x-hidden overflow-y-hidden mx-14 custom-cursor"
+      ref="Memories"
+    >
       <div class="whitespace-nowrap flex">
         <MemoryList v-for="memory in memories" :key="memory.id" :memory="memory"> </MemoryList>
       </div>
@@ -103,7 +106,10 @@
       </p>
     </div>
 
-    <div class="h-96 overflow-scroll mt-10 mx-14 custom-cursor" ref="Recollections">
+    <div
+      class="h-96 overflow-scroll overflow-x-hidden overflow-y-hidden mt-10 mx-14 custom-cursor"
+      ref="Recollections"
+    >
       <div class="whitespace-nowrap flex">
         <!--추억 컴포넌트-->
         <RecollectionList

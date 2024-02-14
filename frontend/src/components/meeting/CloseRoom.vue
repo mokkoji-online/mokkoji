@@ -14,7 +14,7 @@
           class="w-full h-full pr-[7vh] flex flex-col justify-center items-center right-[8%] text-r-md font-bold"
         >
           <h1 class="text-[2.6lvw]">호스트가 행사를 종료했어요.</h1>
-          <h1 class="text-[2.6lvw]">모꼬지를 이용해 주셔서 감사합니다.</h1>
+          <h1 class="text-[2.6lvw]">다음에 또 놀러오세요!</h1>
           <br />
           <button
             class="w-[20%] aspect-[3] outline outline-[0.5vh] outline-purple-400 rounded-r-lg hover:bg-purple-400 z-10"

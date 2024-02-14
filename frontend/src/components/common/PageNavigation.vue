@@ -1,40 +1,48 @@
 <template>
-  <div class="flex items-center justify-center">
-    <ul class="flex">
-      <li>
-        <a
-          @click="onPageChange(1)"
-          class="border-2 cursor-pointer border-pink-100 border-solid rounded-lg p-1 opacity-70 hover:opacity-100 hover:bg-pink-100 w-12 h-2"
-          >최신</a
-        >
-      </li>
-      <li>
-        <a
-          @click="onPageChange(startPage == 1 ? 1 : startPage - 1)"
-          class="border-2 cursor-pointer border-pink-100 border-solid rounded-lg p-1 opacity-70 hover:opacity-100 hover:bg-pink-100 w-12 h-2"
-          >이전</a
-        >
-      </li>
-      <!-- <div v-for="pg in range(startPage, endPage)" :key="pg">
+  <div class="pt-6">
+    <!-- <div class="flex items-center justify-center">
+      <p>{{ currentPage }} / {{ totalPage }}</p>
+    </div> -->
+    <div class="flex justify-center">
+      <ul class="flex">
+        <li>
+          <a
+            @click="onPageChange(1)"
+            class="border-2 cursor-pointer border-pink-100 border-solid rounded-lg p-1 opacity-70 hover:opacity-100 hover:bg-pink-100 w-12 h-2"
+            >최신</a
+          >
+        </li>
+        <li>
+          <a
+            @click="onPageChange(startPage == 1 ? 1 : startPage - 1)"
+            class="border-2 cursor-pointer border-pink-100 border-solid rounded-lg p-1 opacity-70 hover:opacity-100 hover:bg-pink-100 w-12 h-2"
+            >이전</a
+          >
+        </li>
+        <!-- <div v-for="pg in range(startPage, endPage)" :key="pg">
         <li :class="currentPage === pg ? 'page-item active' : 'page-item'">
           <a class="page-item" @click="onPageChange(pg)">{{ pg }}</a>
         </li>
       </div> -->
-      <li>
-        <a
-          @click="onPageChange(endRange ? totalPage : endPage + 1)"
-          class="border-2 cursor-pointer border-pink-100 border-solid rounded-lg p-1 opacity-70 hover:opacity-100 hover:bg-pink-100 w-12 h-2"
-          >다음</a
-        >
-      </li>
-      <li>
-        <a
-          @click="onPageChange(totalPage)"
-          class="border-2 cursor-pointer border-pink-100 border-solid rounded-lg p-1 opacity-70 hover:opacity-100 hover:bg-pink-100 w-12 h-2"
-          >마지막</a
-        >
-      </li>
-    </ul>
+        <div class="justify-center flex items-center px-2">
+          <p>{{ currentPage }} / {{ totalPage }}</p>
+        </div>
+        <li>
+          <a
+            @click="onPageChange(endRange ? totalPage : endPage + 1)"
+            class="border-2 cursor-pointer border-pink-100 border-solid rounded-lg p-1 opacity-70 hover:opacity-100 hover:bg-pink-100 w-12 h-2"
+            >다음</a
+          >
+        </li>
+        <li>
+          <a
+            @click="onPageChange(totalPage)"
+            class="border-2 cursor-pointer border-pink-100 border-solid rounded-lg p-1 opacity-70 hover:opacity-100 hover:bg-pink-100 w-12 h-2"
+            >마지막</a
+          >
+        </li>
+      </ul>
+    </div>
   </div>
 </template>
 <script setup>
