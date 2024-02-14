@@ -34,11 +34,17 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import Cropper from 'cropperjs'
-import { useFormDataStore, useImgUploadStore } from '@/stores/result.js'
+import {
+  useFormDataStore,
+  useImgUploadStore,
+  useResultIDStore,
+  useGalleryStore
+} from '@/stores/result.js'
 import 'cropperjs/dist/cropper.css'
-
+const resultIDStore = useResultIDStore()
 const formDataStore = useFormDataStore()
 const imgUploadStore = useImgUploadStore()
+const galleryStore = useGalleryStore()
 
 const image = ref(null)
 const cropper = ref(null)
@@ -50,17 +56,33 @@ const imgList = []
 const cropImage = () => {
   const croppedDataUrl = cropper.value.getCroppedCanvas().toDataURL('image/png')
   croppedImage.value = croppedDataUrl
+  const base64String = croppedDataUrl.split(',')[1] // Extract base64 data
+  const byteArray = atob(base64String)
+  const byteNumbers = new Array(byteArray.length)
+  for (let i = 0; i < byteArray.length; i++) {
+    byteNumbers[i] = byteArray.charCodeAt(i)
+  }
+  const byteArrayUint8 = new Uint8Array(byteNumbers)
+  const blob = new Blob([byteArrayUint8], { type: 'image/png' })
+
+  // Create a new File object with the Blob
+  const file = new File([blob], `cropped_image.png`, { type: 'image/png' })
+
+  imgList.push(file)
+  formDataStore.addFile(file)
 }
 
 const handleFileChange = (event) => {
   const file = event.target.files[0]
+  console.log(file)
   if (file) {
     imageUrl.value = URL.createObjectURL(file)
     cropper.value.replace(imageUrl.value)
-    console.log(file)
-    formDataStore.addFile(file)
-    console.log(formDataStore.formData)
-    imgList.push(file)
+    // console.log(file)
+    // formDataStore.addFile(file)
+    // console.log(formDataStore.formData)
+    // imgList.push(file)
+    // console.log(file)
   }
 }
 
@@ -70,18 +92,25 @@ const uploadImage = () => {
 
 const photoList = () => {
   console.log('사진 추가 데이터 전송 메소드 실행')
-  console.log(imgList)
+
   const formData = new FormData()
   for (let i = 0; i < imgList.length; i++) {
     formData.append('photos', imgList[i])
   }
 
-  imgUploadStore.addPhotos(11, formData, ({ res }) => {
-    console.log('이미지 업로드 성공')
-  }),
+  imgUploadStore.addPhotos(
+    resultIDStore.getID,
+    formData,
+    ({ res }) => {
+      galleryStore.addUploadedPhoto(imgList[0])
+
+      console.log('이미지 업로드 성공')
+    },
     (error) => {
       console.log('이미지 업로드 오류:', error)
     }
+  )
+  imgList.value = []
   formDataStore.clearFormData()
 }
 

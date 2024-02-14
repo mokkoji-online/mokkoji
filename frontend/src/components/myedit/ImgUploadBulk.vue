@@ -38,6 +38,14 @@
       />
     </ul>
   </DropZone>
+  <div>
+    <button
+      class="absolute left-[430px] bottom-[-10px] opacity-70 text-[16px] border-[#5da2bd] flex pt-1 rounded-lg hover:opacity-100 border-2 border-solid mb-5 px-10 py-1"
+      @click="uploadImage"
+    >
+      이미지 업로드
+    </button>
+  </div>
 </template>
 
 <script setup>
@@ -47,11 +55,89 @@ import FilePreview from '@/components/myedit/FilePreview.vue'
 import IconExclamationMark from '@/icons/result/IconExclamationMark.vue'
 import IconCropTwo from '@/icons/result/IconCropTwo.vue'
 import IconSmile from '@/icons/result/IconSmile.vue'
+import {
+  useFormDataStore,
+  useImgUploadStore,
+  useResultIDStore,
+  useGalleryStore
+} from '@/stores/result.js'
+
 const { files, addFiles, removeFile } = useFiles()
+const resultIDStore = useResultIDStore()
+const formDataStore = useFormDataStore()
+const imgUploadStore = useImgUploadStore()
+const galleryStore = useGalleryStore()
 
 const onInputChange = (e) => {
   addFiles(e.target.files)
   e.target.value = null
+}
+
+const uploadImage = () => {
+  photoList()
+}
+
+const photoList = () => {
+  console.log('사진 추가 Bulk 데이터 전송 메소드 실행')
+  console.log(files.value)
+  const formData = new FormData()
+  const promises = []
+  for (let i = 0; i < files.value.length; i++) {
+    const file = files.value[i].file
+    const reader = new FileReader()
+
+    promises.push(
+      new Promise((resolve) => {
+        reader.onload = (event) => {
+          const image = new Image()
+          image.onload = () => {
+            const canvas = document.createElement('canvas')
+            const ctx = canvas.getContext('2d')
+            const maxSize = Math.min(image.width, image.height)
+            const offsetX = (image.width - maxSize) / 2
+            const offsetY = (image.height - maxSize) / 2
+            canvas.width = maxSize
+            canvas.height = maxSize
+            ctx.drawImage(image, offsetX, offsetY, maxSize, maxSize, 0, 0, maxSize, maxSize)
+            //canvas로 자르고 이미지 파일로 변환
+            canvas.toBlob((blob) => {
+              const croppedFile = new File([blob], file.name, { type: 'image/jpeg' })
+              formDataStore.addFile(croppedFile)
+              formData.append('photos', croppedFile)
+              galleryStore.addUploadedPhoto(croppedFile) // Assuming you have a method to add the image to the gallery
+              resolve()
+            }, 'image/jpeg')
+          }
+          image.src = event.target.result
+        }
+        reader.readAsDataURL(file)
+      })
+    )
+  }
+
+  Promise.all(promises).then(() => {
+    imgUploadStore
+      .addPhotos(resultIDStore.getID, formData, ({ res }) => {
+        console.log('이미지 업로드 성공')
+      })
+      .catch((error) => {
+        console.log('이미지 업로드 오류:', error)
+      })
+      .finally(() => {
+        formDataStore.clearFormData()
+      })
+  })
+
+  imgUploadStore.addPhotos(resultIDStore.getID, formData, ({ res }) => {
+    for (let i = 0; i < files.value.length; i++) {
+      galleryStore.addUploadedPhoto(files.value[i].file)
+    }
+    console.log('이미지 업로드 성공')
+  }),
+    (error) => {
+      console.log('이미지 업로드 오류:', error)
+    }
+  formDataStore.clearFormData()
 }
 </script>
 <style>

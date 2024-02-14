@@ -1,0 +1,88 @@
+<template>
+  <div class="flex items-center justify-center mt-10">
+    <ul class="flex">
+      <li>
+        <a
+          @click="onPageChange(1)"
+          class="border-2 border-pink-100 border-solid rounded-lg p-1 opacity-70 hover:opacity-100 w-12 h-2"
+          >최신</a
+        >
+      </li>
+      <li>
+        <a
+          @click="onPageChange(startPage == 1 ? 1 : startPage - 1)"
+          class="border-2 border-pink-100 border-solid rounded-lg p-1 opacity-70"
+          >이전</a
+        >
+      </li>
+      <!-- <div v-for="pg in range(startPage, endPage)" :key="pg">
+        <li :class="currentPage === pg ? 'page-item active' : 'page-item'">
+          <a class="page-item" @click="onPageChange(pg)">{{ pg }}</a>
+        </li>
+      </div> -->
+      <li>
+        <a
+          @click="onPageChange(endRange ? totalPage : endPage + 1)"
+          class="border-2 border-pink-100 border-solid rounded-lg p-1 opacity-70"
+          >다음</a
+        >
+      </li>
+      <li>
+        <a
+          @click="onPageChange(totalPage)"
+          class="border-2 border-pink-100 border-solid rounded-lg p-1 opacity-70"
+          >마지막</a
+        >
+      </li>
+    </ul>
+  </div>
+</template>
+<script setup>
+import { computed, onMounted } from 'vue'
+
+const props = defineProps({ currentPage: Number, totalPage: Number })
+const emit = defineEmits(['pageChange'])
+
+const navigationSize = parseInt(1)
+
+const startPage = computed(() => {
+  return parseInt((props.currentPage - 1) / navigationSize) * navigationSize + 1
+})
+
+const endPage = computed(() => {
+  let lastPage =
+    parseInt((props.currentPage - 1) / navigationSize) * navigationSize + navigationSize
+  return props.totalPage < lastPage ? props.totalPage : lastPage
+})
+
+const endRange = computed(() => {
+  return parseInt((props.totalPage - 1) / navigationSize) * navigationSize < props.currentPage
+})
+
+function range(start, end) {
+  const list = []
+  for (let i = start; i <= end; i++) list.push(i)
+  return list
+  //   return Array(end - start + 1)
+  //     .fill()
+  //     .map((val, i) => start + i);
+}
+
+function onPageChange(pg) {
+  console.log(pg + '로 이동!!!')
+  emit('pageChange', pg)
+}
+onMounted(() => {
+  setTimeout(() => {})
+})
+</script>
+
+<style scoped>
+a {
+  cursor: pointer;
+  color: black;
+}
+a:hover {
+  color: black;
+}
+</style>

@@ -100,6 +100,7 @@ const router = createRouter({
         requireAuth: true
       }
     },
+
     {
       path: '/photomosaic',
       name: 'photomosaic',

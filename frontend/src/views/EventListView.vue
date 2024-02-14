@@ -1,8 +1,14 @@
 <template>
   <!--섹션 1/3, 유저 이름 -->
   <div class="text-[50px] flex px-2 h-[500px] items-center pl-32 bg-violet-50">
-    <a v-if="isNotShown" class=""><strong>이진영</strong>님의 모꼬지</a>
-    <a v-if="isShown" class="effect-pink"><strong>이진영</strong>님의 모꼬지</a>
+    <a v-if="isNotShown" class=""
+      ><strong>{{ name }}</strong
+      >님의 모꼬지</a
+    >
+    <a v-if="isShown" class="effect-pink"
+      ><strong>{{ name }}</strong
+      >님의 모꼬지</a
+    >
     <div class="flex">
       <div v-if="isNotShownTwo" class=""><IconFlowers /></div>
       <div v-if="isShownTwo" class=""><IconFlowersColored /></div>
@@ -70,32 +76,20 @@
     </div>
   </div>
   <!-- 섹션 2/3, 기억: Memory -->
-  <div class="">
-    <div class="justify-center mt-10 ml-24 w-[40%]">
+  <div class="bg-white">
+    <div class="justify-center pt-10 ml-24 w-[40%]">
       <div class="flex">
         <strong class="text-[40px]">기억 </strong>
         <p class="text-3xl mt-3">: Memory</p>
       </div>
       <p class="pt-2 text-[20px]">편집 버튼으로 롤링페이퍼와 포토모자이크를 만드세요.</p>
       <p class="pt-2 text-[20px] mb-10">추억 쌓기를 통해 모꼬지를 추억으로 간직하세요.</p>
-      <!-- 도움말 -->
     </div>
-    <div class="h-[400px] overflow-scroll mx-14" ref="verticalScrollWrap">
-      <!-- <div class="">
-        
-        <div class="inline-block"> -->
+    <div class="h-96 overflow-scroll mx-14 custom-cursor" ref="Memories">
       <div class="whitespace-nowrap flex">
-        <MemoryList
-          v-for="memory in MemoryData"
-          :key="memory.id"
-          :memory="memory"
-          class="inline-block"
-        >
-        </MemoryList>
+        <MemoryList v-for="memory in memories" :key="memory.id" :memory="memory"> </MemoryList>
       </div>
     </div>
-    <!-- </div>
-    </div> -->
   </div>
   <!-- 섹션 3/3, 추억: Recollection -->
   <div class="h-[600px] bg-[#ffeff8] pt-10">
@@ -109,11 +103,11 @@
       </p>
     </div>
 
-    <div class="h-96 overflow-scroll mt-10 mx-14" ref="verticalScrollWrap">
+    <div class="h-96 overflow-scroll mt-10 mx-14 custom-cursor" ref="Recollections">
       <div class="whitespace-nowrap flex">
         <!--추억 컴포넌트-->
         <RecollectionList
-          v-for="recollection in RecollectionData"
+          v-for="recollection in recollections"
           :key="recollection.eventId"
           :recollection="recollection"
         />
@@ -152,14 +146,25 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
-
+import { ref, onMounted, watch } from 'vue'
+import {
+  useEventList,
+  useRecollectionsStore,
+  useMemoriesStore,
+  useUserNameStore
+} from '@/stores/result.js'
 import IconFlowers from '@/icons/result/IconFlowers.vue'
 import IconFlowersColored from '@/icons/result/IconFlowersColored.vue'
 import MemoryList from '@/components/myevent/MemoryList.vue'
 import MemoryData from '@/temp/memory.json'
 import RecollectionData from '@/temp/recollection.json'
 import RecollectionList from '@/components/myevent/RecollectionList.vue'
+
+const eventListStore = useEventList()
+const recollectionsStore = useRecollectionsStore()
+const memoriesStore = useMemoriesStore()
+const userNameStore = useUserNameStore()
+const name = ref('')
 
 const isHoveredPhotoMosaic = ref(false)
 const isHoveredRollingPaper = ref(false)
@@ -174,10 +179,10 @@ const startX = ref(0)
 const scrollLeft = ref(0)
 
 let memories = ref([])
-let recollections = []
+let recollections = ref([])
 
-const verticalScrollWrap = ref(null)
-
+const Recollections = ref(null)
+const Memories = ref(null)
 const hoverPhotomosaic = () => {
   isHoveredPhotoMosaic.value = true
   isHoveredRollingPaper.value = false
@@ -213,10 +218,15 @@ const setShowTwo = () => {
 const getEventList = () => {
   console.log('user이름님의 event list 불러오기')
   //API 호출
-  eventList(
+  eventListStore.eventList(
     (res) => {
+      console.log(res)
       memories.value = res.data.memoryList
-      recollections = res.data.recollectionList
+      memoriesStore.setMemories = memories.value
+      console.log(memoriesStore.getMemories)
+      recollectionsStore.setRecollections = recollections.value
+      recollections.value = res.data.recollectionList
+      console.log(recollectionsStore.getRecollections)
     },
     (error) => {
       console.log(error)
@@ -224,36 +234,40 @@ const getEventList = () => {
   )
 }
 
+const scrollMethods = (e) => {
+  e.value.addEventListener('mousedown', (event) => {
+    isMouseDown.value = true
+    startX.value = event.pageX - e.value.offsetLeft
+    scrollLeft.value = e.value.scrollLeft
+  })
+
+  e.value.addEventListener('mouseleave', () => {
+    isMouseDown.value = false
+  })
+
+  e.value.addEventListener('mouseup', () => {
+    isMouseDown.value = false
+  })
+
+  e.value.addEventListener('mousemove', (event) => {
+    if (!isMouseDown.value) return
+
+    event.preventDefault()
+    const x = event.pageX - e.value.offsetLeft
+    const beforeScrollLeft = (x - startX.value) * 1
+    e.value.scrollLeft = scrollLeft.value - beforeScrollLeft
+  })
+}
+
 onMounted(() => {
-  console.log("I'm here")
+  userNameStore.setName($cookies.get('user').name)
+  name.value = userNameStore.getName
   setShow()
   setShowTwo()
-  // getEventList()
+  getEventList()
   window.onload = () => {
-    console.log("I'm here")
-    console.log(verticalScrollWrap.value)
-    verticalScrollWrap.value.addEventListener('mousedown', (e) => {
-      isMouseDown.value = true
-      startX.value = e.pageX - verticalScrollWrap.value.offsetLeft
-      scrollLeft.value = verticalScrollWrap.value.scrollLeft
-    })
-
-    verticalScrollWrap.value.addEventListener('mouseleave', () => {
-      isMouseDown.value = false
-    })
-
-    verticalScrollWrap.value.addEventListener('mouseup', () => {
-      isMouseDown.value = false
-    })
-
-    verticalScrollWrap.value.addEventListener('mousemove', (e) => {
-      if (!isMouseDown.value) return
-
-      e.preventDefault()
-      const x = e.pageX - verticalScrollWrap.value.offsetLeft
-      const beforeScrollLeft = (x - startX.value) * 1
-      verticalScrollWrap.value.scrollLeft = scrollLeft.value - beforeScrollLeft
-    })
+    scrollMethods(Memories)
+    scrollMethods(Recollections)
   }
 })
 </script>
@@ -295,5 +309,11 @@ span {
 .highlight-white:hover {
   box-shadow: inset 0 -3px 0 #bab9b9;
   color: black;
+}
+
+.custom-cursor {
+  cursor:
+    url('src/assets/eventlist/scrollIcon.svg') 2 2,
+    auto;
 }
 </style>
