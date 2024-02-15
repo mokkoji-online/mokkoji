@@ -266,6 +266,7 @@ const downloadThumbnailStore = useDownloadThumbnail()
 const downloadPhotomosaicStore = useDownloadPhotomosaic()
 const shareImageStore = useShareImage()
 const sharePhotomosaicStore = useSharePhotomosaic()
+const
 
 const isSaved = ref(false)
 const isCopyBoard = ref(false)
@@ -416,7 +417,8 @@ const getResultView = (id) => {
 }
 
 onMounted(() => {
-  photocard.value.resultId = ref(route.params.resultId)
+  console.log(route.params.resultId)
+  photocard.value.resultId = route.params.resultId
 
   setTimeout(() => {
     getResultView(photocard.value.resultId)
