@@ -118,7 +118,7 @@ const router = createRouter({
     {
       path: '/resultpage/:resultId',
       name: 'resultpage',
-      component: ResultPage
+      component: ResultPage,
       meta: {
         requireAuth: true
       }
