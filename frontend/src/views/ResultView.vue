@@ -4,7 +4,7 @@
       <!-- 추억 결과물 카드 -->
       <div class="mt-[10vh]" v-if="isPhotoCardResult">
         <div class="flex justify-center items-center">
-          <RecollectionList :key="resultIDStore.getID" :recollection="photocard" />
+          <RecollectionList :key="photocard.value.resultId" :recollection="photocard" />
         </div>
 
         <button
