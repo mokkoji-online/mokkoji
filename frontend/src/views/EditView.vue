@@ -206,11 +206,11 @@
             >포토모자이크 생성 TIP</span
           ></a
         >
-        <a
+        <!-- <a
           ><span class="text-slate-500 text-2xl highlight-white" @mouseover="hoverPhotoUpload"
             >사진 업로드 TIP</span
           ></a
-        >
+        > -->
         <p />
       </div>
       <div class="h-[300px] bg-white flex items-center justify-center">
@@ -246,7 +246,7 @@
           </div>
         </div>
 
-        <div v-if="isHoveredPhotoUpload" data-aos="fade-up" data-aos-duration="2000">
+        <!-- <div v-if="isHoveredPhotoUpload" data-aos="fade-up" data-aos-duration="2000">
           <div class="flex">
             <div class="">
               <img src="@/assets/eventlist/img_crop_ex.png" class="t-10 mr-10 w-48" />
@@ -261,7 +261,7 @@
               </p>
             </div>
           </div>
-        </div>
+        </div> -->
       </div>
     </div>
     <!-- 섹션 5/6 포토모자이크 편집 -->

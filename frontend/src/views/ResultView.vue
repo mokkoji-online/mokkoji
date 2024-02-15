@@ -20,15 +20,15 @@
           <p class="absolute z-20 text-[30px] pb-[500px]">{{ username }}님의 추억조각</p>
 
           <img
-            :src="`src/assets/rollingtemplate/${design}.png`"
-            :alt="`template_${design}`"
+            src="@/assets/rollingtemplate/wedding.png"
+            alt="template_wedding"
             width="450px"
             height="700px"
             class="z-10"
           />
           <img
-            :src="`@/assets/rollingnote/${color}.png`"
-            :alt="`template_${color}`"
+            src="@/assets/rollingnote/pink.png"
+            alt="`template_pink`"
             class="absolute z-20"
             width="420px"
             height="650px"
@@ -38,20 +38,76 @@
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[63px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[0].writer }}</p>
             <p class="text-[9px]">{{ msg[0].text }}</p>
+            <button
+              v-if="msg[0].video !== null"
+              @click="playVideo"
+              class="border-2 border-black p-1"
+            >
+              비디오 재생
+            </button>
+            <video ref="videoPlayer" width="500" height="400">
+              <source :src="msg[0].video" type="video/mp4" />
+            </video>
+            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
+            <video v-if="msg[0].audio !== null" ref="audioPlayer">
+              <source :src="msg[0].voice" type="video/webm" />
+            </video>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[203px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[1].writer }}</p>
             <p class="text-[9px]">{{ msg[1].text }}</p>
+            <button
+              v-if="msg[1].video !== null"
+              @click="playVideo"
+              class="border-2 border-black p-1"
+            >
+              비디오 재생
+            </button>
+            <video ref="videoPlayer" width="500" height="400">
+              <source :src="msg[1].video" type="video/mp4" />
+            </video>
+            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
+            <video v-if="msg[1].audio !== null" ref="audioPlayer">
+              <source :src="msg[1].voice" type="video/webm" />
+            </video>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[345px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[2].writer }}</p>
             <p class="text-[9px]">{{ msg[2].text }}</p>
+            <button
+              v-if="msg[2].video !== null"
+              @click="playVideo"
+              class="border-2 border-black p-1"
+            >
+              비디오 재생
+            </button>
+            <video ref="videoPlayer" width="500" height="400">
+              <source :src="msg[2].video" type="video/mp4" />
+            </video>
+            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
+            <video v-if="msg[2].audio !== null" ref="audioPlayer">
+              <source :src="msg[2].voice" type="video/webm" />
+            </video>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[63px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[3].writer }}</p>
             <p class="text-[9px]">{{ msg[3].text }}</p>
+            <button
+              v-if="msg[3].video !== null"
+              @click="playVideo"
+              class="border-2 border-black p-1"
+            >
+              비디오 재생
+            </button>
+            <video ref="videoPlayer" width="500" height="400">
+              <source :src="msg[3].video" type="video/mp4" />
+            </video>
+            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
+            <video v-if="msg[3].audio !== null" ref="audioPlayer">
+              <source :src="msg[3].voice" type="video/webm" />
+            </video>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[203px]">
@@ -59,11 +115,39 @@
             <p class="text-[9px]">
               {{ msg[4].text }}
             </p>
+            <button
+              v-if="msg[4].video !== null"
+              @click="playVideo"
+              class="border-2 border-black p-1"
+            >
+              비디오 재생
+            </button>
+            <video ref="videoPlayer" width="500" height="400">
+              <source :src="msg[4].video" type="video/mp4" />
+            </video>
+            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
+            <video v-if="msg[4].audio !== null" ref="audioPlayer">
+              <source :src="msg[4].voice" type="video/webm" />
+            </video>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[345px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[5].writer }}</p>
             <p class="text-[9px]">{{ msg[5].text }}</p>
+            <button
+              v-if="msg[5].video !== null"
+              @click="playVideo"
+              class="border-2 border-black p-1"
+            >
+              비디오 재생
+            </button>
+            <video ref="videoPlayer" width="500" height="400">
+              <source :src="msg[5].video" type="video/mp4" />
+            </video>
+            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
+            <video v-if="msg[5].audio !== null" ref="audioPlayer">
+              <source :src="msg[5].voice" type="video/webm" />
+            </video>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[63px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[6].writer }}</p>
@@ -250,9 +334,9 @@ const msg = ref([])
 const currentPage = ref(1)
 const totalPage = ref(1)
 const alertText = ref('')
-const design = ref('basic')
+const design = ref('')
 const username = ref('')
-const color = ref('rainbow')
+const color = ref('')
 const participantCount = ref(0)
 const letterCount = ref(0)
 
@@ -310,6 +394,30 @@ const showSucceeded = async (e) => {
     case '복사성공':
       isCopyBoard.value = false
       alertText.value = '클립보드에 복사되었습니다.'
+  }
+}
+
+const videoSource = ref('')
+const videoPlayer = ref(null)
+const audioSource = ref('')
+const audioPlayer = ref(null)
+const playVideo = () => {
+  const videoPlayer = videoPlayer.value
+
+  if (videoPlayer.paused) {
+    videoPlayer.play()
+  } else {
+    videoPlayer.pause()
+  }
+}
+
+const playAudio = () => {
+  const audioPlayer = audioPlayer.value
+
+  if (audioPlayer.paused) {
+    audioPlayer.play()
+  } else {
+    audioPlayer.pause()
   }
 }
 

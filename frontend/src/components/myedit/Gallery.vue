@@ -37,7 +37,7 @@
       <div class="w-[2vw]"></div>
       <div class="">
         <div class="flex justify-end items-end pt-[1vh]">
-          <button
+          <!-- <button
             class="opacity-70 text-sm mr-5 w-[10vw] h-[4.5vh] border-[#5da2bd] rounded-lg hover:opacity-100 border-2 border-solid mb-5 effect-button-two"
             @click="showPhotoUploadModal"
           >
@@ -48,7 +48,7 @@
             @click="showCutPhotoUploadModal"
           >
             <IconCrop /> 자르기 + 사진 추가
-          </button>
+          </button> -->
         </div>
         <div class="ml-4 h-[70vh] w-[40vw] border-sm rounded-r-lg border-[#5da2bd]">
           <div ref="scrollContainer" class="custom-scroll-container">
