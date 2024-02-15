@@ -23,24 +23,21 @@ public class RecordServiceImpl implements RecordService{
     private final EventRepository eventRepository;
 
 
-    // 유저의 활동기록 업데이트
+    //마이페이지 활동 기록 업데이트
     @Override
     public void updateRecord(String sessionId) {
-
         Event event = eventRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> new RestApiException(EventErrorCode.EVENT_NOT_FOUND));
 
         Record record = event.getUser().getRecord();
 
-        // 회의 시간 계산
+        //회의 시간 계산
         long totalTime = ChronoUnit.HOURS.between(event.getStartTime(), event.getEndTime());
 
         int participantCount = event.getParticipantCount();
         int totalMessage = event.getResult().getRollingpaper().getMessages().size();
 
-
         record.updateRecord(totalTime,participantCount,totalMessage);
         recordRepository.save(record);
-
     }
 }

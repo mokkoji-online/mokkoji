@@ -49,13 +49,21 @@ public class OpenviduController {
         this.openvidu = new OpenVidu(openviduUrl, openviduSecret);
     }
 
-    // Session 생성
+
+    /**
+     * 메인 행사 세션 생성
+     * @param params 세션 생성 정보
+     * @param req 유저 Access Token
+     * @return 세션 ID
+     * @throws OpenViduJavaClientException
+     * @throws OpenViduHttpException
+     */
     @PostMapping("/sessions")
     public ResponseEntity<String> addSession(@RequestBody(required = false) Map<String, Object> params,
                                               HttpServletRequest req
     ) throws OpenViduJavaClientException, OpenViduHttpException {
 
-        User user=userService.getByProviderAndEmail(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
+        User user=userService.searchUser(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
 
         // request body 객체로 직렬화
         SessionProperties properties = SessionProperties.fromJson(params).build();
@@ -73,7 +81,13 @@ public class OpenviduController {
     }
 
 
-    // 세션 정보 받기
+    /**
+     * 메인 세션 정보 조회
+     * @param sessionId 조회할 세션 ID
+     * @return 세션 정보, 호스트 이름
+     * @throws OpenViduJavaClientException
+     * @throws OpenViduHttpException
+     */
     @GetMapping("/sessions/{sessionId}")
     public ResponseEntity<Map<String, Object>> getSession(@PathVariable("sessionId") String sessionId)
             throws OpenViduJavaClientException, OpenViduHttpException {
@@ -93,7 +107,15 @@ public class OpenviduController {
     }
 
 
-    // Session 삭제
+    /**
+     * 메인 세션 삭제
+     * @param sessionId 삭제할 세션 ID
+     * @param req 유저 Access Token
+     * @param sessionReqDto 회의 최대 참가자 수
+     * @return 204 코드
+     * @throws OpenViduJavaClientException
+     * @throws OpenViduHttpException
+     */
     @DeleteMapping("/sessions/{sessionId}")
     public ResponseEntity<String> deleteSession(@PathVariable("sessionId") String sessionId,
                                                 HttpServletRequest req,
@@ -101,7 +123,7 @@ public class OpenviduController {
             throws OpenViduJavaClientException, OpenViduHttpException {
 
 
-        User user=userService.getByProviderAndEmail(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
+        User user=userService.searchUser(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
 
         sessionReqDto.setUserId(user.getId());
 
@@ -113,11 +135,18 @@ public class OpenviduController {
 
         activeSession.close();
 
-        return new ResponseEntity<>("세션 삭제 완료", HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
 
-    // Session에 Connect
+    /**
+     * 세션 연결 토큰 생성
+     * @param sessionId 연결할 세션 ID
+     * @param params 연결 정보
+     * @return Connection Token
+     * @throws OpenViduJavaClientException
+     * @throws OpenViduHttpException
+     */
     @PostMapping("/sessions/{sessionId}/connections")
     public ResponseEntity<Map<String, String>> addConnection(@PathVariable("sessionId") String sessionId,
                                                              @RequestBody(required = false) Map<String, Object> params)
@@ -137,7 +166,13 @@ public class OpenviduController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // 소그룹 생성
+    /**
+     * 소그룹 세션 생성
+     * @param params 소그룹 세션 정보(customSessionId==메인 세션의 sessionId)
+     * @return 소그룹 sessionId
+     * @throws OpenViduJavaClientException
+     * @throws OpenViduHttpException
+     */
     @PostMapping("/groupsessions")
     public ResponseEntity<String> addGroupSession(@RequestBody(required = false) Map<String, Object> params
     ) throws OpenViduJavaClientException, OpenViduHttpException {
@@ -160,7 +195,13 @@ public class OpenviduController {
         return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
     }
 
-    // 세션 정보 받기
+    /**
+     * 소그룹 리스트 조회
+     * @param sessionId 소그룹 세션 ID
+     * @return 소그룹 세션 리스트
+     * @throws OpenViduJavaClientException
+     * @throws OpenViduHttpException
+     */
     @GetMapping("/groupsessions/{sessionId}")
     public ResponseEntity<?> getGroupSession(@PathVariable("sessionId") String sessionId)
             throws OpenViduJavaClientException, OpenViduHttpException {

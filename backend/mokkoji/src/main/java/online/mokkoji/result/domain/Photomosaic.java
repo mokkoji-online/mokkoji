@@ -4,10 +4,11 @@ package online.mokkoji.result.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import online.mokkoji.common.domain.BaseEntity;
 
 @Entity
 @Getter
-public class Photomosaic {
+public class Photomosaic extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +19,7 @@ public class Photomosaic {
     @JoinColumn(name = "result_id")
     private Result result;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     @Size(max = 100)
     private String path;
 

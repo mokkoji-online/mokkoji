@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
-//@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${api.version}/events")
@@ -40,13 +39,20 @@ public class EventController {
     private final JwtUtil jwtUtil;
     private final ResultService resultService;
 
-    // 캡쳐사진 저장
+    /**
+     * 사진 추가
+     * @param sessionId 세션 ID
+     * @param req 유저 Access Token
+     * @param photo 사진 파일
+     * @return 완료 안내 텍스트
+     * @throws IOException
+     */
     @PostMapping("/{sessionId}/photos")
     public ResponseEntity<String> addPhoto(@PathVariable("sessionId") String sessionId,
                                            HttpServletRequest req,
                                            MultipartFile photo) throws IOException {
 
-        User user=userService.getByProviderAndEmail(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
+        User user= userService.searchUser(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
         // 사진 업로드
         Event event = eventRepository.findBySessionId(sessionId)
                 .orElseThrow(()->new RestApiException(EventErrorCode.EVENT_NOT_FOUND));
@@ -59,7 +65,16 @@ public class EventController {
         return new ResponseEntity<>("사진 업로드 완료", HttpStatus.OK);
     }
 
-    //롤링페이퍼 저장
+    /**
+     * 롤링페이퍼 메시지 추가
+     * @param sessionId 세션 ID
+     * @param req 유저 Access Token
+     * @param voice 음성 파일
+     * @param video 비디오 파일
+     * @param messageReqDto 작성자, 편지
+     * @return 완료 안내 텍스트
+     * @throws IOException
+     */
     @PostMapping("/{sessionId}/rollingpapers")
     public ResponseEntity<String> addRollingpaper(@PathVariable("sessionId") String sessionId,
                                                   HttpServletRequest req,
@@ -67,7 +82,7 @@ public class EventController {
                                                   @RequestPart(value = "video", required = false) MultipartFile video,
                                                   @RequestPart("writerAndText") MessageReqDto messageReqDto) throws IOException {
 
-        User user=userService.getByProviderAndEmail(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
+        User user=userService.searchUser(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
 
         Event event = eventRepository.findBySessionId(sessionId)
                 .orElseThrow(()->new RestApiException(EventErrorCode.EVENT_NOT_FOUND));
@@ -88,7 +103,11 @@ public class EventController {
 
     }
 
-    // 호스트 계좌 정보 얻기
+    /**
+     * 호스트 계좌 조회
+     * @param sessionId 세션 ID
+     * @return 호스트 계좌 정보
+     */
     @GetMapping("/{sessionId}/accounts")
     public ResponseEntity<AccountResDto> getAccount(@PathVariable("sessionId") String sessionId) {
         AccountResDto accountResDto=eventService.getHostAccount(sessionId);

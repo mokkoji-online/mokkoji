@@ -1,14 +1,15 @@
 package online.mokkoji.user.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class AccountResDto {
     private String bank;
     private String accountNumber;
+
+    @Builder
+    public AccountResDto(String bank, String accountNumber) {
+        this.bank = bank;
+        this.accountNumber = accountNumber;
+    }
 }

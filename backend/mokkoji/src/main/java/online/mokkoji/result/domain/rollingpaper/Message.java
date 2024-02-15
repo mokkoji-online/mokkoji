@@ -3,6 +3,7 @@ package online.mokkoji.result.domain.rollingpaper;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lombok.*;
+import online.mokkoji.common.domain.BaseEntity;
 
 import java.io.Serializable;
 
@@ -10,7 +11,7 @@ import java.io.Serializable;
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString
-public class Message {
+public class Message extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

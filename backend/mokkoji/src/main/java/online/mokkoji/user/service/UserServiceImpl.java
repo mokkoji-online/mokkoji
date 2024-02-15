@@ -27,6 +27,7 @@ public class UserServiceImpl implements UserService{
     private final RecordRepository recordRepository;
     private final JwtUtil jwtService;
 
+    //회원 정보 수정으로 이동
     @Override
     public UpdatePageResDto getUpdatePage(String provider, String email) {
         Optional<User> findUser = userRepository.findByProviderAndEmail(Provider.valueOf(provider), email);
@@ -35,6 +36,7 @@ public class UserServiceImpl implements UserService{
             throw new RestApiException(UserErrorCode.USER_NOT_FOUND);
         }
 
+        //회원 정보, 계좌 정보 전달
         User readUser = findUser.get();
         UserAccount userAccount = readUser.getUserAccount();
 
@@ -47,15 +49,11 @@ public class UserServiceImpl implements UserService{
                 .build();
     }
 
+    //마이 페이지로 이동
     @Override
     public MyPageResDto getMypage(String provider, String email) {
-        Optional<User> findUser = userRepository.findByProviderAndEmail(Provider.valueOf(provider), email);
-
-        if (findUser.isEmpty()) {
-            throw new RestApiException(UserErrorCode.USER_NOT_FOUND);
-        }
-
-        User readUser = findUser.get();
+        //회원 정보, 계좌 정보(등록 여부), 활동 기록 전달
+        User readUser = searchUser(provider, email);
         UserAccount userAccount = readUser.getUserAccount();
         Record record = readUser.getRecord();
 
@@ -82,18 +80,14 @@ public class UserServiceImpl implements UserService{
                 .build();
     }
 
+    //회원 가입
     @Override
-    public void createUser(String provider, String email, UserInputReqDto userInputReqDto) {
-        Optional<User> findUser = userRepository.findByProviderAndEmail
-                (Provider.valueOf(provider), email);
-
-        if(findUser.isPresent() && findUser.get().getAuthority().getKey().equals("ROLE_USER")) {
-            throw new RestApiException(UserErrorCode.DUPLICATE_SIGNUP);
-        }
+    public void signUp(String provider, String email, UserInputReqDto userInputReqDto) {
+        User newUser = searchUser(provider, email);
 
         String refreshToken = jwtService.createRefreshToken();
 
-        User newUser = findUser.get();
+        //입력 내용으로 GuestUser 정보 최신화, Guest >> User 전환, refreshToken 발급
         newUser.updateUser(userInputReqDto.getEmail(), userInputReqDto.getName(), userInputReqDto.getImage());
         newUser.updateRefreshToken(refreshToken);
         newUser.updateAuthority();
@@ -116,46 +110,36 @@ public class UserServiceImpl implements UserService{
         accountRepository.save(userAccount);
     }
 
+    //회원 정보 수정
     @Override
     public void updateUser(String provider, String email, UserInputReqDto modifyDto) {
-        Optional<User> findUser = userRepository.findByProviderAndEmail(Provider.valueOf(provider), email);
-
-        if (findUser.isEmpty()) {
-            throw new RestApiException(UserErrorCode.USER_NOT_FOUND);
-        }
+        User updateUser = searchUser(provider, email);
 
         String name = modifyDto.getName();
         String image = modifyDto.getImage();
         String bank = modifyDto.getBank();
         String accountNumber = modifyDto.getAccountNumber();
 
-        User updateUser = findUser.get();
         updateUser.updateUser(email, name, image);
         userRepository.save(updateUser);
 
-        Optional<UserAccount> findAccount =
-                accountRepository.findByUser_ProviderAndUser_Email(updateUser.getProvider(), updateUser.getEmail());
-
-        UserAccount userAccount = findAccount.get();
+        UserAccount userAccount = accountRepository.findByUser_ProviderAndUser_Email(updateUser.getProvider(), updateUser.getEmail())
+                .orElseThrow(() -> new RestApiException(UserErrorCode.ACCOUNT_NOT_FOUND));
         userAccount.updateAccount(bank, accountNumber);
 
         accountRepository.save(userAccount);
     }
 
+    //회원 탈퇴
     @Override
     public void deleteUser(String provider, String email) {
-        Optional<User> findUser = userRepository.findByProviderAndEmail(Provider.valueOf(provider), email);
-
-        if (findUser.isEmpty()) {
-            throw new RestApiException(UserErrorCode.USER_NOT_FOUND);
-        }
-
-        User deleteUser = findUser.get();
+        User deleteUser = searchUser(provider, email);
         userRepository.delete(deleteUser);
     }
 
+    //DB에서 회원 조회(소셜 도메인, 이메일로 검색)
     @Override
-    public User getByProviderAndEmail(String provider, String email) {
+    public User searchUser(String provider, String email) {
         return userRepository.findByProviderAndEmail(Provider.valueOf(provider), email)
                 .orElseThrow(()->new RestApiException(UserErrorCode.USER_NOT_FOUND));
     }

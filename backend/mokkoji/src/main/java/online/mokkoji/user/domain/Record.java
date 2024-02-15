@@ -2,6 +2,7 @@ package online.mokkoji.user.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import online.mokkoji.common.domain.BaseEntity;
 import online.mokkoji.user.domain.User;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -9,7 +10,7 @@ import org.hibernate.annotations.ColumnDefault;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString(of = {"id", "eventCount", "totalTime", "totalParticipant", "totalMessage"})
-public class Record {
+public class Record extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

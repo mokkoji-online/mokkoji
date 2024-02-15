@@ -3,6 +3,7 @@ package online.mokkoji.event.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import online.mokkoji.common.domain.BaseEntity;
 import online.mokkoji.common.exception.RestApiException;
 import online.mokkoji.common.exception.errorcode.EventErrorCode;
 import online.mokkoji.openvidu.dto.request.SessionReqDto;
@@ -23,7 +24,7 @@ import static online.mokkoji.event.domain.EventStatus.*;
 @AllArgsConstructor
 @DynamicInsert
 @ToString(of = {"id", "participantCount", "status", "startTime", "endTime"})
-public class Event/* extends BaseEntity */ {
+public class Event extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

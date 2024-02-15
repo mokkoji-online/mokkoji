@@ -30,6 +30,9 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -37,39 +40,34 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class S3ServiceImpl implements S3Service {
 
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
-    private final String LOCAL_PATH = System.getProperty("user.home") + File.separator + "Desktop" +
-            File.separator + "mokkoji" + File.separator;
+
+    private final String LOCAL_PATH = "/opt/result" + File.separator;
 
     private final AmazonS3Client amazonS3Client;
     private final ResultRepository resultRepository;
     private final PhotoRepository photoRepository;
-    private final UserRepository userRepository;
 
-
-    // 사진 한 장 업로드 후 url 리턴
+    //사진 한 장 업로드
     @Override
     public PhotoResDto uploadOnePhoto(MultipartFile multipartFile, Long userId, Result result) throws IOException {
         return getPhotoResDto(multipartFile, userId, result);
     }
 
-
-    // 사진 여러장 업로드
+    //사진 여러장 업로드
     @Override
     public List<PhotoResDto> uploadPhotoList(List<MultipartFile> photoList, Long userId, Long resultId) {
-
         Result result = resultRepository.findById(resultId)
                 .orElseThrow(() -> new RestApiException(ResultErrorCode.RESULT_NOT_FOUND));
 
         List<PhotoResDto> dtoList = new ArrayList<>();
 
-        // 사진 업로드 후 dto에 담아서 리턴
         for (MultipartFile photo : photoList) {
             try {
                 PhotoResDto photoResDto = getPhotoResDto(photo, userId, result);
@@ -78,6 +76,7 @@ public class S3ServiceImpl implements S3Service {
                 throw new RuntimeException(e);
             }
         }
+
         return dtoList;
     }
 
@@ -85,12 +84,6 @@ public class S3ServiceImpl implements S3Service {
     // 롤링페이퍼 업로드
     @Override
     public Map<String, String> uploadRollingpaper(Map<String, MultipartFile> multipartFiles, Long userId, Long paperId) throws IOException {
-
-        if (multipartFiles == null) {
-            log.info("파일 없음");
-            return null;
-        }
-
         String dir = "rollingpaper";
         String subDir = "";
         String prefix;
@@ -236,9 +229,34 @@ public class S3ServiceImpl implements S3Service {
         return localFile.getAbsolutePath();
     }
 
+    @Override
+    public void downloadThumbnail(Long resultId, String thumbnailPath) {
+        URL url;
+        try {
+            url = new URL(thumbnailPath);
+        } catch (MalformedURLException e) {
+            throw new RestApiException(S3ErrorCode.INVALID_URL);
+        }
+
+        String key = url.getPath().substring(1);
+
+        File localFile = new File(LOCAL_PATH + resultId + File.separator + "thumbnail.jpg");
+
+        File parentDir = localFile.getParentFile();
+        if(!parentDir.exists()) {
+            parentDir.mkdirs();
+        }
+
+        GetObjectRequest request = new GetObjectRequest(bucket, key);
+
+        amazonS3Client.getObject(request, localFile);
+    }
+
+
+
     //S3 photoList 전체 다운로드
     @Override
-    public String downloadCellImages(Long resultId) {
+    public void downloadCellImages(Long resultId) {
         Result findResult = resultRepository.findById(resultId)
                 .orElseThrow(() -> new RestApiException(ResultErrorCode.RESULT_NOT_FOUND));
 
@@ -253,22 +271,24 @@ public class S3ServiceImpl implements S3Service {
 
         ListObjectsV2Result listResponse = amazonS3Client.listObjectsV2(listRequest);
 
+        Path cellImagesPath = Paths.get(LOCAL_PATH + resultId + File.separator + "cellImages");
+        if(!Files.exists(cellImagesPath)) {
+            try {
+                Files.createDirectories(cellImagesPath);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
         for(S3ObjectSummary s3ObjectSummary : listResponse.getObjectSummaries()) {
             String key = s3ObjectSummary.getKey();
 
-            File localFile = new File(LOCAL_PATH + key.substring(key.indexOf('/') + 1));
-
-            File parentDir = localFile.getParentFile();
-            if(!parentDir.exists()) {
-                parentDir.mkdirs();
-            }
+            File cellImage = new File(cellImagesPath + File.separator + key.substring(key.lastIndexOf('/') + 1));
 
             GetObjectRequest request = new GetObjectRequest(bucket, key);
 
-            amazonS3Client.getObject(request, localFile);
+            amazonS3Client.getObject(request, cellImage);
         }
-
-        return LOCAL_PATH;
     }
 
     //포토모자이크 업로드
@@ -277,22 +297,21 @@ public class S3ServiceImpl implements S3Service {
         Result result = resultRepository.findById(resultId)
                 .orElseThrow(() -> new RestApiException(ResultErrorCode.RESULT_NOT_FOUND));
 
-        String key = result.getUser().getId() + File.separator + resultId + File.separator +
-                "photos" + File.separator + "photomosaic.jpeg";
+        String key = result.getUser().getId() + "/" + resultId + "/" +
+                "photos/photomosaic.jpg";
+
 
         if (amazonS3Client.doesObjectExist(bucket, key)) {
             amazonS3Client.deleteObject(bucket, key);
         }
 
         File photomosaic = new File(System.getProperty("user.home") + File.separator + "Desktop" +
-                File.separator + "photomosaic.jpeg");
+                File.separator + "mokkoji" +  File.separator + resultId + File.separator + "photomosaic.jpg");
 
         PutObjectRequest request = new PutObjectRequest(bucket, key, photomosaic);
 
         try {
             amazonS3Client.putObject(request);
-        } catch (AmazonServiceException e) {
-            e.printStackTrace();
         } catch (SdkClientException e) {
             e.printStackTrace();
         }

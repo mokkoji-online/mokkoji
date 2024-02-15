@@ -54,7 +54,6 @@ dependencies {
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-aws', version: '2.2.6.RELEASE'
 
     compileOnly 'org.projectlombok:lombok'
-    developmentOnly 'org.springframework.boot:spring-boot-devtools'
 //    runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
@@ -67,14 +66,10 @@ dependencies {
     //AWS S3
     implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
-    //photomosaic
-//    implementation files('C:\\opencv\\build\\java\\opencv-490.jar')
-//    implementation files('\\user\\src\\app\\opencv\\opencv-490.jar')
+    //포토 모자이크
+    implementation files('libs/opencv-490.jar')
+
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-}
-
-tasks.named('test') {
-    useJUnitPlatform()
 }

@@ -2,6 +2,7 @@ package online.mokkoji.result.domain.rollingpaper;
 
 import jakarta.persistence.*;
 import lombok.*;
+import online.mokkoji.common.domain.BaseEntity;
 import online.mokkoji.result.domain.Result;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -11,7 +12,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RollingPaper {
+public class RollingPaper extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

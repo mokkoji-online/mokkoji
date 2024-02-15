@@ -25,9 +25,12 @@ public interface S3Service {
     //url로 다운로드
     String downloadWithUrl(String s3Url, String folderName);
 
-    //포토모자이크 cellImages 다운로드
-    String downloadCellImages(Long resultId);
+    //대표 사진 다운로드
+    void downloadThumbnail(Long resultId, String thumbnailPath);
 
-    //포토모자이크 S3로 업로드
+    //포토모자이크 cellImages 다운로드
+    void downloadCellImages(Long resultId);
+
+    //포토모자이크 업로드
     String uploadPhotomosaic(String localPath, Long resultId);
 }

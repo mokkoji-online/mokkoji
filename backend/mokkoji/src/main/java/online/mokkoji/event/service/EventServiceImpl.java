@@ -219,7 +219,10 @@ public class EventServiceImpl implements EventService {
         UserAccount userAccount = event.getUser().getUserAccount();
 
         if (userAccount != null) {
-            return new AccountResDto(userAccount.getBank(), userAccount.getNumber());
+            return AccountResDto.builder()
+                    .bank(userAccount.getBank())
+                    .accountNumber(userAccount.getNumber())
+                    .build();
         }
 
         return null;

@@ -3,6 +3,7 @@ package online.mokkoji.result.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
+import online.mokkoji.common.domain.BaseEntity;
 import online.mokkoji.event.domain.Event;
 import online.mokkoji.result.domain.rollingpaper.RollingPaper;
 import online.mokkoji.user.domain.User;
@@ -14,7 +15,7 @@ import java.util.List;
 @Getter
 @ToString(of = {"id","name", "content", "status","image"})
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Result {
+public class Result extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

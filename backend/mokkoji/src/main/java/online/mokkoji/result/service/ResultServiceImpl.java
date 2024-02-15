@@ -96,7 +96,6 @@ public class ResultServiceImpl implements ResultService {
 
     // 롤링페이퍼와 메시지 페이징
     @Override
-//    @Cacheable(value = "messages", key = "'rp' + #resultId + 'pg' + #pageable.pageNumber")
     public ResultResDto getResult(Long resultId, Pageable pageable) {
         Optional<Result> findResult = resultRepository.findById(resultId);
 
