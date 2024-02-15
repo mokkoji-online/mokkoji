@@ -291,6 +291,10 @@ onMounted(() => {
   }, 200)
   scrollContainer.value.addEventListener('scroll', handleScroll)
 })
+
+onUnmounted(() => {
+  scrollContainer.value.removeEventListener('scroll', handleScroll)
+})
 </script>
 
 <style scoped>

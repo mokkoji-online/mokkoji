@@ -23,19 +23,19 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+import { useResultIDStore } from '@/views/EditView.vue'
 
 const props = defineProps(['recollection'])
 
 const mainImage = ref('@/assets/logo/mokkoji_logo_with_bg.png')
-
-const { VITE_RECOLLECTION_FRAME_COUNT } = import.meta.env
 
 onMounted(() => {
   setTimeout(() => {
     mainImage.value = props.recollection.image
     console.log('Main Image: ', mainImage.value)
   }, 500)
+  useResultIDStore.assignID(props.recollection.eventID)
 })
 </script>
 

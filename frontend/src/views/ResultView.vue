@@ -199,7 +199,7 @@
       </div>
       <p class="flex text-[10px]">{{ shareLink }}</p>
       <div class="flex">
-        <div class="w-[400px]"></div>
+        <div class="w-[300px]"></div>
         <button
           class="ml-16 text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
           @click="copyShare(`${shareLink}`)"
@@ -212,7 +212,7 @@
         >
           닫기
         </button>
-        <div class="w-[400px]"></div>
+        <div class="w-[300px]"></div>
       </div>
     </div>
   </transition>
@@ -240,6 +240,7 @@ import {
 
 //추억 카드 데이터
 const photocard = ref({
+  eventId: resultIDStore.getID,
   name: '',
   content: '',
   image: ''
