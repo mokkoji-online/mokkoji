@@ -37,6 +37,7 @@ onMounted(() => {
     console.log('Main Image: ', mainImage.value)
   }, 500)
   resultIDStore.assignID(props.recollection.eventID)
+  console.log(props.recollection.eventID)
 })
 </script>
 
