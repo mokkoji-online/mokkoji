@@ -64,7 +64,6 @@ const props = defineProps({
 const emit = defineEmits(['user-checked']['user-unchecked'])
 
 const isChecked = ref(false)
-const typeCheck = ref('')
 const userName = ref('')
 const hostName = ref(sessionStorage.getItem('host'))
 const checkBox = ref()

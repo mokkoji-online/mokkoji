@@ -103,13 +103,7 @@
             >
               <IconVideo class="size-[85%] hover:cursor-pointer" />
             </label>
-            <input
-              type="file"
-              id="input-video"
-              ref="videoFile"
-              class="hidden"
-              @change="uploadVideoFile"
-            />
+            <input type="file" id="input-video" class="hidden" @change="uploadVideoFile" />
           </div>
           <div class="basis-1/2 flex justify-end">
             <button
@@ -251,7 +245,6 @@ const uploadAudioFile = () => {
 // 선택한 비디오 파일 업로드하기
 const uploadVideoFile = (event) => {
   const file = event.target.files[0]
-  console.log(file)
   const fileName = event.target.files[0].name
   const extension = fileName.split('.').pop().toLowerCase()
 

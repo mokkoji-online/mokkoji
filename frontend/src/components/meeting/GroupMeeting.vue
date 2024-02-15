@@ -14,7 +14,6 @@
               :stream-manager="sub"
               :main-stream="false"
               @click="updateMainVideoStreamManager(sub)"
-              @toggle-camera="toggleCamera"
             />
           </div>
           <div
@@ -22,9 +21,9 @@
             class="mr-[1vh] w-full h-full basis-3/4 flex justify-center items-start"
           >
             <user-Video
+              :key="`main-${state.mainStreamManager?.stream.connection.connectionId}`"
               :stream-manager="state.mainStreamManager"
               :main-stream="true"
-              @toggle-camera="toggleCamera"
             />
           </div>
         </div>
@@ -40,7 +39,6 @@
           :key="user.stream.connection.connectionId"
           :stream-manager="user"
           :main-stream="false"
-          @toggle-camera="toggleCamera"
         />
       </div>
       <!-- 참여자 목록, 채팅방-->
@@ -380,6 +378,7 @@ const myVideo = ref(null)
 const groupVideo = ref(null)
 const setTime = ref(3)
 
+// 행사 초대 링크 모달
 const showInviteModal = (event) => {
   if (event === 'close') {
     isInviteModal.value = false
@@ -388,14 +387,17 @@ const showInviteModal = (event) => {
   }
 }
 
+// 행사 세부 정보
 const showMeetingDetailModal = () => {
   isMeetingDetailModal.value = !isMeetingDetailModal.value
 }
 
+// 레이아웃 스포트라이트 / 그리드
 const setLayoutState = () => {
   isGrid.value = !isGrid.value
 }
 
+// 마이크 on / off
 const setMicrophoneState = () => {
   isMic.value = !isMic.value
 
@@ -412,6 +414,7 @@ const setMicrophoneState = () => {
   }, 1000)
 }
 
+// 카메라 on / off
 const setCameraState = () => {
   isCamera.value = !isCamera.value
 
@@ -433,6 +436,7 @@ const showLoginCheckModal = () => {
   isLoginCheckModal.value = !isLoginCheckModal.value
 }
 
+// 롤링페이퍼 작성 모달 생성
 const showLetterModal = () => {
   if ($cookies.get('user') !== null) {
     isLetterModal.value = !isLetterModal.value
@@ -441,10 +445,12 @@ const showLetterModal = () => {
   }
 }
 
+// 선물하기 모달 생성
 const showGiftModal = () => {
   isGiftModal.value = !isGiftModal.value
 }
 
+// 개인 사진, 단체 사진 촬영 모달 생성
 const showCaptureModal = () => {
   if ($cookies.get('user') !== null) {
     isCaptureModal.value = !isCaptureModal.value
@@ -453,7 +459,7 @@ const showCaptureModal = () => {
   }
 }
 
-// 사진 촬영 확인 모달
+// 사진 촬영 확인 모달 생성
 const showCaptureCheckModal = () => {
   isCaptureCheckModal.value = true
 
@@ -462,7 +468,7 @@ const showCaptureCheckModal = () => {
   }, 600)
 }
 
-// 행사 참여자 목록 보여주기
+// 소그룹 참여자 목록 보여주기
 const showUserList = () => {
   isUserList.value = !isUserList.value
 }
@@ -472,12 +478,13 @@ const showChat = () => {
   isChat.value = !isChat.value
 }
 
+// 소그룹 나가기, 행사 나가기를 선택하는 모달 생성
 const showLeaveGroupModal = () => {
   isLeaveGroupModal.value = !isLeaveGroupModal.value
 }
 
+// 새로운 채팅 메시지가 오면 메시지창을 최하단으로 내리기
 const scrollToBottom = () => {
-  // 스크롤할 대상 요소 선택
   const scroll = document.getElementById('chat-container')
 
   scroll.scrollTop = scroll.scrollHeight
@@ -504,7 +511,6 @@ const toggleCamera = async () => {
       console.log('New track has been published')
     })
   } else {
-    // 모달창 띄우기
     console.log('전환할 화면이 존재하지 않습니다.')
   }
 }
@@ -597,8 +603,7 @@ const state = reactive({
   publisher: undefined,
   subscribers: [],
   myUserName:
-    $cookies.get('user') !== null ? $cookies.get('user').name : sessionStorage.getItem('userName'),
-  openviduToken: undefined
+    $cookies.get('user') !== null ? $cookies.get('user').name : sessionStorage.getItem('userName')
 })
 
 // 세션 참가하기
@@ -716,6 +721,7 @@ const disconnectSession = () => {
   }
 }
 
+// 행사 나가기
 const leaveMainMeeting = async () => {
   disconnectSession()
 
@@ -725,6 +731,7 @@ const leaveMainMeeting = async () => {
   router.push('/')
 }
 
+// 소그룹 나가기
 const leaveGroupMeeting = async () => {
   disconnectSession()
 
@@ -733,11 +740,7 @@ const leaveGroupMeeting = async () => {
   router.push(`/meetings`)
 }
 
-const updateMainVideoStreamManager = (stream) => {
-  if (state.mainStreamManager === stream) return
-  state.mainStreamManager = stream
-}
-
+// 소그룹 참여자들에게 메시지 보내기
 const sendMessage = () => {
   if (chatMessage.value.trim() !== '') {
     state.session.signal({
@@ -746,6 +749,22 @@ const sendMessage = () => {
       type: 'chat'
     })
     chatMessage.value = ''
+  }
+}
+
+// 사용자 화면 클릭시 메인 화면 전환
+const updateMainVideoStreamManager = async ({ stream }) => {
+  if (state.mainStreamManager === stream.streamManager) return
+
+  const index = state.subscribers.indexOf(stream.streamManager)
+  if (index >= 0) {
+    // state.mainStreamManager를 변경
+    state.mainStreamManager = stream.streamManager
+    // state.subscribers 배열에서 stream.streamManager를 제거
+    state.subscribers.splice(index, 1)
+    // state.publisher를 subscribers 배열의 맨 앞에 추가
+    state.subscribers.splice(index, 0, state.publisher)
+    state.publisher = stream.streamManager
   }
 }
 

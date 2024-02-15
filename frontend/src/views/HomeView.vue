@@ -250,11 +250,12 @@ const photos = ['carousel1.png', 'carousel2.png', 'carousel3.png', 'carousel4.pn
 
 const submitConferenceId = async () => {
   const result = await store.findSession(conferenceIdInput.value)
+  console.log($cookies.get('user'))
 
   if (result === 'success') {
     isInputError.value = false
 
-    if ($cookies.get('user') !== undefined) {
+    if ($cookies.get('user') !== undefined && $cookies.get('user') !== null) {
       router.push('/meetings')
     } else {
       Swal.fire({
