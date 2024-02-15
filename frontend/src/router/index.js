@@ -118,10 +118,10 @@ const router = createRouter({
     {
       path: '/resultpage',
       name: 'resultpage',
-      component: ResultPage,
-      meta: {
-        requireAuth: true
-      }
+      component: ResultPage
+      // meta: {
+      //   requireAuth: true
+      // }
     }
   ],
   // 모든 라우터 이동 후 스크롤 맨 위로

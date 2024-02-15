@@ -6,12 +6,7 @@
         <div class="flex justify-center items-center">
           <RecollectionList :key="resultIDStore.getID" :recollection="photocard" />
         </div>
-        <button
-          class="w-[12vw] mx-auto mt-[1vh] p-2 opacity-70 border-2 rounded-lg flex items-center justify-center hover:opacity-100 effect-button"
-          @click="showSucceeded('대표이미지다운')"
-        >
-          대표 이미지 다운로드
-        </button>
+
         <button
           class="w-[12vw] mx-auto mt-[1vh] p-2 opacity-70 border-2 rounded-lg flex items-center justify-center hover:opacity-100 effect-button"
           @click="shareThumbnail()"
@@ -39,50 +34,50 @@
             height="650px"
           />
         </div>
-        <!-- <div class="z-30 absolute">
+        <div class="z-30 absolute">
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[63px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[0].name }}</p>
-            <p class="text-[9px]">{{ msg[0].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[0].writer }}</p>
+            <p class="text-[9px]">{{ msg[0].text }}</p>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[63px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[1].name }}</p>
-            <p class="text-[9px]">{{ msg[1].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[1].writer }}</p>
+            <p class="text-[9px]">{{ msg[1].text }}</p>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[63px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[2].name }}</p>
-            <p class="text-[9px]">{{ msg[2].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[2].writer }}</p>
+            <p class="text-[9px]">{{ msg[2].text }}</p>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[203px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[3].name }}</p>
-            <p class="text-[9px]">{{ msg[3].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[3].writer }}</p>
+            <p class="text-[9px]">{{ msg[3].text }}</p>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[203px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[4].name }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[4].writer }}</p>
             <p class="text-[9px]">
-              {{ msg[4].content }}
+              {{ msg[4].text }}
             </p>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[203px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[5].name }}</p>
-            <p class="text-[9px]">{{ msg[5].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[5].writer }}</p>
+            <p class="text-[9px]">{{ msg[5].text }}</p>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[345px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[6].name }}</p>
-            <p class="text-[9px]">{{ msg[6].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[6].writer }}</p>
+            <p class="text-[9px]">{{ msg[6].text }}</p>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[345px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[7].name }}</p>
-            <p class="text-[9px]">{{ msg[7].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[7].writer }}</p>
+            <p class="text-[9px]">{{ msg[7].text }}</p>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[345px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[8].name }}</p>
-            <p class="text-[9px]">{{ msg[8].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[8].writer }}</p>
+            <p class="text-[9px]">{{ msg[8].text }}</p>
           </div>
-        </div> -->
+        </div>
         <div class="w-[500px] h-[50px]">
           <PageNavigation
             :current-page="currentPage"
@@ -100,13 +95,13 @@
           </div>
         </div>
         <div class="flex items-center justify-center mt-[3vh]">
-          <button
+          <!-- <button
             class="w-[12vw] p-2 opacity-70 border-2 rounded-lg flex items-center justify-center hover:opacity-100 effect-button"
             @click="downloadPhotomosaic"
           >
             포토 모자이크 다운로드
-          </button>
-          <div class="mx-4"></div>
+          </button> -->
+          <!-- <div class="mx-4"></div> -->
           <button
             class="w-[12vw] p-2 opacity-70 border-2 rounded-lg flex items-center justify-center hover:opacity-100 effect-button"
             @click="sharePhotomosaic"
@@ -197,13 +192,14 @@
   <transition name="modal-fade">
     <div
       v-if="isCopyBoard"
-      class="fixed bottom-[50%] left-[10%] custom-translate rounded-lg bg-slate-50 px-14 py-3 z-30"
+      class="fixed bottom-[50%] left-[10%] custom-translate rounded-lg bg-white px-14 py-3 z-30"
     >
       <div class="flex">
         <p class="">아래 링크를 공유해주세요.</p>
       </div>
       <p class="flex text-[10px]">{{ shareLink }}</p>
       <div class="flex">
+        <div class="w-[450px]"></div>
         <button
           class="ml-16 text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
           @click="copyShare(`${shareLink}`)"
@@ -216,6 +212,7 @@
         >
           닫기
         </button>
+        <div class="w-[450px]"></div>
       </div>
     </div>
   </transition>
@@ -398,8 +395,14 @@ const getResultView = (id) => {
       photocard.value.content = res.data.content
       photocard.value.name = res.data.name
       photomosaic_url.value = res.data.photomosaic
-      totalPage.value = res.data.totalPage + 1
-      msg.value = res.data.messageList
+      totalPage.value = res.data.totalPage
+      msg.value = res.data.messageList.content
+      if (msg.value.length < 9) {
+        for (let i = msg.value.length; i < 9; i++) {
+          msg.value.push(i)
+        }
+      }
+      console.log(msg.value)
       console.log(res)
       console.log(photocard.value.image)
       console.log(photomosaic_url.value)
