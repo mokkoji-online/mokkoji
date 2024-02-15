@@ -5,9 +5,9 @@
     </p>
     <div class="bg-custom">
       <div class="flex justify-center items-center">
-        <a href="/resultpage">
+        <router-link :to="{ name: 'resultpage', params: { resultId: recollection.resultId } }">
           <img :src="`${recollection.image}`" alt="unregistered" height="180" width="180" />
-        </a>
+        </router-link>
       </div>
       <p class="text-lg mt-2 text-center">
         <strong class="effect-blacnk-recollection">{{ recollection.name }}</strong>
@@ -24,18 +24,17 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useResultIDStore } from '@/stores/result.js'
+
+import { useRouter } from 'vue-router'
 
 const props = defineProps(['recollection'])
-const resultIDStore = useResultIDStore()
 
 const mainImage = ref('@/assets/logo/mokkoji_logo_with_bg.png')
 
 onMounted(() => {
   setTimeout(() => {
     mainImage.value = props.recollection.image
-    resultIDStore.assignID(props.recollection.resultId)
-    console.log(props.recollection.resultID)
+
     console.log('Main Image: ', mainImage.value)
   }, 500)
 })

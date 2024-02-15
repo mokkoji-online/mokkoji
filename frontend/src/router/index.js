@@ -116,7 +116,7 @@ const router = createRouter({
       component: CloseRoom
     },
     {
-      path: '/resultpage',
+      path: '/resultpage/:resultId',
       name: 'resultpage',
       component: ResultPage
       // meta: {

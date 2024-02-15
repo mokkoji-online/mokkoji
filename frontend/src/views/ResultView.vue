@@ -223,20 +223,21 @@ import IconHeart from '@/icons/result/IconHeart.vue'
 import IconPeople from '@/icons/result/IconPeople.vue'
 import IconClose from '@/icons/result/IconClose.vue'
 import IconLetter from '@/icons/result/IconLetter.vue'
-
+import { useRoute } from 'vue-router'
 import PageNavigation from '@/components/common/PageNavigation.vue'
 import RecollectionList from '@/components/myevent/RecollectionList.vue'
 
 import { ref, onMounted } from 'vue'
 import {
   useRecollection,
-  useResultIDStore,
   useUserNameStore,
   useDownloadThumbnail,
   useDownloadPhotomosaic,
   useShareImage,
   useSharePhotomosaic
 } from '@/stores/result.js'
+
+const route = useRoute()
 
 //추억 카드 데이터
 const photocard = ref({
@@ -259,7 +260,7 @@ const shareLink = ref('')
 const photomosaic_url = ref('')
 
 const recollectionStore = useRecollection()
-const resultIDStore = useResultIDStore()
+
 const userNameStore = useUserNameStore()
 const downloadThumbnailStore = useDownloadThumbnail()
 const downloadPhotomosaicStore = useDownloadPhotomosaic()
@@ -321,7 +322,7 @@ const copyShare = (shareLink) => {
 //대표이미지 다운로드
 const downloadThumbnail = () => {
   downloadThumbnailStore.DownloadThumbnail(
-    resultIDStore.getID,
+    photocard.value.resultId,
     (res) => {
       console.log(res)
     },
@@ -335,7 +336,7 @@ const downloadThumbnail = () => {
 //대표이미지 공유하기
 const shareThumbnail = () => {
   shareImageStore.ShareImage(
-    resultIDStore.getID,
+    photocard.value.resultId,
     (res) => {
       console.log(res)
       shareLink.value = res.data
@@ -351,7 +352,7 @@ const shareThumbnail = () => {
 //포토모자이크 다운로드 Axios
 const downloadPhotomosaic = () => {
   downloadPhotomosaicStore.DownloadPhotomosaic(
-    resultIDStore.getID,
+    photocard.value.resultId,
     (res) => {
       console.log(res)
     },
@@ -364,7 +365,7 @@ const downloadPhotomosaic = () => {
 //포토모자이크 공유 Axios
 const sharePhotomosaic = () => {
   sharePhotomosaicStore.SharePhotomosaic(
-    resultIDStore.getID,
+    photocard.value.resultId,
     (res) => {
       console.log(res)
     },
@@ -378,7 +379,7 @@ const onPageChange = (val) => {
   console.log(val + '번 페이지로 이동 준비 끝!!!')
   currentPage.value = val
   setTimeout(() => {
-    getResultView(resultIDStore.getID)
+    getResultView(photocard.value.resultId)
   }, 500)
 }
 //결과물 페이지 Axios
@@ -415,10 +416,10 @@ const getResultView = (id) => {
 }
 
 onMounted(() => {
-  photocard.value.resultId = resultIDStore.getID
-  console.log(resultIDStore)
+  photocard.value.resultId = ref(route.params.resultId)
+
   setTimeout(() => {
-    getResultView(resultIDStore.getID)
+    getResultView(photocard.value.resultId)
   }, 500)
   setTimeout(() => {
     username.value = $cookies.get('user').name
