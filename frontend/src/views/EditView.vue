@@ -290,19 +290,23 @@
   <!-- 섹션 6/6 올라가기 -->
   <div class="h-[300px] bg-white">
     <div class="flex justify-center items-center">
-      <div>
-        <div class="justify-center flex" @click="scrollToRollingPaper"><IconUpArrowPurple /></div>
+      <div class="w-[600px]"></div>
+      <div class="">
+        <div class="" @click="scrollToRollingPaper"><IconUpArrowPurple /></div>
         <div class="text-slate-500 justify-center flex" @click="scrollToTop">
           <strong>처음으로</strong>
         </div>
       </div>
       <div
-        class="mt-[20vh] opacity-70 border-2 rounded-lg w-40 mx-auto h-9 flex items-center justify-center hover:cursor-pointer hover:opacity-100 effect-button"
+        class="opacity-70 border-2 border-primary2 rounded-lg w-64 mx-auto h-9 hover:cursor-pointer hover:opacity-100 effect-button"
       >
         <a href="/eventlist"
-          ><p class="text-[20px] justify-center ml-2 flex">목록으로 돌아가기</p>
+          ><p class="text-[20px] justify-center items-center flex">
+            행사 목록으로 돌아가기 <IconBackReverse />
+          </p>
         </a>
       </div>
+      <div class="w-[500px]"></div>
     </div>
   </div>
 </template>
@@ -332,6 +336,7 @@ import IconCheckSkyBlue from '@/icons/result/IconCheckSkyBlue.vue'
 import IconCheckBlue from '@/icons/result/IconCheckBlue.vue'
 import Gallery from '@/components/myedit/Gallery.vue'
 import IconQuestionMarkGray from '@/icons/result/IconQuestionMarkGray.vue'
+import IconBackReverse from '@/icons/result/IconBackReverse.vue'
 
 const editMemoryStore = useEditMemory()
 const saveTemplateStore = useSaveTemplate()
@@ -456,11 +461,14 @@ const showSaved = (e) => {
 }
 
 const reloadParent = () => {
+  window.addEventListener('beforeunload', () => {
+    scrollToPhotoMosaic()
+  })
   setTimeout(() => {
     location.reload()
     console.log('reload 완료')
-    scrollToPhotoMosaic()
-  }, 3000)
+  }, 100)
+  // scrollToPhotoMosaic()
 }
 
 //템플릿 저장 Axios
@@ -628,7 +636,7 @@ onMounted(() => {
 }
 
 .effect-button:hover {
-  box-shadow: inset 0 -200px 0 #e7ebff;
+  box-shadow: inset 0 -200px 0 #b0e3e2;
   color: black;
 }
 
