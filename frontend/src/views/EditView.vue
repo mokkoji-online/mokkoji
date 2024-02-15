@@ -467,7 +467,7 @@ const reloadParent = () => {
   setTimeout(() => {
     location.reload()
     console.log('reload 완료')
-  }, 100)
+  }, 5000)
   // scrollToPhotoMosaic()
 }
 
