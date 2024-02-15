@@ -56,20 +56,24 @@
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[203px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[1].writer }}</p>
             <p class="text-[9px]">{{ msg[1].text }}</p>
-            <button
-              v-if="msg[1].video !== null"
-              @click="playVideo"
-              class="border-2 border-black p-1"
-            >
-              비디오 재생
-            </button>
-            <video ref="videoPlayer" width="500" height="400">
-              <source :src="msg[1].video" type="video/mp4" />
-            </video>
-            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
-            <video v-if="msg[1].audio !== null" ref="audioPlayer">
-              <source :src="msg[1].voice" type="video/webm" />
-            </video>
+            <div class="flex">
+              <button
+                v-if="msg[1].video !== null"
+                @click="playVideo"
+                class="border-2 border-black p-1 text-[5px]"
+              >
+                비디오 재생
+              </button>
+              <video ref="videoPlayer" width="500" height="400">
+                <source :src="msg[1].video" type="video/mp4" />
+              </video>
+              <button @click="playAudio" class="text-[5px] border-2 border-black p-1">
+                오디오 재생
+              </button>
+              <video v-if="msg[1].audio !== null" ref="audioPlayer">
+                <source :src="msg[1].voice" type="video/webm" />
+              </video>
+            </div>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[345px]">
@@ -402,12 +406,10 @@ const videoPlayer = ref(null)
 const audioSource = ref('')
 const audioPlayer = ref(null)
 const playVideo = () => {
-  const videoPlayer = videoPlayer.value
-
-  if (videoPlayer.paused) {
-    videoPlayer.play()
+  if (videoPlayer.value.paused) {
+    videoPlayer.value.play()
   } else {
-    videoPlayer.pause()
+    videoPlayer.value.pause()
   }
 }
 
@@ -415,9 +417,9 @@ const playAudio = () => {
   const audioPlayer = audioPlayer.value
 
   if (audioPlayer.paused) {
-    audioPlayer.play()
+    audioPlayer.value.play()
   } else {
-    audioPlayer.pause()
+    audioPlayer.value.pause()
   }
 }
 
@@ -527,6 +529,8 @@ const getResultView = (id) => {
 
 onMounted(() => {
   console.log(route.params.resultId)
+  console.log(msg.value[5].audio)
+  console.log(msg.value[5].video)
   photocard.value.resultId = route.params.resultId
   getResultView(photocard.value.resultId)
   // setTimeout(() => {
