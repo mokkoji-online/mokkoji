@@ -3,16 +3,13 @@ package online.mokkoji.result.domain;
 import jakarta.persistence.*;
 import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
-import online.mokkoji.common.domain.BaseEntity;
-
-import java.io.Serializable;
 
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @ToString
-public class Photo extends BaseEntity {
+public class Photo{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

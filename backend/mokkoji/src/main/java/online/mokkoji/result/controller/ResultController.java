@@ -37,7 +37,7 @@ public class ResultController {
     private final JwtUtil jwtUtil;
     private final UserService userService;
     private final S3Service s3Service;
-//    private final PhotomosaicService photomosaicService;
+    private final PhotomosaicService photomosaicService;
 
     /**
      * 결과물 리스트 조회

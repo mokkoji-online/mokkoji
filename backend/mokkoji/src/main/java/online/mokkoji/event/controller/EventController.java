@@ -42,22 +42,20 @@ public class EventController {
     /**
      * 사진 추가
      * @param sessionId 세션 ID
-     * @param req 유저 Access Token
      * @param photo 사진 파일
      * @return 완료 안내 텍스트
      * @throws IOException
      */
     @PostMapping("/{sessionId}/photos")
     public ResponseEntity<String> addPhoto(@PathVariable("sessionId") String sessionId,
-                                           HttpServletRequest req,
                                            MultipartFile photo) throws IOException {
 
-        User user= userService.searchUser(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
         // 사진 업로드
         Event event = eventRepository.findBySessionId(sessionId)
                 .orElseThrow(()->new RestApiException(EventErrorCode.EVENT_NOT_FOUND));
+        Long hostId = event.getUser().getId();
         Result result = event.getResult();
-        PhotoResDto photoResDto = s3Service.uploadOnePhoto(photo, user.getId(), result);
+        PhotoResDto photoResDto = s3Service.uploadOnePhoto(photo, hostId, result);
 
         // db에 저장
         resultService.createPhoto(photoResDto);
@@ -68,7 +66,6 @@ public class EventController {
     /**
      * 롤링페이퍼 메시지 추가
      * @param sessionId 세션 ID
-     * @param req 유저 Access Token
      * @param voice 음성 파일
      * @param video 비디오 파일
      * @param messageReqDto 작성자, 편지
@@ -77,15 +74,16 @@ public class EventController {
      */
     @PostMapping("/{sessionId}/rollingpapers")
     public ResponseEntity<String> addRollingpaper(@PathVariable("sessionId") String sessionId,
-                                                  HttpServletRequest req,
                                                   @RequestPart(value = "audio", required = false) MultipartFile voice,
                                                   @RequestPart(value = "video", required = false) MultipartFile video,
                                                   @RequestPart("writerAndText") MessageReqDto messageReqDto) throws IOException {
 
-        User user=userService.searchUser(jwtUtil.getProvider(req),jwtUtil.getEmail(req));
 
         Event event = eventRepository.findBySessionId(sessionId)
                 .orElseThrow(()->new RestApiException(EventErrorCode.EVENT_NOT_FOUND));
+
+        Long hostId = event.getUser().getId();
+        Long resultId = event.getResult().getId();
         Long paperId = event.getResult().getRollingpaper().getId();
 
         messageReqDto.setVoice(voice);
@@ -95,8 +93,7 @@ public class EventController {
         Map<String, MultipartFile> fileMap = eventService.createRollingpaperFileMap(messageReqDto);
 
         // 유효성 검사 후 파일 S3에 업로드
-        Map<String, String> urlMap = s3Service.uploadRollingpaper(fileMap, user.getId(), paperId);
-//        Map<String, String> urlMap = s3Service.uploadRollingpaper(fileMap, 3L, paperId);
+        Map<String, String> urlMap = s3Service.uploadRollingpaper(fileMap, hostId, resultId);
         MessageResDto messageResDto = new MessageResDto(paperId, messageReqDto.getWriter(), messageReqDto.getText(), urlMap);
         resultService.createMessage(messageResDto);
         return new ResponseEntity<>("롤링페이퍼 업로드 완료", HttpStatus.OK);

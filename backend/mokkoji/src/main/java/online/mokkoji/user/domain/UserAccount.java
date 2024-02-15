@@ -3,13 +3,12 @@ package online.mokkoji.user.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import online.mokkoji.common.domain.BaseEntity;
 
 @Entity
 @Getter
 @Table(name = "account")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserAccount extends BaseEntity {
+public class UserAccount {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

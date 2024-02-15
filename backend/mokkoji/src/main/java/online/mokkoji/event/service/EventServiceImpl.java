@@ -212,7 +212,6 @@ public class EventServiceImpl implements EventService {
 
     // 호스트 계좌 정보 얻기
     @Override
-    @Cacheable(value = "hostAccount", key = "#sessionId", cacheManager = "cacheManager")
     public AccountResDto getHostAccount(String sessionId) {
 
         Event event = getEvent(sessionId);

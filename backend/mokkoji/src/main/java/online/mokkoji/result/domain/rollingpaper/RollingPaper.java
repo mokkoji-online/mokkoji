@@ -2,7 +2,6 @@ package online.mokkoji.result.domain.rollingpaper;
 
 import jakarta.persistence.*;
 import lombok.*;
-import online.mokkoji.common.domain.BaseEntity;
 import online.mokkoji.result.domain.Result;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -12,7 +11,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class RollingPaper extends BaseEntity {
+public class RollingPaper  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -42,7 +41,8 @@ public class RollingPaper extends BaseEntity {
     @Builder(builderMethodName = "buildWithResult")
     public RollingPaper(Result result, BackgroundTemplate backgroundTemplate, PostitTemplate postitTemplate) {
         this.result = result;
-        updateTemplate(backgroundTemplate,postitTemplate);
+        this.backgroundTemplate=backgroundTemplate;
+        this.postitTemplate=postitTemplate;
         result.setRollingpaper(this);
     }
 

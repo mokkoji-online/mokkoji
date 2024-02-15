@@ -83,7 +83,7 @@ public class S3ServiceImpl implements S3Service {
 
     // 롤링페이퍼 업로드
     @Override
-    public Map<String, String> uploadRollingpaper(Map<String, MultipartFile> multipartFiles, Long userId, Long paperId) throws IOException {
+    public Map<String, String> uploadRollingpaper(Map<String, MultipartFile> multipartFiles, Long userId, Long resultId) throws IOException {
         String dir = "rollingpaper";
         String subDir = "";
         String prefix;
@@ -100,7 +100,7 @@ public class S3ServiceImpl implements S3Service {
             MultipartFile multipartFile = fileEntry.getValue();
 
             // 사진_유저ID_결과물ID
-            String fileName = createFileName(userId.toString(), paperId.toString(), dir, subDir, prefix, multipartFile.getOriginalFilename());
+            String fileName = createFileName(userId.toString(), resultId.toString(), dir, subDir, prefix, multipartFile.getOriginalFilename());
 
             upload(multipartFile, fileName);
 
