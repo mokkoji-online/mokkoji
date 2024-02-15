@@ -266,7 +266,6 @@ const downloadThumbnailStore = useDownloadThumbnail()
 const downloadPhotomosaicStore = useDownloadPhotomosaic()
 const shareImageStore = useShareImage()
 const sharePhotomosaicStore = useSharePhotomosaic()
-const
 
 const isSaved = ref(false)
 const isCopyBoard = ref(false)
