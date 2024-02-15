@@ -39,17 +39,17 @@
             <p class="text-center text-[8px] mb-1">From {{ msg[0].writer }}</p>
             <p class="text-[9px]">{{ msg[0].text }}</p>
           </div>
-          <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[63px]">
+          <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[203px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[1].writer }}</p>
             <p class="text-[9px]">{{ msg[1].text }}</p>
           </div>
 
-          <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[63px]">
+          <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[345px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[2].writer }}</p>
             <p class="text-[9px]">{{ msg[2].text }}</p>
           </div>
 
-          <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[203px]">
+          <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[63px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[3].writer }}</p>
             <p class="text-[9px]">{{ msg[3].text }}</p>
           </div>
@@ -61,15 +61,15 @@
             </p>
           </div>
 
-          <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[203px]">
+          <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[345px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[5].writer }}</p>
             <p class="text-[9px]">{{ msg[5].text }}</p>
           </div>
-          <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[345px]">
+          <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[63px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[6].writer }}</p>
             <p class="text-[9px]">{{ msg[6].text }}</p>
           </div>
-          <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[345px]">
+          <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[203px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[7].writer }}</p>
             <p class="text-[9px]">{{ msg[7].text }}</p>
           </div>
@@ -116,7 +116,7 @@
     <div class="h-[100vh] w-[40vw] justify-center items-center" ref="top">
       <div class="text-[20px] justify-center items-center flex pt-[20vh]">
         <strong
-          ><p class="effect-black flex">{{ photocard.name }}님의 추억 결과물</p>
+          ><p class="effect-black flex">{{ username }}님의 추억 결과물</p>
         </strong>
       </div>
       <div class="pt-[6vh]">
@@ -199,7 +199,7 @@
       </div>
       <p class="flex text-[10px]">{{ shareLink }}</p>
       <div class="flex">
-        <div class="w-[450px]"></div>
+        <div class="w-[400px]"></div>
         <button
           class="ml-16 text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
           @click="copyShare(`${shareLink}`)"
@@ -212,7 +212,7 @@
         >
           닫기
         </button>
-        <div class="w-[450px]"></div>
+        <div class="w-[400px]"></div>
       </div>
     </div>
   </transition>
