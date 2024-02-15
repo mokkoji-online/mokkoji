@@ -221,6 +221,7 @@ const recordedChunks = ref([])
 const isRecording = ref(false)
 const isPlaying = ref(false)
 const setTime = ref(60)
+const countTimeInterval = ref(null)
 const allowedExtensions = ref(['mp4', 'mov'])
 
 // 작성중인 롤링페이퍼 텍스트 모두 지우기
@@ -348,17 +349,28 @@ const startAudioRecording = async () => {
 
   drawSoundBar()
 
-  // 현재 남은 녹음 가능 시간 보여주기
-  const countTime = setInterval(() => {
-    setTime.value--
-  }, 1000)
+  countTime()
 
   // 60초가 지나면 녹음 종료
-  setTimeout(() => {
-    clearInterval(countTime)
-    setTime.value = 60
-    stopAudioRecording()
-  }, 60000)
+  if (isRecording.value) {
+    setTimeout(() => {
+      clearInterval(countTime)
+      setTime.value = 60
+      stopAudioRecording()
+    }, 60000)
+  }
+}
+
+// 현재 남은 녹음 가능 시간 보여주기
+const countTime = () => {
+  // 숫자 카운트를 시작하고 이를 countTimeInterval에 저장
+  countTimeInterval.value = setInterval(() => {
+    setTime.value--
+    // 시간이 0이하가 되면 자동으로 녹음 중지
+    if (setTime.value <= 0) {
+      stopAudioRecording()
+    }
+  }, 1000)
 }
 
 // 사운드바 제작
@@ -385,6 +397,7 @@ const drawSoundBar = () => {
 const stopAudioRecording = async () => {
   setTime.value = 60
   isRecording.value = false
+  clearInterval(countTimeInterval.value)
   await mediaRecorder.value.stop()
 
   const blob = new Blob(recordedChunks.value, { type: 'audio/webm' })
@@ -413,6 +426,7 @@ const onAudioEnded = () => {
 }
 
 onBeforeUnmount(() => {
+  // Unmount 전에 녹음이 진행되고 있으면 녹음 종료
   if (isRecording.value) {
     stopAudioRecording()
   }

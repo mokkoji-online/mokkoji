@@ -101,8 +101,6 @@ export const useSessionStore = defineStore('session', () => {
           }
         }
       )
-
-      console.log(res)
     } catch (error) {
       console.error(error)
     }
@@ -121,38 +119,40 @@ export const useSessionStore = defineStore('session', () => {
 export const useLetterStore = defineStore('letter', () => {
   const sendLetter = async (videoFile, audioFile, textFile) => {
     // FormData 객체 생성
-    const formData = new FormData()
+    const Letter = new FormData()
 
-    console.log(videoFile)
+    let text = {}
 
-    const text = {
-      writer: $cookies.get('user').name,
-      text: textFile
+    if (textFile !== '') {
+      text = {
+        writer: $cookies.get('user').name,
+        text: textFile
+      }
+    } else {
+      text = {
+        writer: $cookies.get('user').name
+      }
     }
 
     const json = JSON.stringify(text)
     const blob = new Blob([json], { type: 'application/json' })
 
-    if (videoFile) formData.append('video', videoFile)
-    if (audioFile) formData.append('audio', audioFile)
-    if (textFile !== '') formData.append('writerAndText', blob)
+    if (videoFile) Letter.append('video', videoFile)
+    if (audioFile) Letter.append('audio', audioFile)
+    Letter.append('writerAndText', blob)
 
     try {
-      const res = await axiosJwt.post(
+      await axiosJwt.post(
         VITE_SERVER + `/events/${sessionStorage.getItem('sessionId')}/rollingpapers`,
-        formData,
+        Letter,
         {
           headers: {
             'Content-Type': 'multipart/form-data'
           }
         }
       )
-
-      // 성공 시 서버의 응답을 처리
-      console.log('서버 응답:', res.data)
     } catch (error) {
-      // 오류 처리
-      console.error('오류 발생:', error)
+      console.error(error)
     }
   }
 

@@ -32,23 +32,24 @@ const props = defineProps({
 const userName = ref()
 const videoElement = ref(null)
 
-const clientData = () => {
+// 사용자 이름 가져오기
+const getUserName = () => {
   const { clientData } = getConnectionData()
   userName.value = clientData
 }
 
-// 사용자 데이터 가져오기
+// 연결돼 있는 사용자 정보 가져오기
 const getConnectionData = () => {
   const { connection } = props.streamManager.stream
   return JSON.parse(connection.data)
 }
 
 onMounted(() => {
+  getUserName()
+
   if (videoElement.value && props.streamManager) {
     props.streamManager.addVideoElement(videoElement.value)
   }
-
-  clientData()
 })
 </script>
 
