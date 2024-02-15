@@ -20,15 +20,15 @@
           <p class="absolute z-20 text-[30px] pb-[500px]">{{ username }}님의 추억조각</p>
 
           <img
-            :src="`src/assets/rollingtemplate/${design.toLowerCase().trim()}.png`"
-            :alt="`template_${design.toLowerCase().trim()}`"
+            :src="`src/assets/rollingtemplate/${design}.png`"
+            :alt="`template_${design}`"
             width="450px"
             height="700px"
             class="z-10"
           />
           <img
-            src="@/assets/rollingnote/rainbow.png"
-            :alt="`template_${color.toLowerCase().trim()}`"
+            :src="`@/assets/rollingnote/${color}.png`"
+            :alt="`template_${color}`"
             class="absolute z-20"
             width="420px"
             height="650px"
@@ -389,8 +389,8 @@ const getResultView = (id) => {
     id,
     currentPage.value,
     (res) => {
-      design.value = res.data.backgroundTemplate
-      color.value = res.data.postitTemplate
+      design.value = res.data.backgroundTemplate.toLowerCase()
+      color.value = res.data.postitTemplate.toLowerCase()
       participantCount.value = res.data.participantCount
       letterCount.value = res.data.messageCount
       photocard.value.image = res.data.thumbnail
