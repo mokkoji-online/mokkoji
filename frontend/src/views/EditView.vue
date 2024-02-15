@@ -520,38 +520,38 @@ const selectBackground = (value) => {
 
   switch (value) {
     case 'BASIC':
-      design.value = 'basic'
-      rollingPaperTemplate.value.backgroundName = 'basic'
+      design.value = 'BASIC'
+      rollingPaperTemplate.value.backgroundName = 'BASIC'
       isSelectedBasic.value = true
       isNotSelectedBasic.value = false
       break
     case 'WEDDING':
-      design.value = 'wedding'
-      rollingPaperTemplate.value.backgroundName = 'wedding'
+      design.value = 'WEDDING'
+      rollingPaperTemplate.value.backgroundName = 'WEDDING'
       isSelectedWedding.value = true
       isNotSelectedWedding.value = false
       break
     case 'SCHOOL':
-      design.value = 'school'
-      rollingPaperTemplate.value.backgroundName = 'school'
+      design.value = 'SCHOOL'
+      rollingPaperTemplate.value.backgroundName = 'SCHOOL'
       isSelectedSchool.value = true
       isNotSelectedSchool.value = false
       break
     case 'LUNAR':
-      design.value = 'lunar'
-      rollingPaperTemplate.value.backgroundName = 'lunar'
+      design.value = 'LUNAR'
+      rollingPaperTemplate.value.backgroundName = 'LUNAR'
       isSelectedLunar.value = true
       isNotSelectedLunar.value = false
       break
     case 'BABY':
-      design.value = 'baby'
-      rollingPaperTemplate.value.backgroundName = 'baby'
+      design.value = 'BABY'
+      rollingPaperTemplate.value.backgroundName = 'BABY'
       isSelectedBaby.value = true
       isNotSelectedBaby.value = false
       break
     default:
-      design.value = 'basic'
-      rollingPaperTemplate.value.backgroundName = 'basic'
+      design.value = 'BASIC'
+      rollingPaperTemplate.value.backgroundName = 'BASIC'
       isSelectedBasic.value = true
       isNotSelectedBasic.value = false
   }
@@ -571,38 +571,38 @@ const selectInground = (value) => {
   isNotSelectedPink.value = true
   switch (value) {
     case 'RAINBOW':
-      color.value = 'rainbow'
-      rollingPaperTemplate.value.postitName = 'rainbow'
+      color.value = 'RAINBOW'
+      rollingPaperTemplate.value.postitName = 'RAINBOW'
       isNotSelectedPastel.value = false
       isSelectedPastel.value = true
       break
     case 'GREEN':
-      color.value = 'green'
-      rollingPaperTemplate.value.postitName = 'green'
+      color.value = 'GREEN'
+      rollingPaperTemplate.value.postitName = 'GREEN'
       isNotSelectedGreen.value = false
       isSelectedGreen.value = true
       break
     case 'BLUE':
-      color.value = 'blue'
-      rollingPaperTemplate.value.postitName = 'blue'
+      color.value = 'BLUE'
+      rollingPaperTemplate.value.postitName = 'BLUE'
       isNotSelectedBlue.value = false
       isSelectedBlue.value = true
       break
     case 'PINK':
-      color.value = 'pink'
-      rollingPaperTemplate.value.postitName = 'pink'
+      color.value = 'PINK'
+      rollingPaperTemplate.value.postitName = 'PINK'
       isNotSelectedPink.value = false
       isSelectedPink.value = true
       break
     case 'YELLOW':
-      color.value = 'yellow'
-      rollingPaperTemplate.value.postitName = 'yellow'
+      color.value = 'YELLOW'
+      rollingPaperTemplate.value.postitName = 'YELLOW'
       isNotSelectedYellow.value = false
       isSelectedYellow.value = true
       break
     default:
-      color.value = 'rainbow'
-      rollingPaperTemplate.value.postitName = 'rainbow'
+      color.value = 'RAINBOW'
+      rollingPaperTemplate.value.postitName = 'RAINBOW'
       isNotSelectedPastel.value = false
       isSelectedPastel.value = true
   }

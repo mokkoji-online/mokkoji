@@ -203,18 +203,20 @@
         <p class="">아래 링크를 공유해주세요.</p>
       </div>
       <p class="flex text-[10px]">{{ shareLink }}</p>
-      <button
-        class="text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
-        @click="copyShare(`${shareLink}`)"
-      >
-        링크 복사
-      </button>
-      <button
-        class="text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
-        @click="showCopyModal"
-      >
-        닫기
-      </button>
+      <div class="flex">
+        <button
+          class="text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
+          @click="copyShare(`${shareLink}`)"
+        >
+          링크 복사
+        </button>
+        <button
+          class="text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
+          @click="showCopyModal"
+        >
+          닫기
+        </button>
+      </div>
     </div>
   </transition>
 </template>
@@ -407,7 +409,7 @@ const getResultView = (id) => {
       photocard.value.content = res.data.content
       photocard.value.name = res.data.name
       photomosaic_url.value = res.data.photomosaic
-      totalPage.value = res.data.totalPage
+      totalPage.value = res.data.totalPage + 1
       msg.value = res.data.messageList
       console.log(res)
       console.log(photocard.value.image)
