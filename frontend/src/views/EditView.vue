@@ -288,17 +288,21 @@
     </div>
   </div>
   <!-- 섹션 6/6 올라가기 -->
-  <div class="h-[200px] bg-white">
-    <div class="justify-center flex" @click="scrollToRollingPaper"><IconUpArrowPurple /></div>
-    <div class="text-slate-500 justify-center flex" @click="scrollToTop">
-      <strong>처음으로</strong>
-    </div>
-    <div
-      class="mt-[20vh] opacity-70 border-2 rounded-lg w-40 mx-auto h-9 flex items-center justify-center hover:cursor-pointer hover:opacity-100 effect-button"
-    >
-      <a href="/eventlist"
-        ><p class="text-[20px] justify-center ml-2 flex">목록으로 돌아가기</p>
-      </a>
+  <div class="h-[300px] bg-white">
+    <div class="flex justify-center items-center">
+      <div>
+        <div class="justify-center flex" @click="scrollToRollingPaper"><IconUpArrowPurple /></div>
+        <div class="text-slate-500 justify-center flex" @click="scrollToTop">
+          <strong>처음으로</strong>
+        </div>
+      </div>
+      <div
+        class="mt-[20vh] opacity-70 border-2 rounded-lg w-40 mx-auto h-9 flex items-center justify-center hover:cursor-pointer hover:opacity-100 effect-button"
+      >
+        <a href="/eventlist"
+          ><p class="text-[20px] justify-center ml-2 flex">목록으로 돌아가기</p>
+        </a>
+      </div>
     </div>
   </div>
 </template>
@@ -452,8 +456,11 @@ const showSaved = (e) => {
 }
 
 const reloadParent = () => {
-  location.reload()
-  scrollToPhotoMosaic()
+  setTimeout(() => {
+    location.reload()
+    console.log('reload 완료')
+    scrollToPhotoMosaic()
+  }, 3000)
 }
 
 //템플릿 저장 Axios

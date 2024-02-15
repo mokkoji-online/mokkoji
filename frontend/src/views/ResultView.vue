@@ -39,7 +39,7 @@
             height="650px"
           />
         </div>
-        <div class="z-30 absolute">
+        <!-- <div class="z-30 absolute">
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[63px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[0].name }}</p>
             <p class="text-[9px]">{{ msg[0].content }}</p>
@@ -82,7 +82,7 @@
             <p class="text-center text-[8px] mb-1">From {{ msg[8].name }}</p>
             <p class="text-[9px]">{{ msg[8].content }}</p>
           </div>
-        </div>
+        </div> -->
         <div class="w-[500px] h-[50px]">
           <PageNavigation
             :current-page="currentPage"
@@ -201,7 +201,6 @@
     >
       <div class="flex">
         <p class="">아래 링크를 공유해주세요.</p>
-        <button class="ml-[450px]" @click="showCopyModal"><IconClose /></button>
       </div>
       <p class="flex text-[10px]">{{ shareLink }}</p>
       <button
@@ -209,6 +208,12 @@
         @click="copyShare(`${shareLink}`)"
       >
         링크 복사
+      </button>
+      <button
+        class="text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
+        @click="showCopyModal"
+      >
+        닫기
       </button>
     </div>
   </transition>
