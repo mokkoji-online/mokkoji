@@ -51,6 +51,11 @@ const cropper = ref(null)
 const croppedImage = ref(null)
 const imageUrl = ref('src/assets/edit/no_image.png') //처음 이미지
 const imgList = []
+const emit = defineEmits(['closeModal'])
+
+const closeModal = () => {
+  emit('closeModal')
+}
 
 const cropImage = () => {
   const croppedDataUrl = cropper.value.getCroppedCanvas().toDataURL('image/png')
@@ -82,6 +87,7 @@ const handleFileChange = (event) => {
 
 const uploadImage = () => {
   photoList()
+  closeModal()
 }
 
 //이미지 업로드 Axios

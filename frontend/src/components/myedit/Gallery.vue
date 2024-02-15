@@ -86,7 +86,7 @@
       <button class="ml-24 mb-4" @click="closeCutPhotoUploadModal"><IconClose /></button>
     </div>
     <div class="flex content-center items-center">
-      <ImgUpload />
+      <ImgUpload @closeModal="closeCutPhotoUploadModal" />
 
       <!--성공, 실패 여부에 따라 메시지 출력 필요.-->
     </div>
@@ -100,7 +100,7 @@
       <IconClose />
     </button>
     <div class="flex content-center items-center">
-      <ImgUploadBulk />
+      <ImgUploadBulk @closeModal="closePhotoUploadModal" />
     </div>
   </div>
   <!-- 사진 업로드 설명 모달-->
@@ -133,6 +133,7 @@ const createPhotomosaicStore = useCreatePhotomosaic()
 const props = defineProps({
   scrollToHelp: Function
 })
+const emit = defineEmits(['reload'])
 
 const store = useMainImageStore()
 const selectedImage = ref('src/assets/edit/no_image.png')
@@ -272,7 +273,7 @@ const showSaved = (e) => {
 }
 
 const loadGallery = () => {
-  this.$emit('reload')
+  emit('reload')
 }
 
 onMounted(() => {

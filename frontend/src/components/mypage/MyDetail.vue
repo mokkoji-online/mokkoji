@@ -44,7 +44,7 @@
         </div>
       </div>
       <button
-        class="ring-2 ring-primary rounded-xl hover:ring-white bg-primary p-2 my-10 relative"
+        class="m-10 self-center text-primary3 hover:bg-natural-yellow hover:text-red-500"
         @click="update"
       >
         정보 수정하기

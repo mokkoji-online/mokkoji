@@ -55,12 +55,15 @@ import FilePreview from '@/components/myedit/FilePreview.vue'
 import IconExclamationMark from '@/icons/result/IconExclamationMark.vue'
 import IconCropTwo from '@/icons/result/IconCropTwo.vue'
 import IconSmile from '@/icons/result/IconSmile.vue'
+import { defineEmits } from 'vue'
 import {
   useFormDataStore,
   useImgUploadStore,
   useResultIDStore,
   useGalleryStore
 } from '@/stores/result.js'
+
+const emit = defineEmits(['closeModal'])
 
 const { files, addFiles, removeFile } = useFiles()
 const resultIDStore = useResultIDStore()
@@ -73,8 +76,13 @@ const onInputChange = (e) => {
   e.target.value = null
 }
 
+const closeModal = () => {
+  emit('closeModal')
+}
+
 const uploadImage = () => {
   photoList()
+  closeModal()
 }
 
 //사진 추가 Bulk Axios

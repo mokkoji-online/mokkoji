@@ -17,6 +17,7 @@ import Swal from 'sweetalert2'
 import SignUp from '@/components/common/SignUp.vue'
 
 import AOS from 'aos'
+import 'initFlowbite' from 
 import tokenService from '@/services/token.service'
 
 const router = createRouter({

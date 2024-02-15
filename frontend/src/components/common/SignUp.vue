@@ -11,6 +11,7 @@
           <input
             class="flex h-10 w-full bg-background px-3 py-2 text-sm border-2 border-gray-300 rounded-md"
             v-model="email"
+            placeholder="example@email.com"
           />
         </div>
 
@@ -112,6 +113,9 @@ const accountNumber = ref('')
 
 // 회원가입 axios
 const signUp = async () => {
+  if (email.value.length === 0) {
+    email.value = "example@email.com"
+  }
   await axios({
     url: import.meta.env.VITE_SERVER + '/users',
     method: 'POST',
