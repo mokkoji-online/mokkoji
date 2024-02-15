@@ -15,7 +15,7 @@
         class="w-full h-full font-bold text-r-sm rounded-r-lg hover:bg-red-200"
         @click="$emit('leave-main-meeting')"
       >
-        회의 종료
+        행사 나가기
       </button>
     </div>
   </div>

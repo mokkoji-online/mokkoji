@@ -15,7 +15,7 @@
         </button>
       </div>
       <div class="mb-[1vh] text-r-sm">
-        회의 주소를 복사한 후, 초대하고 싶은 친구에게 보내주세요.
+        행사 주소를 복사한 후, 초대하고 싶은 친구에게 보내주세요.
       </div>
       <div
         class="p-[0.5vw] bg-white text-r-sm w-[95%] border-[0.1vb] border-gray rounded-r-lg flex justify-center items-center"

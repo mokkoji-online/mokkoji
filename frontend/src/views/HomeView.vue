@@ -9,7 +9,7 @@
             <h1 id="title" class="underline decoration-red-300">모꼬지</h1>
             <div class="text-[1.5vw]">
               <p>
-                화상 회의 플랫폼 ‘모꼬지’를 통해
+                화상 행사 플랫폼 ‘모꼬지’를 통해
                 <strong class="text-purple-500">결혼식, 졸업식, 돌잔치</strong> 등
               </p>
               <p class="mb-[1vw]">
@@ -50,7 +50,7 @@
                 </button>
               </div>
               <p v-if="isInputError" style="color: red" class="text-[2vh]">
-                올바른 회의 ID가 아닙니다
+                올바른 행사 ID가 아닙니다
               </p>
             </div>
           </div>
@@ -107,7 +107,7 @@
 
           <br />
           <p id="p-main">모꼬지만의 템플릿을 이용하여 롤링페이퍼를 디자인하고 추억하세요.</p>
-          <p id="p-main">참여자는 회의중 언제나 텍스트, 음성, 영상 메시지를 기록할 수 있습니다.</p>
+          <p id="p-main">참여자는 행사중 언제나 텍스트, 음성, 영상 메시지를 기록할 수 있습니다.</p>
         </div>
         <div class="flex justify-center items-center">
           <img src="@/assets/landing/main1.png" class="size-[60%]" />
@@ -131,10 +131,7 @@
           ></path>
         </svg>
       </div>
-      <div
-        class="mt-[2vh] mb-[2vh] flex grid-cols-2 items-center"
-        data-aos="fade-up"
-      >
+      <div class="mt-[2vh] mb-[2vh] flex grid-cols-2 items-center" data-aos="fade-up">
         <div class="basis-2/5 flex justify-end">
           <img class="size-[60%]" src="@/assets/landing/main2.png" />
         </div>
@@ -146,7 +143,7 @@
           <p id="p-main">
             포토 모자이크 기능은 서로 다른 사진들을 조합하여 하나의 이미지를 표현합니다.
           </p>
-          <p id="p-main">회의 사진을 업로드하고 포토 모자이크 기술을 경험해 보세요.</p>
+          <p id="p-main">행사 사진을 업로드하고 포토 모자이크 기술을 경험해 보세요.</p>
         </div>
       </div>
       <div id="space"></div>
@@ -207,7 +204,7 @@
           <h1 id="title-sub-bold">간편하게 보내세요.</h1>
 
           <br />
-          <p id="p-main">화상 회의 내에서 주최자의 계좌와 연동된 QR코드가 제공됩니다.</p>
+          <p id="p-main">화상 행사 내에서 주최자의 계좌와 연동된 QR코드가 제공됩니다.</p>
           <p id="p-main">메세지로 다 담지 못한 축하하는 마음을 전달해보세요.</p>
         </div>
       </div>
@@ -228,7 +225,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeMount, onBeforeUnmount } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { Swiper, SwiperSlide } from 'swiper/vue'
 import { Autoplay, Pagination } from 'swiper/modules'
@@ -237,7 +234,7 @@ import 'vue3-toastify/dist/index.css'
 import 'swiper/css'
 import 'swiper/css/pagination'
 import Swal from 'sweetalert2'
-import AOS from 'aos';
+import AOS from 'aos'
 
 const emit = defineEmits(['load-home'])
 
@@ -252,10 +249,10 @@ const photos = ['carousel1.png', 'carousel2.png', 'carousel3.png', 'carousel4.pn
 
 const submitConferenceId = async () => {
   const result = await store.findSession(conferenceIdInput.value)
-  
+
   if (result === 'success') {
     isInputError.value = false
-    
+
     if ($cookies.get('user') !== undefined) {
       router.push('/meetings')
     } else {
@@ -328,18 +325,10 @@ const toTop = () => {
   })
 }
 
-// onBeforeMount(() => {
-//   AOS.init();
-// })
-
-// onBeforeUnmount(() => {
-//   AOS.init();
-// })
-
 onMounted(() => {
   window.scrollTo(0, 0)
   emit('load-home')
-  AOS.refresh();
+  AOS.refresh()
 })
 </script>
 

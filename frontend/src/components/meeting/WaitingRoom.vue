@@ -15,7 +15,7 @@
         >
           <h1 class="text-[2.6lvw]">모꼬지에 오신걸 환영합니다!</h1>
           <br />
-          <div class="text-[1.8lvw]">회의에서 사용할 이름을 입력하세요</div>
+          <div class="text-[1.8lvw]">행사에서 사용할 이름을 입력하세요</div>
           <input
             type="text"
             name="userName"
