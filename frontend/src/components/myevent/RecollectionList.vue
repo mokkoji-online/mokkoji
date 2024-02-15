@@ -34,10 +34,10 @@ const mainImage = ref('@/assets/logo/mokkoji_logo_with_bg.png')
 onMounted(() => {
   setTimeout(() => {
     mainImage.value = props.recollection.image
+    resultIDStore.assignID(props.recollection.eventId)
+    console.log(props.recollection.eventID)
     console.log('Main Image: ', mainImage.value)
   }, 500)
-  resultIDStore.assignID(props.recollection.eventID)
-  console.log(props.recollection.eventID)
 })
 </script>
 
