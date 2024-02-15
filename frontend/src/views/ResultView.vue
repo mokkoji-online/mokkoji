@@ -22,16 +22,16 @@
           <img
             :src="`src/assets/rollingtemplate/${design.toLowerCase().trim()}.png`"
             :alt="`template_${design.toLowerCase().trim()}`"
-            width="450px"
-            height="700px"
+            width="250px"
+            height="500px"
             class="z-10"
           />
           <img
             :src="`src/assets/rollingnote/${color.toLowerCase().trim()}.png`"
             :alt="`template_${color.toLowerCase().trim()}`"
             class="absolute z-20"
-            width="420px"
-            height="650px"
+            width="220px"
+            height="450px"
           />
         </div>
         <div class="z-30 absolute">
@@ -250,9 +250,9 @@ const msg = ref([])
 const currentPage = ref(1)
 const totalPage = ref(1)
 const alertText = ref('')
-const design = ref('')
+const design = ref('basic')
 const username = ref('')
-const color = ref('')
+const color = ref('rainbow')
 const participantCount = ref(0)
 const letterCount = ref(0)
 
