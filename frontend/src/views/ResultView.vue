@@ -240,7 +240,7 @@ import {
 
 //추억 카드 데이터
 const photocard = ref({
-  eventId: resultIDStore.getID,
+  eventId: 0,
   name: '',
   content: '',
   image: ''
@@ -415,6 +415,8 @@ const getResultView = (id) => {
 }
 
 onMounted(() => {
+  photocard.value.eventId = resultIDStore.getID
+  console.log(resultIDStore)
   setTimeout(() => {
     getResultView(resultIDStore.getID)
   }, 500)
