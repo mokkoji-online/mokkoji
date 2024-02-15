@@ -25,15 +25,15 @@
           <p class="absolute z-20 text-[30px] pb-[500px]">{{ username }}님의 추억조각</p>
 
           <img
-            :src="`src/assets/rollingtemplate/${design}.png`"
-            :alt="`template_${design}`"
+            :src="`src/assets/rollingtemplate/${design.toLowerCase().trim()}.png`"
+            :alt="`template_${design.toLowerCase().trim()}`"
             width="450px"
             height="700px"
             class="z-10"
           />
           <img
-            :src="`src/assets/rollingnote/${color}.png`"
-            :alt="`template_${color}`"
+            :src="`src/assets/rollingnote/${color.toLowerCase().trim()}.png`"
+            :alt="`template_${color.toLowerCase().trim()}`"
             class="absolute z-20"
             width="420px"
             height="650px"
