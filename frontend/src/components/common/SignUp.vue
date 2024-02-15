@@ -114,7 +114,7 @@ const accountNumber = ref('')
 // 회원가입 axios
 const signUp = async () => {
   if (email.value.length === 0) {
-    email.value = "example@email.com"
+    email.value = 'example@email.com'
   }
   await axios({
     url: import.meta.env.VITE_SERVER + '/users',
@@ -137,7 +137,17 @@ const signUp = async () => {
         icon: 'success'
       }).then((result) => {
         if (result.isConfirmed) {
-          router.push('/')
+          if (sessionStorage.getItem('place') === 'meeting') {
+            // session storage에 행사 참여 이력이 있으면 행사 화면으로 다시 이동
+            if (sessionStorage.getItem('groupSessionId') !== null) {
+              router.push('/groupmeetings')
+            } else {
+              router.push('/meetings')
+            }
+          } else {
+            // 홈 화면 새로고침 메서드
+            router.push('/')
+          }
         }
       })
     })

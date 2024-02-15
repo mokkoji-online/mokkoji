@@ -1,312 +1,320 @@
 <template>
-  <!-- 섹션 1/6 편집할 대상 선택 -->
-
-  <div class="bg-violet-50 h-[600px] justify-center items-center" ref="top">
-    <div class="text-[30px] justify-center items-center flex pb-10 pt-20">
-      <strong><p class="effect-black flex">편집할 대상을 선택해주세요</p> </strong>
-    </div>
-    <div class="text-[50px] flex justify-center items-center pt-10">
-      <div
-        class="w-[450px] rounded-3xl border-solid border-[#D4ACDD] p-10 shadow-lg shadow-[#D4ACDD] hover:cursor-pointer flex flex-col justify-center items-center"
-        id="btn"
-        @click="scrollToRollingPaper"
-      >
-        <p class="mb-[1vh]"><IconLoveLetterColored /></p>
-        <button>롤링페이퍼 편집</button>
+  <div>
+    <!-- 섹션 1/6 편집할 대상 선택 -->
+    <div class="bg-violet-50 h-[600px] justify-center items-center" ref="top">
+      <div class="text-[30px] justify-center items-center flex pb-10 pt-20">
+        <strong><p class="effect-black flex">편집할 대상을 선택해주세요</p> </strong>
       </div>
-      <div class="mx-16"></div>
-      <div
-        class="w-[450px] rounded-3xl border-solid border-[#ba44de] p-10 shadow-lg shadow-[#b95fd4] hover:cursor-pointer flex flex-col justify-center items-center"
-        id="btn"
-        @click="scrollToPhotoMosaic"
-      >
-        <p class="mb-[1vh]"><IconGalleryTitle /></p>
-        <button>포토모자이크 편집</button>
-      </div>
-    </div>
-  </div>
-  <!-- 섹션 2/6 모꼬지 정보, 내려가기 -->
-  <div class="bg-[#ffffff] h-[500px] pt-5">
-    <div class="justify-center flex" @click="scrollToRollingPaper"><IconScrollDownGray /></div>
-    <p class="justify-center flex text-slate-500"><strong>롤링페이퍼 편집</strong></p>
-    <p class="justify-center flex pt-20 text-[#c0aac7]"><IconVideoConference />Team MOKKOJI</p>
-    <p class="justify-center flex pt-5 text-[#c0aac7]">
-      <IconLocation />서울특별시 강남구 언주로 508
-    </p>
-    <p class="justify-center flex pt-5 text-[#c0aac7]"><IconInternet />https://mokkoji.online/</p>
-    <p class="justify-center flex pt-5 text-[#c0aac7]"><IconWifi />i10a401.p.ssafy.io</p>
-  </div>
-  <!-- 섹션 3/6 롤링페이퍼 편집 -->
-  <div class="bg-slate-100 h-[100vh] flex" ref="rollingpaper">
-    <div class="w-[24vw] flex items-center">
-      <div class="ml-[10vb]">
-        <p class="flex items-center justify-center"><IconLoveLetterBlue /></p>
-        <p class="flex items-center text-[25px] justify-center pt-2">원하는 템플릿을 선택한 후</p>
-        <div class="flex items-center text-[25px] justify-center">'저장하기'를 눌러주세요</div>
-      </div>
-    </div>
-    <!-- <div class="ml-[10vb] w-[30wv] flex items-center">
-      <div>
-        <p class="flex items-center justify-center"><IconLoveLetterBlue /></p>
-
-        <p class="flex items-center text-[25px] justify-center">원하는 템플릿을 선택한 후</p>
-        <div class="flex items-center text-[25px] justify-center">'저장하기'를 눌러주세요</div>
-      </div>
-    </div> -->
-    <div class="ml-[10vb] w-[25vw]">
-      <div class="h-[60vh] flex pt-[30vh]">
-        <div class="w-1/2">
-          <p class="justify-center flex text-[25px]">배경지</p>
-          <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
-            <p class="effect-blue flex" v-if="isSelectedBasic">기본 <IconCheckBlue /></p>
-            <p class="highlight-blue" v-if="isNotSelectedBasic" @click="selectBackground('BASIC')">
-              기본
-            </p>
-          </div>
-          <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
-            <p class="effect-blue flex" v-if="isSelectedWedding">결혼식<IconCheckBlue /></p>
-            <p
-              class="highlight-blue"
-              v-if="isNotSelectedWedding"
-              @click="selectBackground('WEDDING')"
-            >
-              결혼식
-            </p>
-          </div>
-          <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
-            <p class="effect-blue flex" v-if="isSelectedSchool">졸업식 <IconCheckBlue /></p>
-            <p
-              class="highlight-blue"
-              v-if="isNotSelectedSchool"
-              @click="selectBackground('SCHOOL')"
-            >
-              졸업식
-            </p>
-          </div>
-          <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
-            <p class="effect-blue flex" v-if="isSelectedBaby">돌잔치 <IconCheckBlue /></p>
-            <p class="highlight-blue" v-if="isNotSelectedBaby" @click="selectBackground('BABY')">
-              돌잔치
-            </p>
-          </div>
-          <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
-            <p class="effect-blue flex" v-if="isSelectedLunar">명절 <IconCheckBlue /></p>
-            <p class="highlight-blue" v-if="isNotSelectedLunar" @click="selectBackground('LUNAR')">
-              명절
-            </p>
-          </div>
-        </div>
-        <div class="w-1/2">
-          <p class="justify-center flex text-[25px]">속지</p>
-          <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
-            <p class="effect-skyblue flex" v-if="isSelectedPastel">파스텔 <IconCheckSkyBlue /></p>
-            <p
-              class="highlight-skyblue"
-              v-if="isNotSelectedPastel"
-              @click="selectInground('RAINBOW')"
-            >
-              파스텔
-            </p>
-          </div>
-          <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
-            <p class="effect-skyblue flex" v-if="isSelectedGreen">초록색 <IconCheckSkyBlue /></p>
-            <p class="highlight-skyblue" v-if="isNotSelectedGreen" @click="selectInground('GREEN')">
-              초록색
-            </p>
-          </div>
-          <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
-            <p class="effect-skyblue flex" v-if="isSelectedBlue">파랑색 <IconCheckSkyBlue /></p>
-            <p class="highlight-skyblue" v-if="isNotSelectedBlue" @click="selectInground('BLUE')">
-              파랑색
-            </p>
-          </div>
-          <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
-            <p class="effect-skyblue flex" v-if="isSelectedPink">분홍색 <IconCheckSkyBlue /></p>
-            <p class="highlight-skyblue" v-if="isNotSelectedPink" @click="selectInground('PINK')">
-              분홍색
-            </p>
-          </div>
-          <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
-            <p class="effect-skyblue flex" v-if="isSelectedYellow">노랑색 <IconCheckSkyBlue /></p>
-            <p
-              class="highlight-skyblue"
-              v-if="isNotSelectedYellow"
-              @click="selectInground('YELLOW')"
-            >
-              노랑색
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="h-[20vh]">
-        <!-- <div
-          class="opacity-70 border-2 rounded-lg w-64 mx-auto hover:cursor-pointer hover:opacity-100 effect-button"
-        >
-          <p class="text-[30px] justify-center ml-2 flex">미리보기 <IconSearch /></p>
-        </div> -->
+      <div class="text-[50px] flex justify-center items-center pt-10">
         <div
-          class="mt-[20vh] opacity-70 border-2 rounded-lg w-40 mx-auto h-9 flex items-center justify-center hover:cursor-pointer hover:opacity-100 effect-button"
-          @click="showSaved('템플릿')"
+          class="w-[450px] rounded-3xl border-solid border-[#D4ACDD] p-10 shadow-lg shadow-[#D4ACDD] hover:cursor-pointer flex flex-col justify-center items-center"
+          id="btn"
+          @click="scrollToRollingPaper"
         >
-          <p class="text-[20px] justify-center ml-2 flex">저장하기 <IconCheckMark /></p>
+          <p class="mb-[1vh]"><IconLoveLetterColored /></p>
+          <button>롤링페이퍼 편집</button>
+        </div>
+        <div class="mx-16"></div>
+        <div
+          class="w-[450px] rounded-3xl border-solid border-[#ba44de] p-10 shadow-lg shadow-[#b95fd4] hover:cursor-pointer flex flex-col justify-center items-center"
+          id="btn"
+          @click="scrollToPhotoMosaic"
+        >
+          <p class="mb-[1vh]"><IconGalleryTitle /></p>
+          <button>포토모자이크 편집</button>
         </div>
       </div>
     </div>
-
-    <div class="mr-[7vw] w-[50vw] flex justify-center items-center">
-      <img
-        :src="`src/assets/rollingtemplate/${design}.png`"
-        :alt="`template_${design}`"
-        class="z-10 h-[95vh]"
-      />
-      <img
-        :src="`src/assets/rollingnote/${color}.png`"
-        :alt="`template_${color}`"
-        class="absolute z-20"
-        width="450vw"
-      />
-    </div>
-    <!-- 재확인 모달 ex. 저장되었습니다 -->
-    <transition name="modal-fade">
-      <div
-        v-if="isSaved"
-        class="fixed bottom-[50%] left-[50%] custom-translate rounded-lg bg-slate-50 px-14 py-3 z-30"
-      >
-        <p class="flex text-[30px]">{{ alertText }}</p>
+    <!-- 섹션 2/6 모꼬지 정보, 내려가기 -->
+    <div class="bg-[#ffffff] h-[500px] pt-5">
+      <div class="justify-center flex hover:cursor-pointer" @click="scrollToRollingPaper">
+        <IconScrollDownGray />
       </div>
-    </transition>
-  </div>
-  <!-- 섹션 4/6 도움말, 올라가기, 내려가기 -->
-  <div class="h-[100vh] pt-5 bg-white" ref="help">
-    <div class="flex justify-center items-center h-[120px]">
-      <div class="mr-5" @click="scrollToPhotoMosaic"><IconScrollDownBlue /></div>
-      <div class="ml-5" @click="scrollToTop"><IconUpArrowPurple /></div>
-    </div>
-    <div class="flex justify-center items-center h-[20px]">
-      <div class="mr-20 text-slate-500" @click="scrollToPhotoMosaic">
-        <strong>포토모자이크 편집</strong>
-      </div>
-      <div class="mr-8 text-slate-500" @click="scrollToTop"><strong>처음으로</strong></div>
-    </div>
-    <div class="h-[100px] flex items-center justify-center mt-40">
-      <a class="mr-12"
-        ><span class="text-slate-500 text-2xl highlight-pink" @mouseover="hoverMainImage"
-          >대표이미지란?</span
-        ></a
-      >
-      <a class="mr-12"
-        ><span class="text-slate-500 text-2xl highlight-green" @mouseover="hoverPhotomosaicTip"
-          >포토모자이크 생성 TIP</span
-        ></a
-      >
-      <a
-        ><span class="text-slate-500 text-2xl highlight-white" @mouseover="hoverPhotoUpload"
-          >사진 업로드 TIP</span
-        ></a
-      >
-      <p />
-    </div>
-    <div class="h-[300px] bg-white flex items-center justify-center">
-      <div v-if="isDefaultHelp">
-        <div class="mb-10 flex items-center justify-center">
-          <IconQuestionMarkGray />
-        </div>
-        <div>{{ direction }} 글씨 위에 마우스를 올려보세요!</div>
-      </div>
-
-      <div v-if="isHoveredMainImage" data-aos="fade-up" data-aos-duration="2000">
-        <div class="flex">
-          <div class="">
-            <img src="@/assets/eventlist/recollection_ex.png" class="pt-10 mr-10 w-48" />
-          </div>
-          <div class="ml-10 text-xl">
-            <p class="pt-32">추억 카드를 장식할 대표 이미지를 선택해 주세요.</p>
-            <p class="">선택한 대표 이미지는 포토 모자이크 생성에도 활용됩니다.</p>
-            <p class=""></p>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="isHoveredPhotoMosaicTip" data-aos="fade-up" data-aos-duration="2000">
-        <div class="flex">
-          <div class="">
-            <img src="@/assets/eventlist/photomosaic_ex.png" class="pt-10 mr-10 w-48" />
-          </div>
-          <div class="ml-10 text-xl">
-            <p class="pt-32">멋진 포토 모자이크를 위해 다양한 색감의 사진들을 준비해 주세요.</p>
-            <p class=""></p>
-          </div>
-        </div>
-      </div>
-
-      <div v-if="isHoveredPhotoUpload" data-aos="fade-up" data-aos-duration="2000">
-        <div class="flex">
-          <div class="">
-            <img src="@/assets/eventlist/img_crop_ex.png" class="t-10 mr-10 w-48" />
-          </div>
-          <div class="ml-10 text-xl">
-            <p class="pt-5">
-              원활한 포토 모자이크 생성을 위해 허용 이미지 크기를 1:1 비율로 제한하고 있어요.
-            </p>
-            <p class="">'자르기 + 사진 추가'를 통해 사진을 1:1 비율로 자르고 추가해 보세요.</p>
-            <p class="">
-              '사진 여러 장 추가'를 통해 여러 장의 사진을 한 번에 추가할 수도 있습니다.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <!-- 섹션 5/6 포토모자이크 편집 -->
-  <div class="bg-primary2 h-[100vh]" ref="photomosaic">
-    <div class="text-[25px] flex items-center justify-end pt-5 pr-5" v-if="isNotHoveredHelp">
-      <p class="flex hover:cursor-pointer" @mouseover="onHelp">도움말<IconQuestionMark /></p>
-    </div>
-    <div class="text-[25px] flex items-center justify-end pt-5 pr-5" v-if="isHoveredHelp">
-      <p
-        class="effect flex hover:cursor-pointer"
-        @mouseleave="outHelp"
-        @click="scrollToHelp('포토 모자이크 생성 TIP')"
-      >
-        클릭!<IconQuestionMark />
+      <p class="justify-center flex text-slate-500 hover:cursor-pointer">
+        <strong>롤링페이퍼 편집</strong>
       </p>
+      <p class="justify-center flex pt-20 text-[#c0aac7]"><IconVideoConference />Team MOKKOJI</p>
+      <p class="justify-center flex pt-5 text-[#c0aac7]">
+        <IconLocation />서울특별시 강남구 언주로 508
+      </p>
+      <p class="justify-center flex pt-5 text-[#c0aac7]"><IconInternet />https://mokkoji.online/</p>
+      <p class="justify-center flex pt-5 text-[#c0aac7]"><IconWifi />i10a401.p.ssafy.io</p>
     </div>
-    <div class="h-[100vh] flex">
-      <div class="w-[27vw] flex items-center">
+    <!-- 섹션 3/6 롤링페이퍼 편집 -->
+    <div class="bg-slate-100 h-[100vh] flex" ref="rollingpaper">
+      <div class="w-[24vw] flex items-center">
         <div class="ml-[10vb]">
-          <p class="flex items-center justify-center"><IconGalleryColored /></p>
-          <p class="flex items-center text-[25px] justify-center pt-5">대표 이미지를 지정하고</p>
-          <div class="flex items-center text-[25px] justify-center">
-            포토 모자이크를 생성해주세요
+          <p class="flex items-center justify-center"><IconLoveLetterBlue /></p>
+          <p class="flex items-center text-[25px] justify-center pt-2">원하는 템플릿을 선택한 후</p>
+          <div class="flex items-center text-[25px] justify-center">'저장하기'를 눌러주세요</div>
+        </div>
+      </div>
+      <div class="ml-[10vb] w-[25vw]">
+        <div class="h-[60vh] flex pt-[30vh]">
+          <div class="w-1/2">
+            <p class="justify-center flex text-[25px]">배경지</p>
+            <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
+              <p class="effect-blue flex" v-if="isSelectedBasic">기본 <IconCheckBlue /></p>
+              <p
+                class="highlight-blue"
+                v-if="isNotSelectedBasic"
+                @click="selectBackground('BASIC')"
+              >
+                기본
+              </p>
+            </div>
+            <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
+              <p class="effect-blue flex" v-if="isSelectedWedding">결혼식<IconCheckBlue /></p>
+              <p
+                class="highlight-blue"
+                v-if="isNotSelectedWedding"
+                @click="selectBackground('WEDDING')"
+              >
+                결혼식
+              </p>
+            </div>
+            <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
+              <p class="effect-blue flex" v-if="isSelectedSchool">졸업식 <IconCheckBlue /></p>
+              <p
+                class="highlight-blue"
+                v-if="isNotSelectedSchool"
+                @click="selectBackground('SCHOOL')"
+              >
+                졸업식
+              </p>
+            </div>
+            <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
+              <p class="effect-blue flex" v-if="isSelectedBaby">돌잔치 <IconCheckBlue /></p>
+              <p class="highlight-blue" v-if="isNotSelectedBaby" @click="selectBackground('BABY')">
+                돌잔치
+              </p>
+            </div>
+            <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
+              <p class="effect-blue flex" v-if="isSelectedLunar">명절 <IconCheckBlue /></p>
+              <p
+                class="highlight-blue"
+                v-if="isNotSelectedLunar"
+                @click="selectBackground('LUNAR')"
+              >
+                명절
+              </p>
+            </div>
+          </div>
+          <div class="w-1/2">
+            <p class="justify-center flex text-[25px]">속지</p>
+            <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
+              <p class="effect-skyblue flex" v-if="isSelectedPastel">파스텔 <IconCheckSkyBlue /></p>
+              <p
+                class="highlight-skyblue"
+                v-if="isNotSelectedPastel"
+                @click="selectInground('RAINBOW')"
+              >
+                파스텔
+              </p>
+            </div>
+            <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
+              <p class="effect-skyblue flex" v-if="isSelectedGreen">초록색 <IconCheckSkyBlue /></p>
+              <p
+                class="highlight-skyblue"
+                v-if="isNotSelectedGreen"
+                @click="selectInground('GREEN')"
+              >
+                초록색
+              </p>
+            </div>
+            <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
+              <p class="effect-skyblue flex" v-if="isSelectedBlue">파랑색 <IconCheckSkyBlue /></p>
+              <p class="highlight-skyblue" v-if="isNotSelectedBlue" @click="selectInground('BLUE')">
+                파랑색
+              </p>
+            </div>
+            <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
+              <p class="effect-skyblue flex" v-if="isSelectedPink">분홍색 <IconCheckSkyBlue /></p>
+              <p class="highlight-skyblue" v-if="isNotSelectedPink" @click="selectInground('PINK')">
+                분홍색
+              </p>
+            </div>
+            <div class="justify-center flex text-[25px] mt-5 hover:cursor-pointer">
+              <p class="effect-skyblue flex" v-if="isSelectedYellow">노랑색 <IconCheckSkyBlue /></p>
+              <p
+                class="highlight-skyblue"
+                v-if="isNotSelectedYellow"
+                @click="selectInground('YELLOW')"
+              >
+                노랑색
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="h-[20vh]">
+          <div
+            class="mt-[20vh] opacity-70 border-2 rounded-lg w-40 mx-auto h-9 flex items-center justify-center hover:cursor-pointer hover:opacity-100 effect-button"
+            @click="showSaved('템플릿')"
+          >
+            <p class="text-[20px] justify-center ml-2 flex">저장하기 <IconCheckMark /></p>
           </div>
         </div>
       </div>
 
-      <div class="w-[80vw]">
-        <Gallery :scrollToHelp="scrollToHelp" @reload="reloadParent" />
+      <div class="mr-[7vw] w-[50vw] flex justify-center items-center">
+        <img
+          :src="`src/assets/rollingtemplate/${design}.png`"
+          :alt="`template_${design}`"
+          class="z-10 h-[95vh]"
+        />
+        <img
+          :src="`src/assets/rollingnote/${color}.png`"
+          :alt="`template_${color}`"
+          class="absolute z-20"
+          width="450vw"
+        />
       </div>
+      <!-- 재확인 모달 ex. 저장되었습니다 -->
+      <transition name="modal-fade">
+        <div
+          v-if="isSaved"
+          class="fixed border-sm bottom-[50%] left-[50%] custom-translate rounded-lg bg-slate-50 px-14 py-3 z-30"
+        >
+          <p class="flex text-[30px]">{{ alertText }}</p>
+        </div>
+      </transition>
     </div>
-  </div>
-  <!-- 섹션 6/6 올라가기 -->
-  <div class="h-[300px] bg-white">
-    <div class="flex justify-center items-center">
-      <div class="w-[600px]"></div>
-      <div class="">
-        <div class="" @click="scrollToRollingPaper"><IconUpArrowPurple /></div>
-        <div class="text-slate-500 justify-center flex" @click="scrollToTop">
+    <!-- 섹션 4/6 도움말, 올라가기, 내려가기 -->
+    <div class="h-[100vh] pt-5 bg-white" ref="help">
+      <div class="flex justify-center items-center h-[120px]">
+        <div class="mr-5 hover:cursor-pointer" @click="scrollToPhotoMosaic">
+          <IconScrollDownBlue />
+        </div>
+        <div class="ml-5 hover:cursor-pointer" @click="scrollToTop"><IconUpArrowPurple /></div>
+      </div>
+      <div class="flex justify-center items-center h-[20px]">
+        <div class="mr-20 text-slate-500 hover:cursor-pointer" @click="scrollToPhotoMosaic">
+          <strong>포토모자이크 편집</strong>
+        </div>
+        <div class="mr-8 text-slate-500 hover:cursor-pointer" @click="scrollToTop">
           <strong>처음으로</strong>
         </div>
       </div>
-      <div
-        class="opacity-70 border-2 border-primary2 rounded-lg w-64 mx-auto h-9 hover:cursor-pointer hover:opacity-100 effect-button"
-      >
-        <a href="/eventlist"
-          ><p class="text-[20px] justify-center items-center flex">
-            행사 목록으로 돌아가기 <IconBackReverse />
-          </p>
-        </a>
+      <div class="h-[100px] flex items-center justify-center mt-40">
+        <a class="mr-12"
+          ><span class="text-slate-500 text-2xl highlight-pink" @mouseover="hoverMainImage"
+            >대표이미지란?</span
+          ></a
+        >
+        <a class="mr-12"
+          ><span class="text-slate-500 text-2xl highlight-green" @mouseover="hoverPhotomosaicTip"
+            >포토모자이크 생성 TIP</span
+          ></a
+        >
+        <a
+          ><span class="text-slate-500 text-2xl highlight-white" @mouseover="hoverPhotoUpload"
+            >사진 업로드 TIP</span
+          ></a
+        >
+        <p />
       </div>
-      <div class="w-[500px]"></div>
+      <div class="h-[300px] bg-white flex items-center justify-center">
+        <div v-if="isDefaultHelp">
+          <div class="mb-10 flex items-center justify-center">
+            <IconQuestionMarkGray />
+          </div>
+          <div>{{ direction }} 글씨 위에 마우스를 올려보세요!</div>
+        </div>
+
+        <div v-if="isHoveredMainImage" data-aos="fade-up" data-aos-duration="2000">
+          <div class="flex">
+            <div class="">
+              <img src="@/assets/eventlist/recollection_ex.png" class="pt-10 mr-10 w-48" />
+            </div>
+            <div class="ml-10 text-xl">
+              <p class="pt-32">추억 카드를 장식할 대표 이미지를 선택해 주세요.</p>
+              <p class="">선택한 대표 이미지는 포토 모자이크 생성에도 활용됩니다.</p>
+              <p class=""></p>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="isHoveredPhotoMosaicTip" data-aos="fade-up" data-aos-duration="2000">
+          <div class="flex">
+            <div class="">
+              <img src="@/assets/eventlist/photomosaic_ex.png" class="pt-10 mr-10 w-48" />
+            </div>
+            <div class="ml-10 text-xl">
+              <p class="pt-32">멋진 포토 모자이크를 위해 다양한 색감의 사진들을 준비해 주세요.</p>
+              <p class=""></p>
+            </div>
+          </div>
+        </div>
+
+        <div v-if="isHoveredPhotoUpload" data-aos="fade-up" data-aos-duration="2000">
+          <div class="flex">
+            <div class="">
+              <img src="@/assets/eventlist/img_crop_ex.png" class="t-10 mr-10 w-48" />
+            </div>
+            <div class="ml-10 text-xl">
+              <p class="pt-5">
+                원활한 포토 모자이크 생성을 위해 허용 이미지 크기를 1:1 비율로 제한하고 있어요.
+              </p>
+              <p class="">'자르기 + 사진 추가'를 통해 사진을 1:1 비율로 자르고 추가해 보세요.</p>
+              <p class="">
+                '사진 여러 장 추가'를 통해 여러 장의 사진을 한 번에 추가할 수도 있습니다.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- 섹션 5/6 포토모자이크 편집 -->
+    <div class="bg-primary2 h-[100vh]" ref="photomosaic">
+      <div class="text-[25px] flex items-center justify-end pt-5 pr-5" v-if="isNotHoveredHelp">
+        <p class="flex hover:cursor-pointer" @mouseover="onHelp">도움말<IconQuestionMark /></p>
+      </div>
+      <div class="text-[25px] flex items-center justify-end pt-5 pr-5" v-if="isHoveredHelp">
+        <p
+          class="effect flex hover:cursor-pointer"
+          @mouseleave="outHelp"
+          @click="scrollToHelp('포토 모자이크 생성 TIP')"
+        >
+          클릭!<IconQuestionMark />
+        </p>
+      </div>
+      <div class="h-[100vh] flex">
+        <div class="w-[27vw] flex items-center">
+          <div class="ml-[10vb]">
+            <p class="flex items-center justify-center"><IconGalleryColored /></p>
+            <p class="flex items-center text-[25px] justify-center pt-5">대표 이미지를 지정하고</p>
+            <div class="flex items-center text-[25px] justify-center">
+              포토 모자이크를 생성해주세요
+            </div>
+          </div>
+        </div>
+
+        <div class="w-[80vw]">
+          <Gallery :scrollToHelp="scrollToHelp" />
+        </div>
+      </div>
+    </div>
+    <!-- 섹션 6/6 올라가기 -->
+    <div class="h-[200px] bg-white pt-[3vh]">
+      <div class="flex justify-center items-center">
+        <div class="w-[600px]"></div>
+        <div class="hover:cursor-pointer">
+          <div class="" @click="scrollToRollingPaper"><IconUpArrowPurple /></div>
+          <div class="text-slate-500 justify-center flex" @click="scrollToTop">
+            <strong>처음으로</strong>
+          </div>
+        </div>
+        <div
+          class="opacity-70 border-2 border-primary2 rounded-lg w-64 mx-auto h-9 hover:cursor-pointer hover:opacity-100 effect-button"
+        >
+          <a href="/eventlist"
+            ><p class="text-[20px] border-sm rounded-r-lg justify-center items-center flex">
+              행사 목록으로 돌아가기 <IconBackReverse />
+            </p>
+          </a>
+        </div>
+        <div class="w-[500px]"></div>
+      </div>
     </div>
   </div>
 </template>
@@ -460,17 +468,6 @@ const showSaved = (e) => {
   }
 }
 
-const reloadParent = () => {
-  window.addEventListener('beforeunload', () => {
-    scrollToPhotoMosaic()
-  })
-  setTimeout(() => {
-    location.reload()
-    console.log('reload 완료')
-  }, 5000)
-  // scrollToPhotoMosaic()
-}
-
 //템플릿 저장 Axios
 const saveTemplate = (id) => {
   console.log(`행사번호 ${id}의 템플릿 저장하기`)
@@ -502,9 +499,9 @@ const getEditView = (id) => {
       selectBackground(res.data.rollingpaperTemplate.backgroundTemplate.backgroundName)
       selectInground(res.data.rollingpaperTemplate.postitTemplate.postitName)
       galleryStore.setUploadedPhotos(res.data.photoPath)
-      console.log(res.data.photoPath)
-      console.log(galleryStore.uploadedPhotos)
-      console.log('edit view 데이터 불러옴')
+      // console.log(res.data.photoPath)
+      // console.log(galleryStore.uploadedPhotos)
+      // console.log('edit view 데이터 불러옴')
     },
     (error) => {
       console.log(error)

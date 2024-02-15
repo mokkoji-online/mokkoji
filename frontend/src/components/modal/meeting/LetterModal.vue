@@ -22,6 +22,7 @@
           cols="30"
           rows="10"
           placeholder="메시지를 입력하세요"
+          maxlength="100"
           class="h-[90%] bg-yellow-100 rounded-r-lg resize-none placeholder:text-[1.5vw] text-center text-r-md font-bold focus:outline-none"
           v-model="textFile"
         >
