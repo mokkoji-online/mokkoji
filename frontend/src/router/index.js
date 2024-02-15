@@ -17,7 +17,7 @@ import Swal from 'sweetalert2'
 import SignUp from '@/components/common/SignUp.vue'
 
 import AOS from 'aos'
-import 'initFlowbite' from 
+import { initFlowbite } from 'flowbite'
 import tokenService from '@/services/token.service'
 
 const router = createRouter({
@@ -27,7 +27,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      component: HomeView,
+      component: HomeView
     },
     {
       path: '/oauth2/:pathMatch(.*)*',
