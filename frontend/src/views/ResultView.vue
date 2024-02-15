@@ -27,7 +27,7 @@
             class="z-10"
           />
           <img
-            :src="`src/assets/rollingnote/${color.toLowerCase().trim()}.png`"
+            src="@/assets/rollingnote/rainbow.png"
             :alt="`template_${color.toLowerCase().trim()}`"
             class="absolute z-20"
             width="420px"
@@ -406,6 +406,8 @@ const getResultView = (id) => {
       }
       console.log(msg.value)
       console.log(res)
+      console.log(design.value)
+      console.log(color.value.toLowerCase().trim())
       console.log(photocard.value.image)
       console.log(photomosaic_url.value)
     },
