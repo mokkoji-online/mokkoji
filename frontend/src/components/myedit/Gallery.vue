@@ -127,7 +127,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, defineProps } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import getImages from '@/api/get_images'
 import {
   useMainImageStore,

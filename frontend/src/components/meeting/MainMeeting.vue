@@ -396,6 +396,7 @@ const myVideo = ref(null)
 const groupVideo = ref(null)
 const maxUserNum = ref(1)
 const setTime = ref(3)
+const autoCapture = ref(null)
 
 // 행사 초대 링크 모달
 const showInviteModal = (event) => {
@@ -784,6 +785,7 @@ const leaveMainMeeting = async () => {
   tracks.forEach((track) => track.stop())
 
   if (sessionStorage.getItem('isHost') === 'true') {
+    clearInterval(autoCapture.value)
     state.session.signal({
       to: [],
       type: 'close'
@@ -839,10 +841,30 @@ const updateMainVideoStreamManager = (stream) => {
 onBeforeMount(() => {
   noBack()
   joinSession()
+
+  // 호스트 화면은 1분마다 자동 캡쳐
+  if (sessionStorage.getItem('isHost') === 'true') {
+    autoCapture.value = setInterval(() => {
+      const target = myVideo.value
+
+      html2canvas(target).then((canvas) => {
+        canvas.toBlob((blob) => {
+          const file = new File([blob], 'myVideo.png', { type: 'image/png' })
+          store.sendPicture(file)
+        })
+      })
+    }, 60000)
+  }
+
   window.addEventListener('beforeunload', disconnectSession)
 })
 
 onBeforeUnmount(() => {
+  // 호스트 행사 종료시 자동 캡쳐 종료
+  if (autoCapture.value) {
+    clearInterval(autoCapture.value)
+  }
+
   window.removeEventListener('beforeunload', disconnectSession)
 })
 </script>
