@@ -94,7 +94,7 @@
   <!-- 사진 업로드 모달 - bulk -->
   <div
     v-if="isPhotoUploadModal"
-    class="fixed bottom-[30px] left-[200px] w-[1000px] h-[700px] border-2 rounded-lg border-[#5da2bd] z-20 bg-[#f5fcff]"
+    class="fixed bottom-[30px] left-[200px] w-[1000px] h-[600px] border-2 rounded-lg border-[#5da2bd] z-20 bg-[#f5fcff]"
   >
     <button class="absolute right-[10px] top-[10px]" @click="closePhotoUploadModal">
       <IconClose />

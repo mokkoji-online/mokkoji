@@ -32,8 +32,10 @@ const mainImage = ref('@/assets/logo/mokkoji_logo_with_bg.png')
 const { VITE_RECOLLECTION_FRAME_COUNT } = import.meta.env
 
 onMounted(() => {
-  mainImage.value = props.recollection.image
-  console.log(mainImage.value)
+  setTimeout(() => {
+    mainImage.value = props.recollection.image
+    console.log('Main Image: ', mainImage.value)
+  }, 500)
 })
 </script>
 

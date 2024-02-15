@@ -416,7 +416,6 @@ onMounted(() => {
   getResultView(resultIDStore.getID)
   username.value = userNameStore.getName
   isSaved.value = false
-  location.reload()
   console.log(msg[currentPage.value])
   console.log(currentPage.value)
 })
