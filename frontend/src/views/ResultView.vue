@@ -413,11 +413,13 @@ const getResultView = (id) => {
 onMounted(() => {
   setTimeout(() => {
     getResultView(resultIDStore.getID)
+  }, 500)
+  setTimeout(() => {
     username.value = $cookies.get('user').name
     isSaved.value = false
     console.log(msg[currentPage.value])
     console.log(currentPage.value)
-  }, 500)
+  }, 1000)
 })
 </script>
 
