@@ -27,6 +27,7 @@ import { ref, onMounted } from 'vue'
 import { useResultIDStore } from '@/stores/result.js'
 
 const props = defineProps(['recollection'])
+const resultIDStore = useResultIDStore()
 
 const mainImage = ref('@/assets/logo/mokkoji_logo_with_bg.png')
 
@@ -35,7 +36,7 @@ onMounted(() => {
     mainImage.value = props.recollection.image
     console.log('Main Image: ', mainImage.value)
   }, 500)
-  useResultIDStore.assignID(props.recollection.eventID)
+  resultIDStore.assignID(props.recollection.eventID)
 })
 </script>
 
