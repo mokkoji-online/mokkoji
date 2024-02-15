@@ -50,3 +50,5 @@ onBeforeMount(() => {
   emit('load-home')
 })
 </script>
+
+<style scoped></style>

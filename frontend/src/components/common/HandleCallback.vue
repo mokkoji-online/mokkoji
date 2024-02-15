@@ -69,7 +69,8 @@ onMounted(() => {
             router.push('/signup')
           }
         })
-      } else { // 가입 이력이 있으므로 로그인 후 메인화면 이동
+      } else {
+        // 가입 이력이 있으므로 로그인 후 메인화면 이동
         store.isLogin = true
         // refresh token
         const refreshToken = res.headers['authorization-refresh']
@@ -81,7 +82,8 @@ onMounted(() => {
           } else {
             router.push('/meetings')
           }
-        } else { // 홈 화면 새로고침 메서드
+        } else {
+          // 홈 화면 새로고침 메서드
           store.forceReload = true
         }
       }
@@ -91,4 +93,5 @@ onMounted(() => {
     })
 })
 </script>
-<style></style>
+
+<style scoped></style>

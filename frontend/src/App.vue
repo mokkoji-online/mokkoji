@@ -18,7 +18,7 @@ import TheFooter from '@/components/common/TheFooter.vue'
 import { RouterView } from 'vue-router'
 
 const isMeeting = ref(false)
-const reload = ref(0);
+const reload = ref(0)
 
 const createMeeting = () => {
   isMeeting.value = true
@@ -26,7 +26,7 @@ const createMeeting = () => {
 
 const leaveMeeting = () => {
   isMeeting.value = false
-  reload.value = reload.value + 1;
+  reload.value = reload.value + 1
 }
 </script>
 

@@ -45,4 +45,4 @@ const showLoginModal = () => {
 }
 </script>
 
-<style></style>
+<style scoped></style>

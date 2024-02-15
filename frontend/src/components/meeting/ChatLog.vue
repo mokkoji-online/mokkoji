@@ -24,4 +24,4 @@ const props = defineProps({
 })
 </script>
 
-<style></style>
+<style scoped></style>

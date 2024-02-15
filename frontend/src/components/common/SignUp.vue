@@ -66,25 +66,25 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount } from "vue"
-import { useUserStore } from "@/stores/user"
-import { useRouter } from "vue-router"
-import axios from "@/services/api"
-import Swal from "sweetalert2"
+import { ref, onBeforeMount } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { useRouter } from 'vue-router'
+import axios from '@/services/api'
+import Swal from 'sweetalert2'
 
 const router = useRouter()
 const store = useUserStore()
 
-const name = ref("")
-const image = ref("")
-const email = ref("")
-const fileName = ref("")
+const name = ref('')
+const image = ref('')
+const email = ref('')
+const fileName = ref('')
 
 // file input 최근 파일 byte 64로 preview
 const getFileName = async (files) => {
   const maxFileSize = 1024 * 1024 * 2
   if (files[0].size > maxFileSize) {
-    alert("파일 크기가 2MB를 초과했습니다")
+    alert('파일 크기가 2MB를 초과했습니다')
     return
   }
 
@@ -97,7 +97,7 @@ const base64 = (file) => {
     const reader = new FileReader()
     reader.onload = (e) => {
       resolve(e.target.result)
-      const previewImage = document.getElementById("image-profile")
+      const previewImage = document.getElementById('image-profile')
       previewImage.src = e.target.result
       console.log(previewImage)
       image.value = previewImage.src0
@@ -106,36 +106,36 @@ const base64 = (file) => {
   })
 }
 // 은행 선택 및 계좌번호 입력
-const banks = ["KB", "농협", "기업", "카카오뱅크", "하나", "신한", "SC제일"]
-const bank = ref("")
-const accountNumber = ref("")
+const banks = ['KB', '농협', '기업', '카카오뱅크', '하나', '신한', 'SC제일']
+const bank = ref('')
+const accountNumber = ref('')
 
 // 회원가입 axios
 const signUp = async () => {
   await axios({
-    url: import.meta.env.VITE_SERVER + "/users",
-    method: "POST",
+    url: import.meta.env.VITE_SERVER + '/users',
+    method: 'POST',
     data: {
       email: email.value,
       name: name.value,
       image: image.value,
       bank: bank.value,
-      accountNumber: accountNumber.value,
-    },
+      accountNumber: accountNumber.value
+    }
   })
     .then(() => {
       // 홈 화면 이동 후 새로고침 처리
       store.isLogin = true
       store.forceReload = true
       Swal.fire({
-        title: "회원가입 성공!",
-        text: "모꼬지 서비스를 사용해보세요",
-        icon: "success",
+        title: '회원가입 성공!',
+        text: '모꼬지 서비스를 사용해보세요',
+        icon: 'success'
       }).then((result) => {
-          if (result.isConfirmed) {
-            router.push("/")
-          }
-        })
+        if (result.isConfirmed) {
+          router.push('/')
+        }
+      })
     })
     .catch((err) => {
       console.log(err)
@@ -149,4 +149,4 @@ onBeforeMount(() => {
 })
 </script>
 
-<style></style>
+<style scoped></style>

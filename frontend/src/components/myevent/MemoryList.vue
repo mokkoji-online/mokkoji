@@ -295,7 +295,7 @@ onMounted(() => {
 })
 </script>
 
-<style>
+<style scoped>
 .custom-modal {
   transform: translate(-50%, -50%);
 }

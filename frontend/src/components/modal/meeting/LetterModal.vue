@@ -103,7 +103,13 @@
             >
               <IconVideo class="size-[85%] hover:cursor-pointer" />
             </label>
-            <input type="file" id="input-video" class="hidden" @change="uploadVideoFile" />
+            <input
+              type="file"
+              id="input-video"
+              ref="videoFile"
+              class="hidden"
+              @change="uploadVideoFile"
+            />
           </div>
           <div class="basis-1/2 flex justify-end">
             <button
@@ -244,6 +250,8 @@ const uploadAudioFile = () => {
 
 // 선택한 비디오 파일 업로드하기
 const uploadVideoFile = (event) => {
+  const file = event.target.files[0]
+  console.log(file)
   const fileName = event.target.files[0].name
   const extension = fileName.split('.').pop().toLowerCase()
 
@@ -252,7 +260,7 @@ const uploadVideoFile = (event) => {
     isTypeCheck.value = false
     isFileCheck.value = false
     isSizeCheck.value = false
-    videoFile.value = event.target.files[0]
+    videoFile.value = file
     videoFileName.value = '나만의 영상'
   } else if (!allowedExtensions.value.includes(extension)) {
     isTypeCheck.value = true
@@ -263,6 +271,8 @@ const uploadVideoFile = (event) => {
     isTypeCheck.value = false
     isFileCheck.value = false
   }
+
+  event.target.value = ''
 }
 
 // 선택한 비디오 파일 용량 체크(최대 40MB)
@@ -289,12 +299,14 @@ const checkFileSize = () => {
 const removeAudioFile = () => {
   isAudioFile.value = false
   audioFile.value = null
+  audioFileName.value = ''
 }
 
 // 업로드한 비디오 파일 지우기
 const removeVideoFile = () => {
   isVideoFile.value = false
   videoFile.value = null
+  videoFileName.value = ''
 }
 
 // 작성한 롤링페이퍼 보내기

@@ -323,12 +323,9 @@ onMounted(() => {
   }, 200)
   scrollContainer.value.addEventListener('scroll', handleScroll)
 })
-
-onUnmounted(() => {
-  scrollContainer.value.removeEventListener('scroll', handleScroll)
-})
 </script>
-<style>
+
+<style scoped>
 .highlight-yellow {
   box-shadow: inset 0 -6px 0 #833c7e;
   color: black;

@@ -43,7 +43,7 @@ onMounted(() => {
 })
 </script>
 
-<style>
+<style scoped>
 .effect-pink-recollection {
   box-shadow: inset 0 -5px 0 #fcd8f0;
   color: black;

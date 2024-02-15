@@ -4,7 +4,7 @@
       class="p-[1vw] pl-[1.5vw] h-[100%] bg-black flex flex-col justify-center items-start space-y-[1vh] rounded-r-lg"
     >
       <div class="flex w-[23vw] items-center h-[5vh]">
-        <div class="text-white text-r-md">{{ host }}님의 회의 정보</div>
+        <div class="text-white text-r-md">{{ host }}님의 행사 정보</div>
         <button
           class="ml-auto w-[2.5vw] aspect-square size-[100%] flex justify-center items-center hover:bg-neutral-500 rounded-full"
         >
@@ -12,7 +12,7 @@
         </button>
       </div>
       <div class="text-white text-r-sm">
-        <div>회의 주소 | {{ address }}</div>
+        <div>행사 주소 | {{ address }}</div>
       </div>
       <button
         class="ml-[4vw] w-[5vw] text-white text-[0.8vw] hover:bg-neutral-500 rounded-r-lg"
@@ -22,7 +22,7 @@
       </button>
 
       <div class="text-white text-r-sm flex">
-        회의ID
+        행사ID
         <div class="text-white ml-[1.2vw] flex">| {{ sessionId }}</div>
       </div>
       <button
@@ -93,7 +93,7 @@ const copySessionInfo = () => {
 }
 </script>
 
-<style>
+<style scoped>
 .up-enter-active {
   transition: all 0.3s;
 }

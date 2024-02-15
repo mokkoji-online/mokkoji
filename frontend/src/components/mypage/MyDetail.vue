@@ -44,7 +44,7 @@
         </div>
       </div>
       <button
-        class="ring-2 ring-primary rounded-xl hover:ring-white bg-primary p-2 my-10 relative "
+        class="ring-2 ring-primary rounded-xl hover:ring-white bg-primary p-2 my-10 relative"
         @click="update"
       >
         정보 수정하기
@@ -80,23 +80,23 @@ const update = () => {
       image: image.value,
       bank: bank.value,
       accountNumber: accountNumber.value,
-      email : email.value
+      email: email.value
     })
     .then(() => {
       Swal.fire({
-        title : '회원정보 수정!',
-        icon: 'info',
-      })
-      .then((result) => { // 회원정보 화면으로 이동
+        title: '회원정보 수정!',
+        icon: 'info'
+      }).then((result) => {
+        // 회원정보 화면으로 이동
         if (result.isConfirmed) {
-          router.go(-1);
+          router.go(-1)
         }
       })
     })
     .catch((err) => {
-      console.log(err);
-    });
-};
+      console.log(err)
+    })
+}
 // 업로드 사진파일 미리보기
 const getFileName = async (files) => {
   fileName.value = files[0].name
@@ -115,7 +115,7 @@ const base64 = (file) => {
   })
 }
 
-// 회원 탈퇴 axios 
+// 회원 탈퇴 axios
 // const withdraw = async () => {
 //     try {
 //       await axios.delete(import.meta.env.VITE_SERVER + '/users')
@@ -145,4 +145,4 @@ onBeforeMount(() => {
 })
 </script>
 
-<style></style>
+<style scoped></style>

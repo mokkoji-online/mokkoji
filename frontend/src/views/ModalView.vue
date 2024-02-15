@@ -44,4 +44,4 @@ const clickOutsideEmit = () => {
 }
 </script>
 
-<style></style>
+<style scoped></style>

@@ -601,7 +601,7 @@ onMounted(() => {
 })
 </script>
 
-<style>
+<style scoped>
 .effect-black {
   box-shadow: inset 0 -2px 0 #070700;
   color: black;

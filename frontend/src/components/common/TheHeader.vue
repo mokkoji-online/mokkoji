@@ -4,10 +4,7 @@
     class="fixed h-[10vh] z-10 my-auto w-full bg-transparent"
   >
     <nav class="w-full flex items-center px-[2vw]">
-      <router-link
-        to="/"
-        class="w-[8vw] flex items-center rtl:l:space-x-reverse cursor-grab"
-      >
+      <router-link to="/" class="w-[8vw] flex items-center rtl:l:space-x-reverse cursor-grab">
         <img
           src="/src/assets/logo/mokkoji_logo.png"
           class="w-[8vw] transition ease-in-out hover:animate-pulse"
@@ -18,18 +15,10 @@
       <div class="ml-auto self-center">
         <ul class="font-medium flex md:flex-row">
           <li v-show="!(store.isLogin || isLogin)">
-            <button
-              id="button-header"
-              @click="showLoginModal"
-              class="text-[2.5vh] cursor-grab"
-            >
+            <button id="button-header" @click="showLoginModal" class="text-[2.5vh] cursor-grab">
               로그인
             </button>
-            <ModalView
-              v-if="isLoginModal"
-              :show-modal="isLoginModal"
-              @close-modal="showLoginModal"
-            >
+            <ModalView v-if="isLoginModal" :show-modal="isLoginModal" @close-modal="showLoginModal">
               <LoginModal />
             </ModalView>
           </li>
@@ -38,10 +27,7 @@
               class="flex flex-row relative justify-center items-center gap-[2.5vh] text-[2.5vh]"
             >
               <div class="flex justify-center items-center rounded-full">
-                <img
-                  class="overflow-hidden rounded-full w-[7vh] m-0 mr-[1vw]"
-                  :src="image"
-                />
+                <img class="overflow-hidden rounded-full w-[7vh] m-0 mr-[1vw]" :src="image" />
                 <p class="text-black text-[2.5vh]">{{ name }}님</p>
               </div>
               <button
@@ -75,65 +61,65 @@
 </template>
 
 <script setup>
-import { ref, onBeforeMount, watch } from "vue"
-import { initFlowbite } from "flowbite"
-import { useRouter } from "vue-router"
-import { useUserStore } from "@/stores/user"
-import ModalView from "@/views/ModalView.vue"
-import LoginModal from "@/components/modal/home/LoginModal.vue"
-import tokenService from "@/services/token.service"
-import Swal from "sweetalert2"
+import { ref, onBeforeMount, watch } from 'vue'
+import { initFlowbite } from 'flowbite'
+import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import ModalView from '@/views/ModalView.vue'
+import LoginModal from '@/components/modal/home/LoginModal.vue'
+import tokenService from '@/services/token.service'
+import Swal from 'sweetalert2'
 
-const router = useRouter() 
-const store = useUserStore() 
-const isLoginModal = ref(false) 
-const isTransparent = ref(false) 
-const image = ref("") 
-const name = ref("") 
-const isLogin = ref(false) 
-const limitHeight = 200 
-const dropdownKey = ref(3) 
+const router = useRouter()
+const store = useUserStore()
+const isLoginModal = ref(false)
+const isTransparent = ref(false)
+const image = ref('')
+const name = ref('')
+const isLogin = ref(false)
+const limitHeight = 200
+const dropdownKey = ref(3)
 
-initFlowbite() 
+initFlowbite()
 
 // header 홈뷰에서 새로고침
 const reloadPage = () => {
-  router.push("/").then(() => {
-    window.location.reload() 
-  }) 
-} 
+  router.push('/').then(() => {
+    window.location.reload()
+  })
+}
 
 const showLoginModal = () => {
-  isLoginModal.value = !isLoginModal.value 
-} 
+  isLoginModal.value = !isLoginModal.value
+}
 // 스크롤 일정 높이 이상 내려가면 transparent
 const handleScroll = () => {
-  if (scrollY > limitHeight) isTransparent.value = true 
-  if (scrollY < limitHeight) isTransparent.value = false 
-} 
+  if (scrollY > limitHeight) isTransparent.value = true
+  if (scrollY < limitHeight) isTransparent.value = false
+}
 // 컨펌 후 로그아웃
 const logout = () => {
   Swal.fire({
-    title: "로그아웃 하시겠습니까?",
-    icon: "warning",
+    title: '로그아웃 하시겠습니까?',
+    icon: 'warning',
     showCancelButton: true,
-    confirmButtonText: "네",
-    cancelButtonText: "돌아가기",
+    confirmButtonText: '네',
+    cancelButtonText: '돌아가기'
   }).then((result) => {
     if (result.isConfirmed) {
       Swal.fire({
-        title: "로그아웃 되었습니다!",
-        icon: "info",
+        title: '로그아웃 되었습니다!',
+        icon: 'info'
       }).then(() => {
         // tokenservice로 cookie 저장된 정보 삭제 + 로그아웃 처리
-        tokenService.removeUser() 
-        isLogin.value = false 
-        store.isLogin = false 
-      }) 
-      router.push("/") 
+        tokenService.removeUser()
+        isLogin.value = false
+        store.isLogin = false
+      })
+      router.push('/')
     }
-  }) 
-} 
+  })
+}
 
 onBeforeMount(() => {
   initFlowbite()
@@ -141,15 +127,14 @@ onBeforeMount(() => {
   // 브라우저를 재연결시 이미 쿠키에 저장된 토큰 만료 여부 처리
   if ($cookies.isKey('user')) {
     if (tokenService.expiredToken($cookies.get('token'))) {
-      $cookies.keys().forEach(cookie => $cookies.remove(cookie));
-    }
-    else {
+      $cookies.keys().forEach((cookie) => $cookies.remove(cookie))
+    } else {
       isLogin.value = true
       image.value = $cookies.get('user').image
       name.value = $cookies.get('user').name
     }
   }
-}) 
+})
 
 watch(
   // store에서 새로고침 요청이 들어오면 (로그인 및 회원가입 성공시)
@@ -158,26 +143,25 @@ watch(
     if (newValue === true) {
       // 알림 후 새로고침
       Swal.fire({
-        icon: "success",
-        title: `환영합니다, ${store.name} 님!`,
-      })
-      .then((result) => {
+        icon: 'success',
+        title: `환영합니다, ${store.name} 님!`
+      }).then((result) => {
         if (result.isConfirmed) {
-          store.forceReload = false 
-          setTimeout(reloadPage, 500) 
+          store.forceReload = false
+          setTimeout(reloadPage, 500)
         }
       })
     }
   }
-) 
+)
 </script>
 
-<style>
+<style scoped>
 .transparent-header {
-  @apply opacity-0 transition-opacity duration-500 z-10 pointer-events-none 
+  @apply opacity-0 transition-opacity duration-500 z-10 pointer-events-none;
 }
 
 li {
-  @apply m-[1vw] p-[1vw] 
+  @apply m-[1vw] p-[1vw];
 }
 </style>

@@ -120,6 +120,6 @@ const kakaoApiRequestURI =
   '&redirect_uri=' +
   VITE_KAKAO_REDIRECT_URI +
   '&state=mokkoji&response_type=code'
-
 </script>
-<style></style>
+
+<style scoped></style>

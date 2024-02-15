@@ -124,7 +124,7 @@ onMounted(() => {
 })
 </script>
 
-<style>
+<style scoped>
 input.user-check {
   display: none;
 }
