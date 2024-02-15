@@ -25,15 +25,15 @@
           <p class="absolute z-20 text-[30px] pb-[500px]">{{ username }}님의 추억조각</p>
 
           <img
-            :src="`src/assets/rollingtemplate/${design}.png`"
-            :alt="`template_${design}`"
+            :src="`src/assets/rollingtemplate/${design.toLowerCase().trim()}.png`"
+            :alt="`template_${design.toLowerCase().trim()}`"
             width="450px"
             height="700px"
             class="z-10"
           />
           <img
-            :src="`src/assets/rollingnote/${color}.png`"
-            :alt="`template_${color}`"
+            :src="`src/assets/rollingnote/${color.toLowerCase().trim()}.png`"
+            :alt="`template_${color.toLowerCase().trim()}`"
             class="absolute z-20"
             width="420px"
             height="650px"
@@ -188,7 +188,7 @@
   <transition name="modal-fade">
     <div
       v-if="isSaved"
-      class="fixed bottom-[50%] left-[50%] custom-translate rounded-lg bg-slate-50 px-14 py-3 z-30"
+      class="fixed bottom-[50%] left-[20%] custom-translate rounded-lg bg-slate-50 px-14 py-3 z-30"
     >
       <p class="flex text-[30px]">{{ alertText }}</p>
     </div>
@@ -205,13 +205,13 @@
       <p class="flex text-[10px]">{{ shareLink }}</p>
       <div class="flex">
         <button
-          class="text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
+          class="ml-16 text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
           @click="copyShare(`${shareLink}`)"
         >
           링크 복사
         </button>
         <button
-          class="text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
+          class="mr-16 text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
           @click="showCopyModal"
         >
           닫기
@@ -296,16 +296,13 @@ const showPhotoCard = () => {
 }
 
 const showSucceeded = async (e) => {
-  let mainImgDownload
   isSaved.value = true
   setTimeout(() => {
     isSaved.value = false
   }, 2000)
   switch (e) {
     case '대표이미지다운':
-      mainImgDownload = await downloadThumbnail()
-
-      if (mainImgDownload === 1) {
+      if (downloadThumbnail() === 1) {
         alertText.value = '바탕화면 mokkoji 폴더에 대표이미지가 저장되었어요'
       } else {
         alertText.value = '대표이미지 저장에 실패했어요'
@@ -325,25 +322,17 @@ const copyShare = (shareLink) => {
 
 //대표이미지 다운로드
 const downloadThumbnail = () => {
-  return new Promise((resolve) => {
-    downloadThumbnailStore.DownloadThumbnail(
-      resultIDStore.getID,
-      (res) => {
-        console.log(res)
-        resolve(1)
-      },
-      (error) => {
-        console.log(error)
-        resolve(0)
-      }
-    )
-  })
+  downloadThumbnailStore.DownloadThumbnail(
+    resultIDStore.getID,
+    (res) => {
+      console.log(res)
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+  return 1
 }
-
-downloadThumbnail().then((result) => {
-  console.log(result)
-  return result
-})
 
 //대표이미지 공유하기
 const shareThumbnail = () => {

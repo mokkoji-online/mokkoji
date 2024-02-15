@@ -333,6 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 
 onMounted(() => {
+  AOS.init()
   window.scrollTo(0, 0)
   emit('load-home')
 })
