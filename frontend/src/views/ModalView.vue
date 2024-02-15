@@ -1,10 +1,8 @@
 <template>
-  <!-- <Transition name="modal-outer" :appear="true"> -->
   <div
     v-if="showModal"
     class="fixed w-full h-screen my-auto bg-black bg-opacity-30 top-0 left-0 z-10 flex justify-center px-8"
   >
-    <!-- <Transition name="modal-inner" :appear="true"> -->
     <div
       v-show="showModal"
       class="p-4 bg-white self-start m-auto rounded-r-xl"
@@ -13,10 +11,10 @@
       <svg
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 24 24"
-        width="24"
-        height="24"
+        width="30"
+        height="30"
         fill="gray"
-        class="m-1 float-right"
+        class="m-1 float-right hover:bg-neutral-200 hover:cursor-pointer rounded-full"
         @click="$emit('close-modal')"
       >
         <path
@@ -26,9 +24,7 @@
       <br />
       <slot />
     </div>
-    <!-- </Transition> -->
   </div>
-  <!-- </Transition> -->
 </template>
 
 <script setup>

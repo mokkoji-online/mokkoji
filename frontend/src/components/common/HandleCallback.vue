@@ -62,7 +62,7 @@ onMounted(() => {
           icon: 'info'
         }).then((result) => {
           if (result.isConfirmed) {
-            router.push("/signup");
+            router.push('/signup')
           }
         })
       } else {
@@ -70,7 +70,11 @@ onMounted(() => {
         const refreshToken = res.headers['authorization-refresh']
         tokenService.setLocalRefreshToken(refreshToken)
         if (sessionStorage.getItem('place') === 'meeting') {
-          router.push('/meetings')
+          if (sessionStorage.getItem('groupSessionId') !== null) {
+            router.push('/groupmeetings')
+          } else {
+            router.push('/meetings')
+          }
         } else {
           store.forceReload = true
         }

@@ -230,7 +230,11 @@
             <span @click="showGiftModal" class="button-text">선물하기</span>
           </div>
           <div>
-            <button id="button-picture" class="bg-purple-200" @click="showCaptureModal">
+            <button
+              id="button-picture"
+              :class="{ 'bg-purple-400': isCaptureModal, 'bg-purple-200': !isCaptureModal }"
+              @click="showCaptureModal"
+            >
               <IconCamera class="size-[50%]" />
             </button>
             <span @click="showCaptureModal" class="button-text">사진찍기</span>

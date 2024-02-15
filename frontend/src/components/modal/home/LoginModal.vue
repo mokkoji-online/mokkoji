@@ -9,7 +9,7 @@
       <div class="flex flex-col justify-center">
         <a
           type="button"
-          class="text-white bg-[#FEE500] hover:bg-[#fed400cb] focus:ring-4 focus:outline-none focus:ring-[#FEE500]/40 font-bold rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mb-4 w-[14lvw]"
+          class="text-white bg-[#fde047] hover:bg-[#fed400cb] focus:ring-4 focus:outline-none focus:ring-[#FEE500]/40 font-bold rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center mb-4 w-[14lvw]"
           :href="kakaoApiRequestURI"
         >
           <svg
@@ -65,7 +65,6 @@
           <svg
             version="1.0"
             xmlns="http://www.w3.org/2000/svg"
-
             viewBox="0 0 300.000000 265.000000"
             preserveAspectRatio="xMidYMid meet"
             class="w-4 h-4 me-2"

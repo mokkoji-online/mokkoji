@@ -41,46 +41,46 @@
         </div>
         <div class="z-30 absolute">
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[63px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][0].name }}</p>
-            <p class="text-[9px]">{{ msg[currentPage - 1][0].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[0].name }}</p>
+            <p class="text-[9px]">{{ msg[0].content }}</p>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[63px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][1].name }}</p>
-            <p class="text-[9px]">{{ msg[currentPage - 1][1].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[1].name }}</p>
+            <p class="text-[9px]">{{ msg[1].content }}</p>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[63px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][2].name }}</p>
-            <p class="text-[9px]">{{ msg[currentPage - 1][2].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[2].name }}</p>
+            <p class="text-[9px]">{{ msg[2].content }}</p>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[203px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][3].name }}</p>
-            <p class="text-[9px]">{{ msg[currentPage - 1][3].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[3].name }}</p>
+            <p class="text-[9px]">{{ msg[3].content }}</p>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[203px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][4].name }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[4].name }}</p>
             <p class="text-[9px]">
-              {{ msg[currentPage - 1][4].content }}
+              {{ msg[4].content }}
             </p>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[203px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][5].name }}</p>
-            <p class="text-[9px]">{{ msg[currentPage - 1][5].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[5].name }}</p>
+            <p class="text-[9px]">{{ msg[5].content }}</p>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[345px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][6].name }}</p>
-            <p class="text-[9px]">{{ msg[currentPage - 1][6].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[6].name }}</p>
+            <p class="text-[9px]">{{ msg[6].content }}</p>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[345px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][7].name }}</p>
-            <p class="text-[9px]">{{ msg[currentPage - 1][7].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[7].name }}</p>
+            <p class="text-[9px]">{{ msg[7].content }}</p>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[345px]">
-            <p class="text-center text-[8px] mb-1">From {{ msg[currentPage - 1][8].name }}</p>
-            <p class="text-[9px]">{{ msg[currentPage - 1][8].content }}</p>
+            <p class="text-center text-[8px] mb-1">From {{ msg[8].name }}</p>
+            <p class="text-[9px]">{{ msg[8].content }}</p>
           </div>
         </div>
         <div class="w-[500px] h-[50px]">
@@ -95,7 +95,9 @@
 
       <div class="mt-[7vh]" v-if="isPhotomosaicResult">
         <div class="flex justify-center items-center">
-          <div class="w-[500px] h-[500px] border-2 border-black"></div>
+          <div class="w-[500px] h-[500px] border-2 border-black">
+            <img :src="`${photomosaic_url}`" width="500px" height="500px" />
+          </div>
         </div>
         <div class="flex items-center justify-center mt-[3vh]">
           <button
@@ -220,9 +222,8 @@ import IconHeart from '@/icons/result/IconHeart.vue'
 import IconPeople from '@/icons/result/IconPeople.vue'
 import IconClose from '@/icons/result/IconClose.vue'
 import IconLetter from '@/icons/result/IconLetter.vue'
-import msg from '@/temp/result/messages.json'
+
 import PageNavigation from '@/components/common/PageNavigation.vue'
-import RollingPaperItem from '@/components/myresult/RollingPaperItem.vue'
 import RecollectionList from '@/components/myevent/RecollectionList.vue'
 // import PhotoCard from '@/temp/result/photocard.json'
 
@@ -244,7 +245,7 @@ const photocard = ref({
   content: '',
   image: ''
 })
-
+const msg = ref([])
 const currentPage = ref(1)
 const totalPage = ref(8)
 const alertText = ref('')
@@ -263,6 +264,7 @@ const letterCount = ref(0)
 const isSaved = ref(false)
 const isCopyBoard = ref(false)
 const shareLink = ref('')
+const photomosaic_url = ref('')
 // const currentPage = ref(1)
 // const totalPage = ref(0)
 
@@ -381,6 +383,7 @@ const sharePhotomosaic = () => {
 const onPageChange = (val) => {
   console.log(val + '번 페이지로 이동 준비 끝!!!')
   currentPage.value = val
+  getResultView(resultIDStore.getID)
   // param.value.pgno = val
   // getHotArticleList()
 }
@@ -388,7 +391,7 @@ const getResultView = (id) => {
   console.log(`행사번호 ${id}의 result view 불러오기`)
   recollectionStore.RecollectionData(
     id,
-    0,
+    currentPage.value,
     (res) => {
       design.value = res.data.backgroundTemplate
       color.value = res.data.postitTemplate
@@ -397,8 +400,12 @@ const getResultView = (id) => {
       photocard.value.image = res.data.thumbnail
       photocard.value.content = res.data.content
       photocard.value.name = res.data.name
+      photomosaic_url.value = res.data.photomosaic
+      totalPage.value = res.data.totalPage
+      msg.value = res.data.messageList
       console.log(res)
       console.log(photocard.value.image)
+      console.log(photomosaic_url.value)
     },
     (error) => {
       console.log(error)

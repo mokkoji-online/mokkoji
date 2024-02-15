@@ -1,8 +1,5 @@
 <template>
   <div class="pt-6">
-    <!-- <div class="flex items-center justify-center">
-      <p>{{ currentPage }} / {{ totalPage }}</p>
-    </div> -->
     <div class="flex justify-center">
       <ul class="flex">
         <li>

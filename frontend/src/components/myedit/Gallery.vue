@@ -258,15 +258,18 @@ const saveThumbnail = (id) => {
 const createPhotomosaic = (id) => {
   console.log(`행사번호 ${id}의 포토모자이크 생성하기`)
   let result = 1
-  createPhotomosaicStore.createPhotomosaic(
+  createPhotomosaicStore.CreatePhotomosaic(
     id,
     (res) => {
       console.log(res)
+      result = 1
     },
     (error) => {
       console.log(error)
+      result = 0
     }
   )
+  return result
 }
 
 const showSaved = (e) => {
