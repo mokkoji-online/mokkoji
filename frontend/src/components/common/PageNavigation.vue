@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-6">
+  <div class="pt-10">
     <div class="flex justify-center">
       <ul class="flex">
         <li>
@@ -40,12 +40,13 @@
 <script setup>
 import { computed } from 'vue'
 
-const props = defineProps({ currentPage: {
-  type: Number 
-}, 
+const props = defineProps({
+  currentPage: {
+    type: Number
+  },
   totalPage: {
     type: Number
-  } 
+  }
 })
 const emit = defineEmits(['pageChange'])
 
