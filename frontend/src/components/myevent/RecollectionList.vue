@@ -24,7 +24,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useResultIDStore } from '@/views/EditView.vue'
+import { useResultIDStore } from '@/stores/result.js'
 
 const props = defineProps(['recollection'])
 
