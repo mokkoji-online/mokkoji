@@ -40,12 +40,12 @@ const goToHome = () => {
   router.push('/')
 }
 
-onMounted(() => {
-  emit('waiting-room')
-})
-
 onBeforeMount(() => {
   emit('leave-meeting')
+})
+
+onMounted(() => {
+  emit('waiting-room')
 })
 </script>
 

@@ -9,7 +9,6 @@
             class="h-full basis-1/4 flex flex-col justify-start items-center overflow-y-scroll gap-[1vh]"
           >
             <user-Video
-              id="sub-video"
               v-for="sub in state.subscribers"
               :key="sub.stream.connection.connectionId"
               :stream-manager="sub"
@@ -37,7 +36,6 @@
         class="w-full h-full basis-3/4 grid grid-cols-3 gap-[1vh] overflow-y-scroll items-center"
       >
         <user-Video
-          id="sub-video"
           v-for="user in userList"
           :key="user.stream.connection.connectionId"
           :stream-manager="user"
@@ -301,7 +299,7 @@
       />
     </transition-group>
     <transition-group name="down">
-      <InviteModal v-if="isInviteModal" />
+      <InviteModal v-if="isInviteModal" @remove-invite-modal="showInviteModal" />
       <MicModal v-if="isMicModal" :is-mic="isMic" />
       <CameraModal v-if="isCameraModal" :is-camera="isCamera" />
       <CaptureCheckModal v-if="isCaptureCheckModal" />
@@ -464,10 +462,12 @@ const showCaptureCheckModal = () => {
   }, 600)
 }
 
+// 행사 참여자 목록 보여주기
 const showUserList = () => {
   isUserList.value = !isUserList.value
 }
 
+// 채팅 메시지 보여주기
 const showChat = () => {
   isChat.value = !isChat.value
 }
@@ -481,6 +481,32 @@ const scrollToBottom = () => {
   const scroll = document.getElementById('chat-container')
 
   scroll.scrollTop = scroll.scrollHeight
+}
+
+// 카메라 전, 후면 전환
+const toggleCamera = async () => {
+  const devices = await state.OV.getDevices()
+  const videoDevices = await devices.filter((device) => device.kind === 'videoinput')
+
+  isFrontCamera.value = !isFrontCamera.value
+
+  if (videoDevices && videoDevices.length > 1) {
+    const mediaStream = await state.OV.getUserMedia({
+      audioSource: false,
+      videoSource: isFrontCamera.value ? videoDevices[0].deviceId : videoDevices[1].deviceId,
+      resolution: `${videoWidth}x${videoHeight}`,
+      frameRate: 30
+    })
+
+    const myTrack = mediaStream.getVideoTracks()[0]
+
+    state.publisher.replaceTrack(myTrack).then(() => {
+      console.log('New track has been published')
+    })
+  } else {
+    // 모달창 띄우기
+    console.log('전환할 화면이 존재하지 않습니다.')
+  }
 }
 
 // 개인 사진 촬영
@@ -548,6 +574,14 @@ const captureGroupVideo = async () => {
     showCaptureCheckModal()
     clearInterval(countTime)
   }, 3000)
+}
+
+// 행사 참여시 뒤로가기 버튼 클릭 막기
+const noBack = () => {
+  history.pushState(null, null, location.href)
+  window.onpopstate = () => {
+    history.go(1)
+  }
 }
 
 // ---------------- OpenVidu 관련 ----------------
@@ -715,38 +749,6 @@ const sendMessage = () => {
   }
 }
 
-const toggleCamera = async () => {
-  const devices = await state.OV.getDevices()
-  const videoDevices = await devices.filter((device) => device.kind === 'videoinput')
-
-  isFrontCamera.value = !isFrontCamera.value
-
-  if (videoDevices && videoDevices.length > 1) {
-    const mediaStream = await state.OV.getUserMedia({
-      audioSource: false,
-      videoSource: isFrontCamera.value ? videoDevices[0].deviceId : videoDevices[1].deviceId,
-      resolution: `${videoWidth}x${videoHeight}`,
-      frameRate: 30
-    })
-
-    const myTrack = mediaStream.getVideoTracks()[0]
-
-    state.publisher.replaceTrack(myTrack).then(() => {
-      console.log('New track has been published')
-    })
-  } else {
-    // 모달창 띄우기
-    console.log('전환할 화면이 존재하지 않습니다.')
-  }
-}
-
-const noBack = () => {
-  history.pushState(null, null, location.href)
-  window.onpopstate = () => {
-    history.go(1)
-  }
-}
-
 onMounted(() => {
   noBack()
   joinSession()
@@ -759,16 +761,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-::-webkit-scrollbar {
-  width: 0.8vw;
-  background-color: white;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: #e7c6ff;
-  border-radius: var(--border-radius-lg);
-}
-
 #button-container-center {
   margin: auto 0;
 }

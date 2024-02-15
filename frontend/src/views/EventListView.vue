@@ -266,8 +266,14 @@ const scrollMethods = (e) => {
 }
 
 onMounted(() => {
-  userNameStore.setName($cookies.get('user').name)
+  // const username = $cookies.get('user').name
+  // if (username != null) {
+  //   userNameStore.setName($cookies.get('user').name)
+  // } else {
+  userNameStore.setName('이정민')
+  // }
   name.value = userNameStore.getName
+  console.log(name.value)
   setShow()
   setShowTwo()
   getEventList()

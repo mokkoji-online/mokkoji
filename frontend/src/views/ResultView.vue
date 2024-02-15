@@ -8,13 +8,13 @@
         </div>
         <button
           class="w-[12vw] mx-auto mt-[1vh] p-2 opacity-70 border-2 rounded-lg flex items-center justify-center hover:opacity-100 effect-button"
-          @click="downloadThumbnail"
+          @click="showSucceeded('대표이미지다운')"
         >
           대표 이미지 다운로드
         </button>
         <button
           class="w-[12vw] mx-auto mt-[1vh] p-2 opacity-70 border-2 rounded-lg flex items-center justify-center hover:opacity-100 effect-button"
-          @click="shareThumbnail"
+          @click="shareThumbnail()"
         >
           대표 이미지 공유하기
         </button>
@@ -25,14 +25,14 @@
           <p class="absolute z-20 text-[30px] pb-[500px]">{{ username }}님의 추억조각</p>
 
           <img
-            :src="`src/assets/rollingtemplate/wedding.png`"
+            :src="`src/assets/rollingtemplate/${design}.png`"
             :alt="`template_${design}`"
             width="450px"
             height="700px"
             class="z-10"
           />
           <img
-            :src="`src/assets/rollingnote/rainbow.png`"
+            :src="`src/assets/rollingnote/${color}.png`"
             :alt="`template_${color}`"
             class="absolute z-20"
             width="420px"
@@ -185,12 +185,40 @@
       </div>
     </div>
   </div>
+  <!-- 재확인 모달 ex. 저장되었습니다 -->
+  <transition name="modal-fade">
+    <div
+      v-if="isSaved"
+      class="fixed bottom-[50%] left-[50%] custom-translate rounded-lg bg-slate-50 px-14 py-3 z-30"
+    >
+      <p class="flex text-[30px]">{{ alertText }}</p>
+    </div>
+  </transition>
+  <!--- 클립보드 복사 모달 -->
+  <transition name="modal-fade">
+    <div
+      v-if="isCopyBoard"
+      class="fixed bottom-[50%] left-[50%] custom-translate rounded-lg bg-slate-50 px-14 py-3 z-30"
+    >
+      <div class="flex">
+        <p class="">아래 링크를 공유해주세요.</p>
+        <button class="ml-[450px]" @click="showCopyModal"><IconClose /></button>
+      </div>
+      <p class="flex text-[10px]">{{ shareLink }}</p>
+      <button
+        class="text-[10px] rounded-lg border-2 border-solid border-pink-300 p-[1px] px-[2px] mt-1 mx-auto bg-pink-300 text-white"
+        @click="copyShare(`${shareLink}`)"
+      >
+        링크 복사
+      </button>
+    </div>
+  </transition>
 </template>
 <script setup>
 import IconGift from '@/icons/result/IconGift.vue'
 import IconHeart from '@/icons/result/IconHeart.vue'
 import IconPeople from '@/icons/result/IconPeople.vue'
-import IconPhoto from '@/icons/result/IconPhoto.vue'
+import IconClose from '@/icons/result/IconClose.vue'
 import IconLetter from '@/icons/result/IconLetter.vue'
 import msg from '@/temp/result/messages.json'
 import PageNavigation from '@/components/common/PageNavigation.vue'
@@ -219,7 +247,7 @@ const photocard = ref({
 
 const currentPage = ref(1)
 const totalPage = ref(8)
-
+const alertText = ref('')
 const recollectionStore = useRecollection()
 const resultIDStore = useResultIDStore()
 const userNameStore = useUserNameStore()
@@ -232,6 +260,9 @@ const username = ref('')
 const color = ref('')
 const participantCount = ref(0)
 const letterCount = ref(0)
+const isSaved = ref(false)
+const isCopyBoard = ref(false)
+const shareLink = ref('')
 // const currentPage = ref(1)
 // const totalPage = ref(0)
 
@@ -239,6 +270,9 @@ const isRollingPaperResult = ref(false)
 const isPhotomosaicResult = ref(false)
 const isPhotoCardResult = ref(true)
 
+const showCopyModal = () => {
+  isCopyBoard.value = false
+}
 const showRollingPaper = () => {
   isRollingPaperResult.value = true
   isPhotomosaicResult.value = false
@@ -257,11 +291,62 @@ const showPhotoCard = () => {
   isPhotoCardResult.value = true
 }
 
+const showSucceeded = async (e) => {
+  let mainImgDownload
+  isSaved.value = true
+  setTimeout(() => {
+    isSaved.value = false
+  }, 2000)
+  switch (e) {
+    case '대표이미지다운':
+      mainImgDownload = await downloadThumbnail()
+
+      if (mainImgDownload === 1) {
+        alertText.value = '바탕화면 mokkoji 폴더에 대표이미지가 저장되었어요'
+      } else {
+        alertText.value = '대표이미지 저장에 실패했어요'
+      }
+      break
+    case '복사성공':
+      isCopyBoard.value = false
+      alertText.value = '클립보드에 복사되었습니다.'
+  }
+}
+
+const copyShare = (shareLink) => {
+  navigator.clipboard.writeText(shareLink)
+  showSucceeded('복사성공')
+}
+
 const downloadThumbnail = () => {
-  downloadThumbnailStore.DownloadThumbnail(
+  return new Promise((resolve) => {
+    downloadThumbnailStore.DownloadThumbnail(
+      resultIDStore.getID,
+      (res) => {
+        console.log(res)
+        resolve(1)
+      },
+      (error) => {
+        console.log(error)
+        resolve(0)
+      }
+    )
+  })
+}
+
+downloadThumbnail().then((result) => {
+  console.log(result)
+  return result
+})
+
+const shareThumbnail = () => {
+  shareImageStore.ShareImage(
     resultIDStore.getID,
     (res) => {
       console.log(res)
+      shareLink.value = res.data
+      isCopyBoard.value = true
+      console.log(shareLink.value)
     },
     (error) => {
       console.log(error)
@@ -271,18 +356,6 @@ const downloadThumbnail = () => {
 
 const downloadPhotomosaic = () => {
   downloadPhotomosaicStore.DownloadPhotomosaic(
-    resultIDStore.getID,
-    (res) => {
-      console.log(res)
-    },
-    (error) => {
-      console.log(error)
-    }
-  )
-}
-
-const shareThumbnail = () => {
-  shareImageStore.ShareImage(
     resultIDStore.getID,
     (res) => {
       console.log(res)
@@ -325,6 +398,7 @@ const getResultView = (id) => {
       photocard.value.content = res.data.content
       photocard.value.name = res.data.name
       console.log(res)
+      console.log(photocard.value.image)
     },
     (error) => {
       console.log(error)
@@ -335,6 +409,7 @@ const getResultView = (id) => {
 onMounted(() => {
   getResultView(resultIDStore.getID)
   username.value = userNameStore.getName
+  isSaved.value = false
   console.log(msg[0][0].name)
   console.log(msg[0][0].content)
   console.log(msg[currentPage.value])

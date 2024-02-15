@@ -52,6 +52,7 @@ export const useSessionStore = defineStore('session', () => {
         sessionStorage.setItem('isHost', false)
         sessionStorage.setItem('bank', accounts.bank)
         sessionStorage.setItem('accountNumber', accounts.accountNumber)
+        sessionStorage.setItem('place', 'meeting')
 
         return 'success'
       } else {

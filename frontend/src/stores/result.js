@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 import axiosJwt from '@/services/api'
 
-const { VITE_API_URL_LOCAL } = import.meta.env
 const { VITE_API_URL } = import.meta.env
 const { VITE_SERVER } = import.meta.env
 
@@ -138,7 +137,7 @@ export const useImgUploadStore = defineStore('imgUpload', () => {
     // console.log(id)
     // console.log(formData)
     await axiosJwt
-      .post(VITE_API_URL_LOCAL + VITE_SERVER + `/results/${id}/memories/photos`, formData, {
+      .post(VITE_API_URL + VITE_SERVER + `/results/${id}/memories/photos`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -155,7 +154,7 @@ export const useImgUploadStore = defineStore('imgUpload', () => {
 export const useEventList = defineStore('userEvents', () => {
   const eventList = async (success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL_LOCAL + VITE_SERVER + '/results/lists')
+      .get(VITE_API_URL + VITE_SERVER + '/results/lists')
       .then(success)
       .catch(fail)
   }
@@ -167,7 +166,7 @@ export const useEventList = defineStore('userEvents', () => {
 export const useEditMemory = defineStore('editMemoryData', () => {
   const editMemory = async (id, success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL_LOCAL + VITE_SERVER + `/results/${id}/memories`)
+      .get(VITE_API_URL + VITE_SERVER + `/results/${id}/memories`)
       .then(success)
       .catch(fail)
   }
@@ -178,7 +177,7 @@ export const useSaveTemplate = defineStore('saveTemplateData', () => {
   const saveTemplate = async (id, template, success, fail) => {
     await axiosJwt
       .patch(
-        VITE_API_URL_LOCAL + VITE_SERVER + `/results/${id}/memories/rollingpaper`,
+        VITE_API_URL + VITE_SERVER + `/results/${id}/memories/rollingpaper`,
         JSON.stringify(template),
         {
           headers: {
@@ -195,7 +194,7 @@ export const useSaveTemplate = defineStore('saveTemplateData', () => {
 export const useSaveThumbnail = defineStore('saveThumbnailData', () => {
   const saveThumbnail = async (id, url, success, fail) => {
     await axiosJwt
-      .patch(VITE_API_URL_LOCAL + VITE_SERVER + `/results/${id}/memories`, url, {
+      .patch(VITE_API_URL + VITE_SERVER + `/results/${id}/memories`, url, {
         headers: {
           'Content-Type': 'application/json;charset=utf-8'
         }
@@ -209,7 +208,7 @@ export const useSaveThumbnail = defineStore('saveThumbnailData', () => {
 export const useToRecollection = defineStore('ToRecollection', () => {
   const toRecollection = async (id, cardData, success, fail) => {
     await axiosJwt
-      .post(VITE_API_URL_LOCAL + VITE_SERVER + `/results/${id}`, cardData, {
+      .post(VITE_API_URL + VITE_SERVER + `/results/${id}`, cardData, {
         headers: {
           'Content-Type': 'application/json;charset=utf-8'
         }
@@ -223,7 +222,7 @@ export const useToRecollection = defineStore('ToRecollection', () => {
 export const useRecollection = defineStore('RecollectionData', () => {
   const RecollectionData = async (id, page, success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL_LOCAL + VITE_SERVER + `/results/recollections/${id}`, page)
+      .get(VITE_API_URL + VITE_SERVER + `/results/recollections/${id}`, page)
       .then(success)
       .catch(fail)
   }
@@ -233,7 +232,7 @@ export const useRecollection = defineStore('RecollectionData', () => {
 export const useDownloadThumbnail = defineStore('DownloadThumbnail', () => {
   const DownloadThumbnail = async (id, success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL_LOCAL + VITE_SERVER + `/results/thumbnail/${id}`)
+      .get(VITE_API_URL + VITE_SERVER + `/results/${id}/thumbnail`)
       .then(success)
       .catch(fail)
   }
@@ -243,7 +242,7 @@ export const useDownloadThumbnail = defineStore('DownloadThumbnail', () => {
 export const useDownloadPhotomosaic = defineStore('DownloadPhotomosaic', () => {
   const DownloadPhotomosaic = async (id, success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL_LOCAL + VITE_SERVER + `/results/photomosaic/${id}`)
+      .get(VITE_API_URL + VITE_SERVER + `/results/photomosaic/${id}`)
       .then(success)
       .catch(fail)
   }
@@ -253,7 +252,7 @@ export const useDownloadPhotomosaic = defineStore('DownloadPhotomosaic', () => {
 export const useShareImage = defineStore('ShareImage', () => {
   const ShareImage = async (id, success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL_LOCAL + VITE_SERVER + `/results/image/sharing/${id}`)
+      .get(VITE_API_URL + VITE_SERVER + `/results/${id}/sharing/thumbnail`)
       .then(success)
       .catch(fail)
   }
@@ -263,7 +262,7 @@ export const useShareImage = defineStore('ShareImage', () => {
 export const useSharePhotomosaic = defineStore('SharePhotomosaic', () => {
   const SharePhotomosaic = async (id, success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL_LOCAL + VITE_SERVER + `/results/photomosaic/sharing/${id}`)
+      .get(VITE_API_URL + VITE_SERVER + `/results/photomosaic/sharing/${id}`)
       .then(success)
       .catch(fail)
   }
@@ -273,7 +272,7 @@ export const useSharePhotomosaic = defineStore('SharePhotomosaic', () => {
 export const useCreatePhotomosaic = defineStore('createPhotomosaic', () => {
   const CreatePhotomosaic = async (id, success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL_LOCAL + VITE_SERVER + `/results/${id}/photomosaic`)
+      .get(VITE_API_URL + VITE_SERVER + `/results/${id}/photomosaic`)
       .then(success)
       .catch(fail)
   }

@@ -2,7 +2,7 @@
   <div class="w-80 items-center m-5 flex flex-col gap-4 mb-16 p-5">
     <img
       src="@/assets/logo/mokkoji_logo.png"
-      class="w-24 p-2 m-2 mb-4 border-2 rounded-2xl border-primary bg-natural-beige shadow-md"
+      class="w-24 p-2 m-2 mb-4 border-2 rounded-2xl border-primary bg-natural-beige shadow-md rounded-r-lg"
     />
     <div id="title-sub-bold">모꼬지 시작하기</div>
     <div id="box-shadow">

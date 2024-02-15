@@ -6,7 +6,7 @@
     <div class="bg-custom">
       <div class="flex justify-center items-center">
         <a href="/resultpage">
-          <img :src="mainImage" alt="unregistered" height="180" width="180" />
+          <img :src="`${recollection.image}`" alt="unregistered" height="180" width="180" />
         </a>
       </div>
       <p class="text-lg mt-2 text-center">

@@ -108,13 +108,23 @@ pre {
   border-radius: var(--border-radius-xl);
 }
 
+::-webkit-scrollbar {
+  width: 0.8vw;
+  background-color: white;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #e7c6ff;
+  border-radius: var(--border-radius-lg);
+}
+
 @layer components {
   #title-bold {
     @apply text-6xl font-bold tracking-wider p-2;
   }
 
   #title {
-    @apply text-[5vw] mb-[2vb] font-bold ;
+    @apply text-[5vw] mb-[2vb] font-bold;
   }
 
   #title-sub-bold {
@@ -174,7 +184,7 @@ pre {
     );
   }
   #card-div {
-    @apply rounded-md shadow-lg bg-white p-10 flex flex-col mt-24 mb-40 border-2 border-slate-200; 
+    @apply rounded-md shadow-lg bg-white p-10 flex flex-col mt-24 mb-40 border-2 border-slate-200;
   }
 
   #button-submit {
@@ -222,7 +232,7 @@ pre {
   }
 
   #section-main {
-    @apply justify-between flex flex-col ;
+    @apply justify-between flex flex-col;
   }
 
   #svg-curve-1 {

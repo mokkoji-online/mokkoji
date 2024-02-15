@@ -1,7 +1,6 @@
 <template>
   <div class="fixed w-[30%] h-[50%] left-[35%]">
     <div
-      id="gift-container"
       class="px-[5vh] h-[100%] bg-purple-100 flex flex-col justify-center items-center rounded-r-lg"
     >
       <div class="mb-[3vh] font-bold text-r-lg underline decoration-[1vh] decoration-purple-400/50">

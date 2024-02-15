@@ -1,7 +1,6 @@
 <template>
   <div class="fixed w-[26%] aspect-auto bottom-[11%] left-[13%]">
     <div
-      id="gift-container"
       class="p-[1vw] pl-[1.5vw] h-[100%] bg-black flex flex-col justify-center items-start space-y-[1vh] rounded-r-lg"
     >
       <div class="flex w-[23vw] items-center h-[5vh]">
@@ -17,7 +16,7 @@
       </div>
       <button
         class="ml-[4vw] w-[5vw] text-white text-[0.8vw] hover:bg-neutral-500 rounded-r-lg"
-        @click="copySessionInfo(address), showAddressCopyModal()"
+        @click="copyAddress"
       >
         <IconCopyWhite class="mr-[0.3vw]" />주소 복사
       </button>
@@ -28,7 +27,7 @@
       </div>
       <button
         class="ml-[4vw] w-[4.3vw] text-white text-[0.8vw] hover:bg-neutral-500 rounded-r-lg"
-        @click="copySessionInfo(sessionId), showSessionIdCopyModal()"
+        @click="copySessionInfo"
       >
         <IconCopyWhite class="mr-[0.3vw]" />ID 복사
       </button>
@@ -71,28 +70,30 @@ const today = date.toLocaleDateString()
 const isAddressCopy = ref(false)
 const isSessionIdCopy = ref(false)
 
-const copySessionInfo = (sessionInfo) => {
-  navigator.clipboard.writeText(sessionInfo)
-}
+// 행사 주소 복사
+const copyAddress = () => {
+  navigator.clipboard.writeText(address.value)
 
-const showAddressCopyModal = () => {
   isAddressCopy.value = true
 
   setTimeout(() => {
     isAddressCopy.value = false
-  }, 600)
+  }, 700)
 }
 
-const showSessionIdCopyModal = () => {
+// 행사 세션 아이디 복사
+const copySessionInfo = () => {
+  navigator.clipboard.writeText(sessionId.value)
+
   isSessionIdCopy.value = true
 
   setTimeout(() => {
     isSessionIdCopy.value = false
-  }, 600)
+  }, 700)
 }
 </script>
 
-<style setup>
+<style>
 .up-enter-active {
   transition: all 0.3s;
 }

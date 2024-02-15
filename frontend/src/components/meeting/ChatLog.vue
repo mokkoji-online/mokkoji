@@ -17,17 +17,11 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-
 const props = defineProps({
   chatLog: {
     type: Array
   }
 })
-
-const myName = ref(
-  $cookies.get('user') !== null ? $cookies.get('user').name : sessionStorage.getItem('userName')
-)
 </script>
 
 <style></style>

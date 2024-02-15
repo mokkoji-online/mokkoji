@@ -7,7 +7,7 @@
     <!-- <Transition name="modal-inner" :appear="true"> -->
     <div
       v-show="showModal"
-      class="p-4 bg-white self-start m-auto"
+      class="p-4 bg-white self-start m-auto rounded-r-xl"
       v-on-click-outside="clickOutsideEmit"
     >
       <svg
