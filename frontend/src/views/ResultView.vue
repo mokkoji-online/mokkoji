@@ -22,16 +22,16 @@
           <img
             :src="`src/assets/rollingtemplate/${design.toLowerCase().trim()}.png`"
             :alt="`template_${design.toLowerCase().trim()}`"
-            width="250px"
-            height="500px"
+            width="450px"
+            height="700px"
             class="z-10"
           />
           <img
             :src="`src/assets/rollingnote/${color.toLowerCase().trim()}.png`"
             :alt="`template_${color.toLowerCase().trim()}`"
             class="absolute z-20"
-            width="220px"
-            height="450px"
+            width="420px"
+            height="650px"
           />
         </div>
         <div class="z-30 absolute">
@@ -418,14 +418,14 @@ const getResultView = (id) => {
 onMounted(() => {
   console.log(route.params.resultId)
   photocard.value.resultId = route.params.resultId
-
-  setTimeout(() => {
-    getResultView(photocard.value.resultId)
-  }, 500)
+  getResultView(photocard.value.resultId)
+  // setTimeout(() => {
+  //   getResultView(photocard.value.resultId)
+  // }, 500)
   setTimeout(() => {
     username.value = $cookies.get('user').name
     isSaved.value = false
-    console.log(msg[currentPage.value])
+
     console.log(currentPage.value)
   }, 1000)
 })
