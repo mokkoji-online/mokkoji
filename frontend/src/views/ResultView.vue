@@ -198,9 +198,7 @@
 
       <div class="mt-[7vh]" v-if="isPhotomosaicResult">
         <div class="flex justify-center items-center">
-          <div class="w-[500px] h-[500px] border-2 border-black">
-            <img :src="`${photomosaic_url}`" width="500px" height="500px" />
-          </div>
+          <img :src="`${photomosaic_url}`" width="500px" height="500px" />
         </div>
         <div class="flex items-center justify-center mt-[3vh]">
           <!-- <button
@@ -479,6 +477,9 @@ const sharePhotomosaic = () => {
     photocard.value.resultId,
     (res) => {
       console.log(res)
+      shareLink.value = res.data
+      isCopyBoard.value = true
+      console.log(shareLink.value)
     },
     (error) => {
       console.log(error)
