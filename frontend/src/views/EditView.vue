@@ -449,7 +449,7 @@ const reloadParent = () => {
     location.reload()
     console.log('reload 완료')
     scrollToPhotoMosaic()
-  }, 1500)
+  }, 2000)
 }
 
 const hoverMainImage = () => {
