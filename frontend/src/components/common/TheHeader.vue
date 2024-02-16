@@ -4,15 +4,11 @@
     class="fixed h-[10vh] z-10 my-auto w-full bg-transparent"
   >
     <nav class="w-full flex items-center px-[2vw]">
-      <router-link to="/" class="w-[8vw] flex items-center rtl:l:space-x-reverse cursor-grab">
-        <img
-          src="@/assets/logo/mokkoji_logo.png"
-          class="w-[8vw]"
-          alt="모꼬지 로고"
-        />
-      </router-link>
+      <a href="/" class="w-[8vw] flex items-center rtl:l:space-x-reverse cursor-grab">
+        <img src="@/assets/logo/mokkoji_logo.png" class="w-[8vw]" alt="모꼬지 로고" />
+      </a>
 
-      <div class="ml-auto self-center">
+      <div class="ml-auto self-center relative">
         <ul class="font-medium flex md:flex-row">
           <li v-show="!(store.isLogin || isLogin)">
             <button id="button-header" @click="showLoginModal" class="text-[2.5vh] cursor-grab">
@@ -23,34 +19,32 @@
             </ModalView>
           </li>
           <li v-show="store.isLogin || isLogin">
-            <div
-              class="flex flex-row relative justify-center items-center gap-[2.5vh] text-[2.5vh]"
-            >
-              <div class="flex justify-center items-center rounded-full">
-                <img class="overflow-hidden rounded-full w-[7vh] m-0 mr-[1vw]" :src="image" />
+            <div class="flex flex-row relative justify-center gap-[2.5vh] text-[2.5vh]">
+              <div class="flex justify-center items-center rounded-full mr-[2lvw]">
+                <img
+                  class="overflow-hidden rounded-full w-[7vh] h-[7vh] m-0 mr-[1vw]"
+                  :src="image"
+                />
                 <p class="text-black text-[2.5vh]">{{ name }}님</p>
               </div>
-              <button
-                id="button-header"
-                data-dropdown-toggle="dropdown"
-              >
-                내 서비스
-              </button>
-              <button id="button-header" @click="logout">로그아웃</button>
-              <div
-                :key="dropdownKey"
-                id="dropdown"
-                class="z-10 hidden bg-white divide-y divide-slate-200 rounded-lg w-32"
-              >
-                <ul aria-labelledby="dropdownHoverButton" class="w-50">
-                  <li id="li-dropdown" class="text-[2.5vh]">
-                    <router-link to="mypage">마이페이지</router-link>
-                  </li>
-                  <li id="li-dropdown" class="text-[2.5vh]">
-                    <router-link to="eventlist">내 결과물</router-link>
-                  </li>
-                </ul>
+              <div class="relative inline-block m-0 items-center pt-[0.5vh]">
+                <button id="button-header" @click="showDropdown">내 서비스</button>
+                <div
+                  id="dropdown"
+                  class="absolute -right-7 mt-2 bg-white divide-y divide-slate-200 rounded-lg w-32"
+                  v-show="isShowDropdown"
+                >
+                  <ul class="w-50">
+                    <li id="li-dropdown" class="text-[2.5vh]">
+                      <router-link to="mypage">마이페이지</router-link>
+                    </li>
+                    <li id="li-dropdown" class="text-[2.5vh]">
+                      <router-link to="eventlist">내 결과물</router-link>
+                    </li>
+                  </ul>
+                </div>
               </div>
+              <button id="button-header" @click="logout">로그아웃</button>
             </div>
           </li>
         </ul>
@@ -61,13 +55,16 @@
 
 <script setup>
 import { ref, onBeforeMount, watch } from 'vue'
-import { initFlowbite } from 'flowbite'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import ModalView from '@/views/ModalView.vue'
 import LoginModal from '@/components/modal/home/LoginModal.vue'
 import tokenService from '@/services/token.service'
 import Swal from 'sweetalert2'
+
+const isShowDropdown = ref(false)
+
+const showDropdown = () => (isShowDropdown.value = !isShowDropdown.value)
 
 const router = useRouter()
 const store = useUserStore()
@@ -77,9 +74,6 @@ const image = ref('')
 const name = ref('')
 const isLogin = ref(false)
 const limitHeight = 200
-const dropdownKey = ref(3)
-
-// initFlowbite()
 
 // header 홈뷰에서 새로고침
 const reloadPage = () => {
@@ -121,7 +115,6 @@ const logout = () => {
 }
 
 onBeforeMount(() => {
-  initFlowbite()
   window.addEventListener('scroll', handleScroll)
   // 브라우저를 재연결시 이미 쿠키에 저장된 토큰 만료 여부 처리
   if ($cookies.isKey('user')) {

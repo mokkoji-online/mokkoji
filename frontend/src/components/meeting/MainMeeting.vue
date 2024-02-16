@@ -20,7 +20,11 @@
             ref="myVideo"
             class="mr-[1vh] w-full h-full basis-3/4 flex justify-center items-start"
           >
-            <user-Video :stream-manager="state.mainStreamManager" :main-stream="true" />
+            <user-Video
+              :key="`main-${state.mainStreamManager?.stream.connection.connectionId}`"
+              :stream-manager="state.mainStreamManager"
+              :main-stream="true"
+            />
           </div>
         </div>
       </div>
@@ -469,6 +473,7 @@ const showLoginCheckModal = () => {
   isLoginCheckModal.value = !isLoginCheckModal.value
 }
 
+// 롤링페이퍼 작성 모달 생성
 const showLetterModal = () => {
   if ($cookies.get('user') !== null) {
     isLetterModal.value = !isLetterModal.value
@@ -477,11 +482,12 @@ const showLetterModal = () => {
   }
 }
 
-// 선물하기 모달
+// 선물하기 모달 생성
 const showGiftModal = () => {
   isGiftModal.value = !isGiftModal.value
 }
 
+// 개인 사진, 단체 사진 촬영 모달 생성
 const showCaptureModal = () => {
   if ($cookies.get('user') !== null) {
     isCaptureModal.value = !isCaptureModal.value
@@ -490,7 +496,7 @@ const showCaptureModal = () => {
   }
 }
 
-// 사진 촬영 확인 모달
+// 사진 촬영 확인 모달 생성
 const showCaptureCheckModal = () => {
   isCaptureCheckModal.value = true
 
@@ -499,10 +505,12 @@ const showCaptureCheckModal = () => {
   }, 600)
 }
 
+// 행사 참여자 목록 생성
 const showUserList = () => {
   isUserList.value = !isUserList.value
 }
 
+// 채팅창 생성
 const showChat = () => {
   isChat.value = !isChat.value
 }
@@ -533,7 +541,6 @@ const toggleCamera = async () => {
 
     state.publisher.replaceTrack(myTrack)
   } else {
-    // 모달창 띄우기
     console.log('화면을 전환할 수 없습니다.')
   }
 }
@@ -626,8 +633,7 @@ const state = reactive({
   publisher: undefined,
   subscribers: [],
   myUserName:
-    $cookies.get('user') !== null ? $cookies.get('user').name : sessionStorage.getItem('userName'),
-  openviduToken: undefined
+    $cookies.get('user') !== null ? $cookies.get('user').name : sessionStorage.getItem('userName')
 })
 
 // 세션 참가하기
@@ -645,8 +651,8 @@ const joinSession = () => {
         let publisher = state.OV.initPublisher(undefined, {
           audioSource: undefined,
           videoSource: undefined,
-          publishAudio: true,
           publishVideo: true,
+          publishAudio: false,
           allowTranscoding: true,
           resolution: `${videoWidth}x${videoHeight}`,
           frameRate: 30,
@@ -671,8 +677,9 @@ const joinSession = () => {
   })
 
   // 새로운 참가자 입장
+
   state.session.on('streamCreated', ({ stream }) => {
-    const subscriber = state.session.subscribe(stream, undefined)
+    const subscriber = state.session.subscribe(stream)
     state.subscribers.push(subscriber)
     userList.value.push(subscriber)
 
@@ -703,20 +710,7 @@ const joinSession = () => {
     window.setTimeout(scrollToBottom, 50)
   })
 
-  // 참가자 퇴장
-  state.session.on('streamDestroyed', ({ stream }) => {
-    const index = state.subscribers.indexOf(stream.streamManager, 0)
-    if (index >= 0) {
-      state.subscribers.splice(index, 1)
-    }
-
-    for (let idx = 0; idx < userList.value.length; idx++) {
-      if (stream.streamId === userList.value[idx].stream.streamId) {
-        userList.value.splice(idx, 1)
-      }
-    }
-  })
-
+  // 소그룹 참가자 체크
   state.session.on('connectionCreated', (event) => {
     const user = {
       name: JSON.parse(event.connection.data).clientData,
@@ -734,6 +728,20 @@ const joinSession = () => {
     disconnectSession()
   })
 
+  // 참가자 퇴장
+  state.session.on('streamDestroyed', ({ stream }) => {
+    const index = state.subscribers.indexOf(stream.streamManager, 0)
+    if (index >= 0) {
+      state.subscribers.splice(index, 1)
+    }
+
+    for (let idx = 0; idx < userList.value.length; idx++) {
+      if (stream.streamId === userList.value[idx].stream.streamId) {
+        userList.value.splice(idx, 1)
+      }
+    }
+  })
+
   // 호스트가 행사 종료시 참가자들을 'closeroom' 컴포넌트로 이동시키는 메소드
   state.session.on('signal:close', async () => {
     if (sessionStorage.getItem('isHost') === 'false') {
@@ -748,6 +756,7 @@ const joinSession = () => {
   })
 }
 
+// 세션 연결 해제
 const disconnectSession = () => {
   if (state.session) {
     state.session.disconnect()
@@ -833,9 +842,20 @@ const createGroupMeeting = async (userList) => {
   isGroupModal.value = false
 }
 
-const updateMainVideoStreamManager = (stream) => {
-  if (state.mainStreamManager === stream) return
-  state.mainStreamManager = stream
+// 사용자 화면 클릭시 메인 화면 전환
+const updateMainVideoStreamManager = async ({ stream }) => {
+  if (state.mainStreamManager === stream.streamManager) return
+
+  const index = state.subscribers.indexOf(stream.streamManager)
+  if (index >= 0) {
+    // state.mainStreamManager를 변경
+    state.mainStreamManager = stream.streamManager
+    // state.subscribers 배열에서 stream.streamManager를 제거
+    state.subscribers.splice(index, 1)
+    // state.publisher를 subscribers 배열의 맨 앞에 추가
+    state.subscribers.splice(index, 0, state.publisher)
+    state.publisher = stream.streamManager
+  }
 }
 
 onBeforeMount(() => {

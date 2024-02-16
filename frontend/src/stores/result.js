@@ -222,7 +222,7 @@ export const useToRecollection = defineStore('ToRecollection', () => {
 export const useRecollection = defineStore('RecollectionData', () => {
   const RecollectionData = async (id, page, success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL + VITE_SERVER + `/results/recollections/${id}`, page)
+      .get(VITE_API_URL + VITE_SERVER + `/results/${id}/recollections?page=${page}`)
       .then(success)
       .catch(fail)
   }
@@ -262,7 +262,7 @@ export const useShareImage = defineStore('ShareImage', () => {
 export const useSharePhotomosaic = defineStore('SharePhotomosaic', () => {
   const SharePhotomosaic = async (id, success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL + VITE_SERVER + `/results/photomosaic/sharing/${id}`)
+      .get('http://localhost:8080/' + VITE_SERVER + `/results/${id}/sharing/photomosaic`)
       .then(success)
       .catch(fail)
   }

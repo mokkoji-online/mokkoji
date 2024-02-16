@@ -108,7 +108,7 @@
         <!--추억 컴포넌트-->
         <RecollectionList
           v-for="recollection in recollections"
-          :key="recollection.eventId"
+          :key="recollection.resultId"
           :recollection="recollection"
         />
       </div>

@@ -5,9 +5,9 @@
     </p>
     <div class="bg-custom">
       <div class="flex justify-center items-center">
-        <a href="/resultpage">
+        <router-link :to="{ name: 'resultpage', params: { resultId: recollection.resultId } }">
           <img :src="`${recollection.image}`" alt="unregistered" height="180" width="180" />
-        </a>
+        </router-link>
       </div>
       <p class="text-lg mt-2 text-center">
         <strong class="effect-blacnk-recollection">{{ recollection.name }}</strong>
@@ -23,17 +23,18 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
+
+import { useRouter } from 'vue-router'
 
 const props = defineProps(['recollection'])
 
 const mainImage = ref('@/assets/logo/mokkoji_logo_with_bg.png')
 
-const { VITE_RECOLLECTION_FRAME_COUNT } = import.meta.env
-
 onMounted(() => {
   setTimeout(() => {
     mainImage.value = props.recollection.image
+
     console.log('Main Image: ', mainImage.value)
   }, 500)
 })

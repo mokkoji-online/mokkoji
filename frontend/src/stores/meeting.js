@@ -142,7 +142,7 @@ export const useLetterStore = defineStore('letter', () => {
     Letter.append('writerAndText', blob)
 
     try {
-      await axiosJwt.post(
+      const res = await axiosJwt.post(
         VITE_SERVER + `/events/${sessionStorage.getItem('sessionId')}/rollingpapers`,
         Letter,
         {
