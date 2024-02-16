@@ -38,80 +38,68 @@
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[63px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[0].writer }}</p>
             <p class="text-[9px]">{{ msg[0].text }}</p>
-            <button
-              v-if="msg[0].video !== null"
-              @click="playVideo"
-              class="border-2 border-black p-1"
-            >
-              비디오 재생
-            </button>
-            <video ref="videoPlayer" width="500" height="400">
-              <source :src="msg[0].video" type="video/mp4" />
-            </video>
-            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
-            <video v-if="msg[0].audio !== null" ref="audioPlayer">
-              <source :src="msg[0].voice" type="video/webm" />
-            </video>
+            <div class="flex">
+              <a :href="`${msg[0].video}`"
+                ><button v-if="msg[0].video != null" class="border-2 border-black p-1">
+                  비디오
+                </button></a
+              >
+              <a :href="`${msg[0].voice}`"
+                ><button v-if="msg[0].voice != null" class="border-2 border-black p-1">
+                  오디오
+                </button></a
+              >
+            </div>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[203px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[1].writer }}</p>
             <p class="text-[9px]">{{ msg[1].text }}</p>
             <div class="flex">
-              <button
-                v-if="msg[1].video !== null"
-                @click="playVideo"
-                class="border-2 border-black p-1 text-[5px]"
+              <a :href="`${msg[1].video}`"
+                ><button v-if="msg[1].video != null" class="border-2 border-black p-1">
+                  비디오
+                </button></a
               >
-                비디오 재생
-              </button>
-              <video ref="videoPlayer" width="500" height="400">
-                <source :src="msg[1].video" type="video/mp4" />
-              </video>
-              <button @click="playAudio" class="text-[5px] border-2 border-black p-1">
-                오디오 재생
-              </button>
-              <video v-if="msg[1].audio !== null" ref="audioPlayer">
-                <source :src="msg[1].voice" type="video/webm" />
-              </video>
+              <a :href="`${msg[1].voice}`"
+                ><button v-if="msg[1].voice != null" class="border-2 border-black p-1">
+                  오디오
+                </button></a
+              >
             </div>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[380px] left-[345px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[2].writer }}</p>
             <p class="text-[9px]">{{ msg[2].text }}</p>
-            <button
-              v-if="msg[2].video !== null"
-              @click="playVideo"
-              class="border-2 border-black p-1"
-            >
-              비디오 재생
-            </button>
-            <video ref="videoPlayer" width="500" height="400">
-              <source :src="msg[2].video" type="video/mp4" />
-            </video>
-            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
-            <video v-if="msg[2].audio !== null" ref="audioPlayer">
-              <source :src="msg[2].voice" type="video/webm" />
-            </video>
+            <div class="flex">
+              <a :href="`${msg[2].video}`"
+                ><button v-if="msg[2].video != null" class="border-2 border-black p-1">
+                  비디오
+                </button></a
+              >
+              <a :href="`${msg[2].voice}`"
+                ><button v-if="msg[2].voice != null" class="border-2 border-black p-1">
+                  오디오
+                </button></a
+              >
+            </div>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[63px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[3].writer }}</p>
             <p class="text-[9px]">{{ msg[3].text }}</p>
-            <button
-              v-if="msg[3].video !== null"
-              @click="playVideo"
-              class="border-2 border-black p-1"
-            >
-              비디오 재생
-            </button>
-            <video ref="videoPlayer" width="500" height="400">
-              <source :src="msg[3].video" type="video/mp4" />
-            </video>
-            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
-            <video v-if="msg[3].audio !== null" ref="audioPlayer">
-              <source :src="msg[3].voice" type="video/webm" />
-            </video>
+            <div class="flex">
+              <a :href="`${msg[3].video}`"
+                ><button v-if="msg[3].video != null" class="border-2 border-black p-1">
+                  비디오
+                </button></a
+              >
+              <a :href="`${msg[3].voice}`"
+                ><button v-if="msg[3].voice != null" class="border-2 border-black p-1">
+                  오디오
+                </button></a
+              >
+            </div>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[203px]">
@@ -119,51 +107,83 @@
             <p class="text-[9px]">
               {{ msg[4].text }}
             </p>
-            <button
-              v-if="msg[4].video !== null"
-              @click="playVideo"
-              class="border-2 border-black p-1"
-            >
-              비디오 재생
-            </button>
-            <video ref="videoPlayer" width="500" height="400">
-              <source :src="msg[4].video" type="video/mp4" />
-            </video>
-            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
-            <video v-if="msg[4].audio !== null" ref="audioPlayer">
-              <source :src="msg[4].voice" type="video/webm" />
-            </video>
+            <div class="flex">
+              <a :href="`${msg[4].video}`"
+                ><button v-if="msg[4].video != null" class="border-2 border-black p-1">
+                  비디오
+                </button></a
+              >
+              <a :href="`${msg[4].voice}`"
+                ><button v-if="msg[4].voice != null" class="border-2 border-black p-1">
+                  오디오
+                </button></a
+              >
+            </div>
           </div>
 
           <div class="absolute w-[100px] h-[100px] bottom-[235px] left-[345px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[5].writer }}</p>
             <p class="text-[9px]">{{ msg[5].text }}</p>
-            <button
-              v-if="msg[5].video !== null"
-              @click="playVideo"
-              class="border-2 border-black p-1"
-            >
-              비디오 재생
-            </button>
-            <video ref="videoPlayer" width="500" height="400">
-              <source :src="msg[5].video" type="video/mp4" />
-            </video>
-            <button @click="playAudio" class="border-2 border-black p-1">오디오 재생</button>
-            <video v-if="msg[5].audio !== null" ref="audioPlayer">
-              <source :src="msg[5].voice" type="video/webm" />
-            </video>
+            <div class="flex">
+              <a :href="`${msg[5].video}`"
+                ><button v-if="msg[5].video != null" class="border-2 border-black p-1">
+                  비디오
+                </button></a
+              >
+              <a :href="`${msg[5].voice}`"
+                ><button v-if="msg[5].voice != null" class="border-2 border-black p-1">
+                  오디오
+                </button></a
+              >
+            </div>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[63px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[6].writer }}</p>
             <p class="text-[9px]">{{ msg[6].text }}</p>
+            <div class="flex">
+              <a :href="`${msg[6].video}`"
+                ><button v-if="msg[6].video != null" class="border-2 border-black p-1">
+                  비디오
+                </button></a
+              >
+              <a :href="`${msg[6].voice}`"
+                ><button v-if="msg[6].voice != null" class="border-2 border-black p-1">
+                  오디오
+                </button></a
+              >
+            </div>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[203px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[7].writer }}</p>
             <p class="text-[9px]">{{ msg[7].text }}</p>
+            <div class="flex">
+              <a :href="`${msg[7].video}`"
+                ><button v-if="msg[7].video != null" class="border-2 border-black p-1">
+                  비디오
+                </button></a
+              >
+              <a :href="`${msg[7].voice}`"
+                ><button v-if="msg[7].voice != null" class="border-2 border-black p-1">
+                  오디오
+                </button></a
+              >
+            </div>
           </div>
           <div class="absolute w-[100px] h-[100px] bottom-[90px] left-[345px]">
             <p class="text-center text-[8px] mb-1">From {{ msg[8].writer }}</p>
             <p class="text-[9px]">{{ msg[8].text }}</p>
+            <div class="flex">
+              <a :href="`${msg[8].video}`"
+                ><button v-if="msg[8].video != null" class="border-2 border-black p-1">
+                  비디오
+                </button></a
+              >
+              <a :href="`${msg[8].voice}`"
+                ><button v-if="msg[8].voice != null" class="border-2 border-black p-1">
+                  오디오
+                </button></a
+              >
+            </div>
           </div>
         </div>
         <div class="w-[500px] h-[50px]">
@@ -401,27 +421,8 @@ const showSucceeded = async (e) => {
   }
 }
 
-const videoSource = ref('')
-const videoPlayer = ref(null)
-const audioSource = ref('')
-const audioPlayer = ref(null)
-const playVideo = () => {
-  if (videoPlayer.value.paused) {
-    videoPlayer.value.play()
-  } else {
-    videoPlayer.value.pause()
-  }
-}
-
-const playAudio = () => {
-  const audioPlayer = audioPlayer.value
-
-  if (audioPlayer.paused) {
-    audioPlayer.value.play()
-  } else {
-    audioPlayer.value.pause()
-  }
-}
+// const videoSource = ref('')
+// const audioSource = ref('')
 
 //클립보드 링크 복사
 const copyShare = (shareLink) => {
@@ -529,8 +530,12 @@ const getResultView = (id) => {
 
 onMounted(() => {
   console.log(route.params.resultId)
-  console.log(msg.value[5].audio)
+  console.log(msg.value[5].voice)
   console.log(msg.value[5].video)
+  console.log(msg.value[4].voice)
+  console.log(msg.value[4].video)
+  console.log(msg.value[3].voice)
+  console.log(msg.value[3].video)
   photocard.value.resultId = route.params.resultId
   getResultView(photocard.value.resultId)
   // setTimeout(() => {
