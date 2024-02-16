@@ -222,7 +222,7 @@ export const useToRecollection = defineStore('ToRecollection', () => {
 export const useRecollection = defineStore('RecollectionData', () => {
   const RecollectionData = async (id, page, success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL + VITE_SERVER + `/results/${id}/recollections`, page)
+      .get(VITE_API_URL + VITE_SERVER + `/results/${id}/recollections?page=${page}`)
       .then(success)
       .catch(fail)
   }
