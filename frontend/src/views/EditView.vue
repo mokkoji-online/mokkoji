@@ -313,7 +313,7 @@
             </p>
           </a>
         </div>
-        <div class="w-[500px]"></div>
+        <div class="w-[600px]"></div>
       </div>
     </div>
   </div>

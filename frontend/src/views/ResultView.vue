@@ -530,17 +530,14 @@ const getResultView = (id) => {
 
 onMounted(() => {
   console.log(route.params.resultId)
-  console.log(msg.value[5].voice)
-  console.log(msg.value[5].video)
-  console.log(msg.value[4].voice)
-  console.log(msg.value[4].video)
-  console.log(msg.value[3].voice)
-  console.log(msg.value[3].video)
+  // console.log(msg.value[5].voice)
+  // console.log(msg.value[5].video)
+  // console.log(msg.value[4].voice)
+  // console.log(msg.value[4].video)
+  // console.log(msg.value[3].voice)
+  // console.log(msg.value[3].video)
   photocard.value.resultId = route.params.resultId
   getResultView(photocard.value.resultId)
-  // setTimeout(() => {
-  //   getResultView(photocard.value.resultId)
-  // }, 500)
   setTimeout(() => {
     username.value = $cookies.get('user').name
     isSaved.value = false
