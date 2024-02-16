@@ -41,7 +41,7 @@
   <div>
     <button
       class="absolute left-[430px] bottom-[-10px] opacity-70 text-[16px] border-[#5da2bd] flex pt-1 rounded-lg hover:opacity-100 border-2 border-solid mb-5 px-10 py-1"
-      @click="photoList"
+      @click="uploadImage"
     >
       이미지 업로드
     </button>
@@ -55,6 +55,7 @@ import FilePreview from '@/components/myedit/FilePreview.vue'
 import IconExclamationMark from '@/icons/result/IconExclamationMark.vue'
 import IconCropTwo from '@/icons/result/IconCropTwo.vue'
 import IconSmile from '@/icons/result/IconSmile.vue'
+import { defineEmits } from 'vue'
 import {
   useFormDataStore,
   useImgUploadStore,
@@ -62,7 +63,7 @@ import {
   useGalleryStore
 } from '@/stores/result.js'
 
-const emit = defineEmits(['closeModal', 'updatePhotos'])
+const emit = defineEmits(['closeModal'])
 
 const { files, addFiles, removeFile } = useFiles()
 const resultIDStore = useResultIDStore()
@@ -73,6 +74,15 @@ const galleryStore = useGalleryStore()
 const onInputChange = (e) => {
   addFiles(e.target.files)
   e.target.value = null
+}
+
+const closeModal = () => {
+  emit('closeModal')
+}
+
+const uploadImage = () => {
+  photoList()
+  closeModal()
 }
 
 //사진 추가 Bulk Axios
@@ -118,8 +128,6 @@ const photoList = () => {
     imgUploadStore
       .addPhotos(resultIDStore.getID, formData, ({ res }) => {
         console.log('이미지 업로드 성공')
-        emit('updatePhotos')
-        emit('closeModal')
       })
       .catch((error) => {
         console.log('이미지 업로드 오류:', error)

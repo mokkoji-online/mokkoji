@@ -23,7 +23,7 @@
     <div class="h-1/3">
       <button
         class="absolute left-[560px] bottom-[-10px] opacity-70 text-sm border-[#5da2bd] flex pt-1 rounded-lg hover:opacity-100 border-2 border-solid mb-5 px-2 py-1"
-        @click="photoList"
+        @click="uploadImage"
       >
         이미지 업로드
       </button>
@@ -51,8 +51,11 @@ const cropper = ref(null)
 const croppedImage = ref(null)
 const imageUrl = ref('src/assets/edit/no_image.png') //처음 이미지
 const imgList = []
+const emit = defineEmits(['closeModal'])
 
-const emit = defineEmits(['closeModal', 'updatePhotos'])
+const closeModal = () => {
+  emit('closeModal')
+}
 
 const cropImage = () => {
   const croppedDataUrl = cropper.value.getCroppedCanvas().toDataURL('image/png')
@@ -82,31 +85,33 @@ const handleFileChange = (event) => {
   }
 }
 
+const uploadImage = () => {
+  photoList()
+  closeModal()
+}
+
 //이미지 업로드 Axios
 const photoList = () => {
+  console.log('사진 추가 데이터 전송 메소드 실행')
+
   const formData = new FormData()
   for (let i = 0; i < imgList.length; i++) {
     formData.append('photos', imgList[i])
   }
 
-  imgUploadStore
-    .addPhotos(
-      resultIDStore.getID,
-      formData,
-      ({ res }) => {
-        galleryStore.addUploadedPhoto(imgList[0])
-        console.log('이미지 업로드 성공')
-        emit('updatePhotos')
-        emit('closeModal')
-      },
-      (error) => {
-        console.log('이미지 업로드 오류:', error)
-      }
-    )
-    .then(() => {
-      imgList.value = []
-      formDataStore.clearFormData()
-    })
+  imgUploadStore.addPhotos(
+    resultIDStore.getID,
+    formData,
+    ({ res }) => {
+      galleryStore.addUploadedPhoto(imgList[0])
+      console.log('이미지 업로드 성공')
+    },
+    (error) => {
+      console.log('이미지 업로드 오류:', error)
+    }
+  )
+  imgList.value = []
+  formDataStore.clearFormData()
 }
 
 onMounted(() => {

@@ -290,7 +290,7 @@
         </div>
 
         <div class="w-[80vw]">
-          <Gallery :scrollToHelp="scrollToHelp" />
+          <Gallery :scrollToHelp="scrollToHelp" @reload="reloadParent" />
         </div>
       </div>
     </div>
@@ -442,6 +442,14 @@ const hoverPhotoUpload = () => {
   isHoveredMainImage.value = false
   isHoveredPhotoUpload.value = true
   isDefaultHelp.value = false
+}
+
+const reloadParent = () => {
+  setTimeout(() => {
+    location.reload()
+    console.log('reload 완료')
+    scrollToPhotoMosaic()
+  }, 100000)
 }
 
 const hoverMainImage = () => {
