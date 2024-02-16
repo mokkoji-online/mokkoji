@@ -198,7 +198,9 @@
 
       <div class="mt-[7vh]" v-if="isPhotomosaicResult">
         <div class="flex justify-center items-center">
-          <img :src="`${photomosaic_url}`" width="500px" height="500px" />
+          <div class="w-[500px] h-500px">
+            <img :src="`${photomosaic_url}`" width="500px" height="500px" />
+          </div>
         </div>
         <div class="flex items-center justify-center mt-[3vh]">
           <!-- <button

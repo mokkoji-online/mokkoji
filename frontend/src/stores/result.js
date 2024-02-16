@@ -262,7 +262,7 @@ export const useShareImage = defineStore('ShareImage', () => {
 export const useSharePhotomosaic = defineStore('SharePhotomosaic', () => {
   const SharePhotomosaic = async (id, success, fail) => {
     await axiosJwt
-      .get(VITE_API_URL + VITE_SERVER + `${id}/sharing/photomosaic/`)
+      .get(VITE_API_URL + VITE_SERVER + `/results/${id}/sharing/photomosaic`)
       .then(success)
       .catch(fail)
   }
