@@ -1,5 +1,60 @@
 # Daily Wrap Up
 
+## 20240216
+
+#### 발표 완료! 다들 수고하셨습니다🎇
+
+## 20240215
+
+### 오늘 한 것
+
+- 산출물 만들기
+- 주석 달기
+- 오류 수정
+
+### 어려웠던 점
+
+- 순환 재귀 오류
+  - redis로 데이터를 저장할 때 또 연관관계때문에 순환 재귀 오류가 났다.
+  - HttpMessageNotWritableException: Could not write JSON: Infinite recursion 났음
+    - `@JsonManagedReference` 로 해결
+
+### 새로 알게 된 점
+
+- `@JsonManagedReference`를 추가하면 StackOverFlow를 해결할 수 있다.
+
+### 내일 할 것
+
+- 발표준비
+- 마무리
+
+## 20240214
+
+### 오늘 한 것
+
+- 오픈비두 자잘한 오류 수정
+- 계좌 조회 추가
+- 리드미 작성
+
+### 어려웠던 점
+
+- deleteSession을 하는데 request body가 null로 떴었음
+
+### 새로 알게 된 점
+
+- `data:` 를 붙여야하는 이유
+
+  - `axios.delete`, `axios.patch` 는 `data:`를 붙여야 한다고 한다
+
+### 내일 할 것
+
+- 디버깅 후 오류 잡기
+- 활용 동의서 제출
+- 더미데이터 만들기
+- 시연 준비(영상촬영, 시연 가이드 작성)
+- 마스터 브랜치 머지
+- 산출물 끝내기
+
 ## 20240213
 
 ### 오늘 한 것
